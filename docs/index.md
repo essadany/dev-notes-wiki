@@ -1,17 +1,11 @@
-# Welcome to MkDocs
+# Dev notes wiki
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Base de connaissances technique personnelle — notes issues de cours, de playlists et de concepts que je veux pouvoir revoir plus tard, sans avoir à revisionner la source.
 
-## Commands
+## Sujets
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- **[Backend from first principles](backend-fundamentals/index.md)** — notes issues de [cette playlist](https://www.youtube.com/playlist?list=PLui3EUkuMTPgZcV0QhQrOcwMPcBCcd_Q1), qui explore les systèmes backend à partir des concepts les plus fondamentaux.
 
-## Project layout
+## Organisation
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+Chaque sujet possède son propre dossier sous `docs/`, indépendant des autres. Les sujets basés sur une playlist sont découpés vidéo par vidéo, dans l'ordre.

@@ -12,7 +12,8 @@ dev-notes-wiki/
 ├── mkdocs.yml              # site config + sidebar nav
 ├── requirements.txt        # pinned python deps
 ├── docs/
-│   └── backend-fundamentals/
+│   └── backend-from-first-principles/
+│       ├── index.md
 │       ├── 01-intro.md
 │       ├── 02-core-concept.md
 │       └── ...

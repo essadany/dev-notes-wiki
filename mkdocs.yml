@@ -1,1 +1,40 @@
-site_name: My Docs
+site_name: Dev Notes Wiki
+site_description: Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.
+site_author: Yassine ES-SADANY
+repo_url: https://github.com/essadany/dev-notes-wiki
+repo_name: essadany/dev-notes-wiki
+
+theme:
+  name: material
+  language: fr
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Passer au mode sombre
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Passer au mode clair
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+nav:
+  - Accueil: index.md
+  - Backend from first principles:
+      - 1. Feuille de route pour backend from first principles: backend-from-first-principles/index.md
+      - 2. Le chemin d'un vrai ingénieur backend: backend-from-first-principles/02-walk-the-path-of-a-true-backend-engineer.md
+      - 3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?: backend-from-first-principles/03-what-is-a-backend.md
