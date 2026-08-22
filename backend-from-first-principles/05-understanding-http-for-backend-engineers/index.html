@@ -1,0 +1,1490 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../04-benefits-of-learning-backend-engineering-from-first-principles/">
+      
+      
+        <link rel="next" href="../06-what-is-routing-in-backend/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>5. Comprendre HTTP pour les ingénieurs backend - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#5-comprendre-http-pour-les-ingenieurs-backend" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              5. Comprendre HTTP pour les ingénieurs backend
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-deux-piliers-fondamentaux-de-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Les Deux Piliers Fondamentaux de HTTP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Les Deux Piliers Fondamentaux de HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-le-statelessness-protocole-sans-etat" class="md-nav__link">
+    <span class="md-ellipsis">
+      🐠 A. Le "Statelessness" (Protocole Sans État)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-modele-client-serveur" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔌 B. Le Modèle Client-Serveur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-anatomie-dun-message-http-la-metaphore-du-colis" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 2. Anatomie d'un Message HTTP &amp; La Métaphore du Colis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📦 2. Anatomie d'un Message HTTP & La Métaphore du Colis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-metaphore-du-colis-postal" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚚 La Métaphore du Colis Postal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparaison-brute-requete-vs-reponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔬 Comparaison Brute : Requête vs Réponse
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔬 Comparaison Brute : Requête vs Réponse">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requete-client-http11" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔼 REQUÊTE CLIENT (HTTP/1.1)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reponse-serveur-http11" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔽 RÉPONSE SERVEUR (HTTP/1.1)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-4-grandes-familles-de-headers-en-tetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗂️ 3. Les 4 Grandes Familles de Headers (En-têtes)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-methodes-http-lidempotence" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 4. Les Méthodes HTTP &amp; L'Idempotence
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-mystere-du-cors-enfin-clair" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ 5. Le Mystère du CORS Enfin Clair !
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛡️ 5. Le Mystère du CORS Enfin Clair !">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-la-requete-simple-simple-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      🟢 A. La Requête Simple (Simple Request)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-la-requete-pre-verifiee-preflight-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      🟡 B. La Requête Pré-vérifiée (Preflight Request)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lantiseche-des-codes-detat-status-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚦 6. L'Antisèche des Codes d'État (Status Codes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚦 6. L'Antisèche des Codes d'État (Status Codes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-indispensables-a-retenir-absolument" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Les indispensables à retenir absolument :
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Les indispensables à retenir absolument :">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2xx-succes" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ 2xx : Succès
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3xx-redirection" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔀 3xx : Redirection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4xx-erreurs-client-cest-ma-faute-celle-de-lutilisateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ 4xx : Erreurs Client (C'est ma faute / celle de l'utilisateur !)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5xx-erreurs-serveur-le-backend-a-plante" class="md-nav__link">
+    <span class="md-ellipsis">
+      💥 5xx : Erreurs Serveur (Le backend a planté !)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-fonctionnement-de-la-mise-en-cache-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      💾 7. Fonctionnement de la Mise en Cache HTTP
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-gestion-des-fichiers-volumineux" class="md-nav__link">
+    <span class="md-ellipsis">
+      📁 8. Gestion des Fichiers Volumineux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📁 8. Gestion des Fichiers Volumineux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-part-request-envoyer-de-gros-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      📤 Multi-part Request (Envoyer de gros fichiers)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chunked-event-stream-recevoir-de-gros-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      📥 Chunked / Event Stream (Recevoir de gros fichiers)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-securite-ssl-tls-et-https-en-bref" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔐 9. Sécurité : SSL, TLS et HTTPS en bref
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-deux-piliers-fondamentaux-de-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Les Deux Piliers Fondamentaux de HTTP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Les Deux Piliers Fondamentaux de HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-le-statelessness-protocole-sans-etat" class="md-nav__link">
+    <span class="md-ellipsis">
+      🐠 A. Le "Statelessness" (Protocole Sans État)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-modele-client-serveur" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔌 B. Le Modèle Client-Serveur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-anatomie-dun-message-http-la-metaphore-du-colis" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 2. Anatomie d'un Message HTTP &amp; La Métaphore du Colis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📦 2. Anatomie d'un Message HTTP & La Métaphore du Colis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-metaphore-du-colis-postal" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚚 La Métaphore du Colis Postal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparaison-brute-requete-vs-reponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔬 Comparaison Brute : Requête vs Réponse
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔬 Comparaison Brute : Requête vs Réponse">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requete-client-http11" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔼 REQUÊTE CLIENT (HTTP/1.1)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reponse-serveur-http11" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔽 RÉPONSE SERVEUR (HTTP/1.1)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-4-grandes-familles-de-headers-en-tetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗂️ 3. Les 4 Grandes Familles de Headers (En-têtes)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-methodes-http-lidempotence" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 4. Les Méthodes HTTP &amp; L'Idempotence
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-mystere-du-cors-enfin-clair" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ 5. Le Mystère du CORS Enfin Clair !
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛡️ 5. Le Mystère du CORS Enfin Clair !">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-la-requete-simple-simple-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      🟢 A. La Requête Simple (Simple Request)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-la-requete-pre-verifiee-preflight-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      🟡 B. La Requête Pré-vérifiée (Preflight Request)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lantiseche-des-codes-detat-status-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚦 6. L'Antisèche des Codes d'État (Status Codes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚦 6. L'Antisèche des Codes d'État (Status Codes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-indispensables-a-retenir-absolument" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Les indispensables à retenir absolument :
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Les indispensables à retenir absolument :">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2xx-succes" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ 2xx : Succès
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3xx-redirection" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔀 3xx : Redirection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4xx-erreurs-client-cest-ma-faute-celle-de-lutilisateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ 4xx : Erreurs Client (C'est ma faute / celle de l'utilisateur !)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5xx-erreurs-serveur-le-backend-a-plante" class="md-nav__link">
+    <span class="md-ellipsis">
+      💥 5xx : Erreurs Serveur (Le backend a planté !)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-fonctionnement-de-la-mise-en-cache-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      💾 7. Fonctionnement de la Mise en Cache HTTP
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-gestion-des-fichiers-volumineux" class="md-nav__link">
+    <span class="md-ellipsis">
+      📁 8. Gestion des Fichiers Volumineux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📁 8. Gestion des Fichiers Volumineux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-part-request-envoyer-de-gros-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      📤 Multi-part Request (Envoyer de gros fichiers)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chunked-event-stream-recevoir-de-gros-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      📥 Chunked / Event Stream (Recevoir de gros fichiers)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-securite-ssl-tls-et-https-en-bref" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔐 9. Sécurité : SSL, TLS et HTTPS en bref
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="5-comprendre-http-pour-les-ingenieurs-backend">5. Comprendre HTTP pour les ingénieurs backend<a class="headerlink" href="#5-comprendre-http-pour-les-ingenieurs-backend" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><em>Objectif : Maîtriser le protocole HTTP, comprendre le CORS une bonne fois pour toutes, et retenir les codes d'état essentiels pour mes futurs débugs.</em></p>
+</blockquote>
+<hr />
+<h2 id="1-les-deux-piliers-fondamentaux-de-http">🧭 1. Les Deux Piliers Fondamentaux de HTTP<a class="headerlink" href="#1-les-deux-piliers-fondamentaux-de-http" title="Permanent link">&para;</a></h2>
+<h3 id="a-le-statelessness-protocole-sans-etat">🐠 A. Le "Statelessness" (Protocole Sans État)<a class="headerlink" href="#a-le-statelessness-protocole-sans-etat" title="Permanent link">&para;</a></h3>
+<p>Le serveur est un poisson rouge : <strong>il n'a aucune mémoire des interactions passées</strong>.
+* <strong>Auto-contenue (Self-contained)</strong> : Chaque requête doit porter TOUTES ses infos (tokens, cookies, ID).
+* <strong>Nouveau départ</strong> : Si je fais deux requêtes d'affilée, le serveur traite la deuxième comme si on ne s'était jamais vus.</p>
+<div class="highlight"><pre><span></span><code>┌──────────┐                 Requête 1 : &quot;Je suis l&#39;utilisateur X, donne-moi ma page&quot;                  ┌──────────┐
+│          ├──────────────────────────────────────────────────────────────────────────────────────────&gt;│          │
+│          │                 Réponse 1 : &quot;Tiens, voilà tes données&quot;                                    │          │
+│  CLIENT  │&lt;──────────────────────────────────────────────────────────────────────────────────────────┤ SERVEUR  │
+│ (Browser)│                                                                                           │ (NodeJS) │
+│          │                 Requête 2 : &quot;Donne-moi mes messages&quot; (SANS préciser qui je suis)          │          │
+│          ├──────────────────────────────────────────────────────────────────────────────────────────&gt;│          │
+└──────────┘                 Réponse 2 : &quot;Qui es-tu ? Erreur 401 Unauthorized&quot; (Oubli de session !)    └──────────┘
+</code></pre></div>
+<blockquote>
+<p>⚙️ <strong>Pourquoi ce choix ?</strong>
+* <strong>Simplicité</strong> : Pas besoin de stocker des sessions en RAM côté serveur.
+* <strong>Scalabilité de dingue</strong> : On peut distribuer les requêtes sur plein de serveurs (Load Balancing). Si un serveur crash, un autre prend le relais sans devoir restaurer de session !</p>
+</blockquote>
+<p>💡 <strong>Astuce de dev :</strong> Pour que l'utilisateur reste connecté (ex: panier d'achat, login), on rajoute une couche de gestion d'état par-dessus (Cookies, Sessions ou JWT Tokens).</p>
+<hr />
+<h3 id="b-le-modele-client-serveur">🔌 B. Le Modèle Client-Serveur<a class="headerlink" href="#b-le-modele-client-serveur" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>La règle d'or</strong> : C’est <em>toujours</em> le client (navigateur, appli, Postman) qui initie l'échange. Le serveur écoute passivement sur un port ouvert et répond.</li>
+</ul>
+<hr />
+<h2 id="2-anatomie-dun-message-http-la-metaphore-du-colis">📦 2. Anatomie d'un Message HTTP &amp; La Métaphore du Colis<a class="headerlink" href="#2-anatomie-dun-message-http-la-metaphore-du-colis" title="Permanent link">&para;</a></h2>
+<p>Un message HTTP, c'est uniquement du texte brut structuré.</p>
+<h3 id="la-metaphore-du-colis-postal">🚚 La Métaphore du Colis Postal<a class="headerlink" href="#la-metaphore-du-colis-postal" title="Permanent link">&para;</a></h3>
+<p>Quand j'envoie un colis :
+* J'écris l'adresse et le numéro du destinataire <strong>sur le dessus du carton</strong> → Ce sont les <strong>Headers</strong> (métadonnées).
+* Je mets le cadeau <strong>à l'intérieur du carton</strong> → C'est le <strong>Body</strong> (données utiles).</p>
+<p>Le livreur (proxies, routeurs, pare-feu) regarde juste l'étiquette extérieure pour acheminer le colis sans jamais l'ouvrir. C'est ultra-rapide !</p>
+<div class="highlight"><pre><span></span><code>┌──────────────────────────────────────────────────────────────┐
+│  MÉTADONNÉES (L&#39;étiquette sur le colis)                     │
+│  • Requête : METHODE / URL / VERSION                         │
+│  • En-têtes (Headers) : paires Clé-Valeur                    │
+├──────────────────────────────────────────────────────────────┤
+│  [ LIGNE VIDE ] (Indique la fin des en-têtes)                │
+├──────────────────────────────────────────────────────────────┤
+│  CORPS DU MESSAGE (L&#39;intérieur du colis)                     │
+│  • Payload / Body (JSON, XML, Fichiers, HTML...)             │
+└──────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="comparaison-brute-requete-vs-reponse">🔬 Comparaison Brute : Requête vs Réponse<a class="headerlink" href="#comparaison-brute-requete-vs-reponse" title="Permanent link">&para;</a></h3>
+<h4 id="requete-client-http11">🔼 REQUÊTE CLIENT (HTTP/1.1)<a class="headerlink" href="#requete-client-http11" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/api/user</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">backend.demo.xyz</span>
+<span class="na">Authorization</span><span class="o">:</span> <span class="l">Bearer token_xyz</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+
+{ &quot;action&quot;: &quot;read&quot; }
+</code></pre></div>
+<h4 id="reponse-serveur-http11">🔽 RÉPONSE SERVEUR (HTTP/1.1)<a class="headerlink" href="#reponse-serveur-http11" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Cache-Control</span><span class="o">:</span> <span class="l">max-age=10</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">42</span>
+
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;junior_dev&quot;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="3-les-4-grandes-familles-de-headers-en-tetes">🗂️ 3. Les 4 Grandes Familles de Headers (En-têtes)<a class="headerlink" href="#3-les-4-grandes-familles-de-headers-en-tetes" title="Permanent link">&para;</a></h2>
+<p>Les headers sont des couples <code>Clé: Valeur</code>. On peut les regrouper ainsi :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Catégorie</th>
+<th style="text-align: left;">Rôle</th>
+<th style="text-align: left;">Headers Clés</th>
+<th style="text-align: left;">Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1. Request Headers</strong></td>
+<td style="text-align: left;">Décrivent le client et ses préférences</td>
+<td style="text-align: left;"><code>User-Agent</code><br><code>Authorization</code><br><code>Accept</code></td>
+<td style="text-align: left;">- Identifie le navigateur/app.<br>- Transmet le token JWT.<br>- Dit quel format on attend (ex: JSON).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2. General Headers</strong></td>
+<td style="text-align: left;">Métadonnées globales hors contenu</td>
+<td style="text-align: left;"><code>Date</code><br><code>Connection</code></td>
+<td style="text-align: left;">- Heure du message.<br>- <code>keep-alive</code> pour réutiliser la connexion TCP.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3. Representation Headers</strong></td>
+<td style="text-align: left;">Décrivent le format et la taille du Body</td>
+<td style="text-align: left;"><code>Content-Type</code><br><code>Content-Length</code><br><code>Content-Encoding</code><br><code>ETag</code></td>
+<td style="text-align: left;">- Format (ex: <code>application/json</code>).<br>- Taille en octets.<br>- Compression (ex: <code>gzip</code>).<br>- Hash unique pour le cache.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>4. Security Headers</strong></td>
+<td style="text-align: left;">Protègent le client contre les attaques</td>
+<td style="text-align: left;"><code>HSTS</code><br><code>CSP</code><br><code>X-Frame-Options</code><br><code>Set-Cookie</code></td>
+<td style="text-align: left;">- Force le HTTPS.<br>- Bloque les XSS.<br>- Bloque le clickjacking.<br>- Sécurise les cookies (HttpOnly, Secure).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🎮 <strong>Le concept de "Remote Control" :</strong><br />
+Les headers fonctionnent comme une télécommande. Le client demande un format via <code>Accept</code> et le serveur s'adapte (ex: renvoie du JSON ou de l'HTML). Inversement, le serveur contrôle le comportement du cache du navigateur grâce à <code>Cache-Control</code>.</p>
+</blockquote>
+<hr />
+<h2 id="4-les-methodes-http-lidempotence">⚡ 4. Les Méthodes HTTP &amp; L'Idempotence<a class="headerlink" href="#4-les-methodes-http-lidempotence" title="Permanent link">&para;</a></h2>
+<p>Les méthodes indiquent la sémantique et <strong>l'intention</strong> de l'action.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Méthode</th>
+<th style="text-align: left;">Action</th>
+<th style="text-align: center;">Body ?</th>
+<th style="text-align: center;">Idempotente ?</th>
+<th style="text-align: left;">En gros, ça veut dire quoi ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>GET</strong></td>
+<td style="text-align: left;">Récupérer des données</td>
+<td style="text-align: center;">Non</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Je peux l'appeler 100 fois, l'état du serveur ne bouge pas.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>POST</strong></td>
+<td style="text-align: left;">Créer une ressource</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: center;"><strong>NON</strong></td>
+<td style="text-align: left;">Si je double-clique sur "Envoyer", je crée 2 ressources en BDD.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>PATCH</strong></td>
+<td style="text-align: left;">Modif partielle</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Met à jour uniquement les champs envoyés (ex: juste le pseudo).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>PUT</strong></td>
+<td style="text-align: left;">Remplacer complètement</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Écrase la ressource entière. Même après 10 PUT identiques, le résultat reste le même.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>DELETE</strong></td>
+<td style="text-align: left;">Supprimer</td>
+<td style="text-align: center;">Non</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Supprime une fois. Les appels suivants ne changent rien (la ressource est déjà supprimée).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>OPTIONS</strong></td>
+<td style="text-align: left;">Demander les droits</td>
+<td style="text-align: center;">Non</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Permet au navigateur de vérifier les autorisations CORS.</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>Règle de bonne pratique :</strong> Toujours privilégier <code>PATCH</code> pour les modifications partielles. On utilise <code>PUT</code> uniquement pour un remplacement total de la ressource.</p>
+<hr />
+<h2 id="5-le-mystere-du-cors-enfin-clair">🛡️ 5. Le Mystère du CORS Enfin Clair !<a class="headerlink" href="#5-le-mystere-du-cors-enfin-clair" title="Permanent link">&para;</a></h2>
+<p>Le <strong>CORS (Cross-Origin Resource Sharing)</strong> est une sécurité imposée par le <strong>navigateur</strong>. Il bloque le JavaScript qui tente de requêter un domaine/port différent de celui du site d'origine (ex: le front sur <code>localhost:5173</code> qui appelle l'API sur <code>localhost:3000</code>).</p>
+<p>Il y a deux scénarios de requêtes :</p>
+<h3 id="a-la-requete-simple-simple-request">🟢 A. La Requête Simple (Simple Request)<a class="headerlink" href="#a-la-requete-simple-simple-request" title="Permanent link">&para;</a></h3>
+<p>Se produit uniquement pour <code>GET</code>, <code>POST</code> ou <code>HEAD</code> avec des en-têtes basiques.
+1. Le client envoie sa requête. Le navigateur y greffe automatiquement le header <code>Origin: localhost:5173</code>.
+2. Le serveur traite la requête et renvoie la réponse avec le header <code>Access-Control-Allow-Origin: localhost:5173</code> (ou <code>*</code>).
+3. Le navigateur vérifie si son origine est bien listée. Si le header est absent → <strong>CORS Error</strong> instantanée dans la console !</p>
+<h3 id="b-la-requete-pre-verifiee-preflight-request">🟡 B. La Requête Pré-vérifiée (Preflight Request)<a class="headerlink" href="#b-la-requete-pre-verifiee-preflight-request" title="Permanent link">&para;</a></h3>
+<p>Se déclenche si la méthode est complexe (<code>PUT</code>, <code>DELETE</code>), si on envoie du JSON (<code>application/json</code>), ou si on utilise des headers spéciaux (comme <code>Authorization</code>).</p>
+<div class="highlight"><pre><span></span><code>[ Navigateur (Client) ]                                              [ Serveur API ]
+         │                                                                  │
+         │ ── ① OPTIONS /api/data (Preflight) ────────────────────────────&gt; │  &lt;- &quot;Salut ! J&#39;ai le droit de faire un PUT ?&quot;
+         │    Headers:                                                      │
+         │      Access-Control-Request-Method: PUT                          │
+         │      Access-Control-Request-Headers: Authorization               │
+         │                                                                  │
+         │ &lt;── ② Réponse 204 No Content ─────────────────────────────────── │  &lt;- &quot;Pas de souci ! Voici mes conditions :&quot;
+         │    Headers CORS :                                                │
+         │      Access-Control-Allow-Origin: http://localhost:5173          │
+         │      Access-Control-Allow-Methods: GET, POST, PUT, DELETE        │
+         │      Access-Control-Allow-Headers: Content-Type, Authorization   │
+         │      Access-Control-Max-Age: 86400 (Évite de refaire OPTIONS)    │
+         │                                                                  │
+         │ ── ③ PUT /api/data (Requête réelle) ───────────────────────────&gt; │  &lt;- Tout est OK, j&#39;envoie mon vrai PUT !
+         │                                                                  │
+         │ &lt;── ④ Réponse 200 OK + Données ───────────────────────────────── │
+</code></pre></div>
+<hr />
+<h2 id="6-lantiseche-des-codes-detat-status-codes">🚦 6. L'Antisèche des Codes d'État (Status Codes)<a class="headerlink" href="#6-lantiseche-des-codes-detat-status-codes" title="Permanent link">&para;</a></h2>
+<p>Les codes d'état permettent de comprendre ce qui s'est passé en un clin d'œil, sans lire le Body.</p>
+<div class="highlight"><pre><span></span><code>┌──────────────────────────────────────────────────────────────────────────┐
+│                           CODES D&#39;ÉTAT HTTP                              │
+├──────────────┬──────────────┬──────────────┬──────────────┬──────────────┤
+│     1xx      │     2xx      │     3xx      │     4xx      │     5xx      │
+│ Informational│   Success    │ Redirection  │ Client Error │ Server Error │
+└──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
+</code></pre></div>
+<h3 id="les-indispensables-a-retenir-absolument">🎯 Les indispensables à retenir absolument :<a class="headerlink" href="#les-indispensables-a-retenir-absolument" title="Permanent link">&para;</a></h3>
+<h4 id="2xx-succes">✅ 2xx : Succès<a class="headerlink" href="#2xx-succes" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>200 OK</code> : Tout s'est bien passé.</li>
+<li><code>201 Created</code> : Ressource créée avec succès (idéal après un <code>POST</code>).</li>
+<li><code>204 No Content</code> : Action réussie mais pas de contenu à renvoyer (ex: requête <code>OPTIONS</code> ou un <code>DELETE</code>).</li>
+</ul>
+<h4 id="3xx-redirection">🔀 3xx : Redirection<a class="headerlink" href="#3xx-redirection" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>301 Moved Permanently</code> : Redirection définitive. Le navigateur va directement à la nouvelle adresse à l'avenir.</li>
+<li><code>302 Found</code> : Redirection temporaire.</li>
+<li><code>304 Not Modified</code> : Dit au navigateur : "Le fichier n'a pas bougé, recharge-le depuis ton cache local !" (Économise de la bande passante).</li>
+</ul>
+<h4 id="4xx-erreurs-client-cest-ma-faute-celle-de-lutilisateur">❌ 4xx : Erreurs Client (C'est ma faute / celle de l'utilisateur !)<a class="headerlink" href="#4xx-erreurs-client-cest-ma-faute-celle-de-lutilisateur" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>400 Bad Request</code> : Données invalides (ex: format d'email incorrect).</li>
+<li><code>401 Unauthorized</code> : Pas authentifié ou token expiré.</li>
+<li><code>403 Forbidden</code> : Authentifié mais pas les droits d'accès (ex: modifier le compte d'un autre utilisateur).</li>
+<li><code>404 Not Found</code> : La ressource demandée n'existe pas.</li>
+<li><code>405 Method Not Allowed</code> : Méthode non supportée par cette route.</li>
+<li><code>409 Conflict</code> : Conflit de données (ex: créer un utilisateur avec un email déjà pris).</li>
+<li><code>429 Too Many Requests</code> : Rate limiting déclenché (trop de requêtes d'un coup).</li>
+</ul>
+<h4 id="5xx-erreurs-serveur-le-backend-a-plante">💥 5xx : Erreurs Serveur (Le backend a planté !)<a class="headerlink" href="#5xx-erreurs-serveur-le-backend-a-plante" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>500 Internal Server Error</code> : Crash inattendu de l'application (exception non gérée).</li>
+<li><code>502 Bad Gateway</code> : Le reverse proxy (Nginx) ne reçoit pas de réponse de l'application locale (ex: Node.js est arrêté).</li>
+<li><code>503 Service Unavailable</code> : Serveur surchargé ou en cours de maintenance.</li>
+<li><code>504 Gateway Timeout</code> : L'application backend a mis trop de temps à répondre à Nginx.</li>
+</ul>
+<hr />
+<h2 id="7-fonctionnement-de-la-mise-en-cache-http">💾 7. Fonctionnement de la Mise en Cache HTTP<a class="headerlink" href="#7-fonctionnement-de-la-mise-en-cache-http" title="Permanent link">&para;</a></h2>
+<p>Le cache évite de re-télécharger des fichiers ou des données inchangés.</p>
+<div class="highlight"><pre><span></span><code>[ Navigateur ]                                                        [ Serveur ]
+      │                                                                    │
+      │ ── ① GET /resource ──────────────────────────────────────────────&gt; │
+      │                                                                    │
+      │ &lt;── ② Réponse 200 OK + Données ─────────────────────────────────── │
+      │     Headers :                                                      │
+      │       Cache-Control: max-age=10 (Valide pendant 10s)               │
+      │       ETag: &quot;hash3141&quot; (Empreinte numérique du contenu)            │
+      │       Last-Modified: Sat, 22 Aug 2026 12:00:00 GMT                 │
+      │                                                                    │
+      │ ── [ Plus tard : Nouvelle demande ] ─────────────────────────────── │
+      │                                                                    │
+      │ ── ③ GET /resource ──────────────────────────────────────────────&gt; │
+      │     Headers :                                                      │
+      │       If-None-Match: &quot;hash3141&quot;                                    │
+      │       If-Modified-Since: Sat, 22 Aug 2026 12:00:00 GMT             │
+      │                                                                    │
+      │ &lt;── ④ Réponse 304 Not Modified ─────────────────────────────────── │
+      │     (Pas de body renvoyé ! Le navigateur réutilise son cache)      │
+</code></pre></div>
+<p>📌 <strong>Note de dev moderne :</strong> En production, on utilise souvent des bibliothèques comme <strong>React Query</strong> côté client. Elles permettent de gérer le cache de façon ultra fine sans subir les comportements parfois imprévisibles du cache HTTP natif des navigateurs.</p>
+<hr />
+<h2 id="8-gestion-des-fichiers-volumineux">📁 8. Gestion des Fichiers Volumineux<a class="headerlink" href="#8-gestion-des-fichiers-volumineux" title="Permanent link">&para;</a></h2>
+<h3 id="multi-part-request-envoyer-de-gros-fichiers">📤 Multi-part Request (Envoyer de gros fichiers)<a class="headerlink" href="#multi-part-request-envoyer-de-gros-fichiers" title="Permanent link">&para;</a></h3>
+<p>Pour envoyer des images/vidéos du client vers le serveur :
+* Utiliser <code>Content-Type: multipart/form-data</code>.
+* Le body est découpé en plusieurs morceaux séparés par une chaîne unique appelée <strong><code>boundary</code></strong> (définie dans le header).
+* Le serveur peut ainsi lire et traiter le fichier au fur et à mesure de l'envoi.</p>
+<h3 id="chunked-event-stream-recevoir-de-gros-fichiers">📥 Chunked / Event Stream (Recevoir de gros fichiers)<a class="headerlink" href="#chunked-event-stream-recevoir-de-gros-fichiers" title="Permanent link">&para;</a></h3>
+<p>Pour renvoyer des flux de données ou de très gros fichiers du serveur vers le client :
+* Headers requis : <code>Content-Type: text/event-stream</code> et <code>Connection: keep-alive</code>.
+* Le serveur envoie les données par morceaux ("chunks") en continu sur la même connexion persistante. Le client les assemble dynamiquement.</p>
+<hr />
+<h2 id="9-securite-ssl-tls-et-https-en-bref">🔐 9. Sécurité : SSL, TLS et HTTPS en bref<a class="headerlink" href="#9-securite-ssl-tls-et-https-en-bref" title="Permanent link">&para;</a></h2>
+<p>Pas besoin de devenir ingénieur réseau, mais voici la base :
+* <strong>SSL</strong> : Le protocole historique de sécurisation. Aujourd'hui déprécié car vulnérable.
+* <strong>TLS</strong> : Le remplaçant moderne et hautement sécurisé de SSL. Il gère l'authentification du serveur et le chiffrement des données de bout en bout.
+* <strong>HTTPS</strong> : C’est tout simplement le protocole standard <strong>HTTP encapsulé dans une couche de chiffrement TLS</strong>. Indispensable pour sécuriser les données utilisateur en transit !</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 4. Les avantages de l&#39;apprentissage de l&#39;ingénierie backend depuis les principes fondamentaux">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../06-what-is-routing-in-backend/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 6. Qu&#39;est-ce que le routing dans le backend ?">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                6. Qu'est-ce que le routing dans le backend ?
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
