@@ -25,6 +25,9 @@ theme:
     - search.highlight
     - content.code.copy
 
+extra_css:
+  - stylesheets/extra.css
+
 markdown_extensions:
   - admonition
   - pymdownx.highlight
@@ -38,3 +41,9 @@ nav:
       - 1. Feuille de route pour backend from first principles: backend-from-first-principles/index.md
       - 2. Le chemin d'un vrai ingénieur backend: backend-from-first-principles/02-walk-the-path-of-a-true-backend-engineer.md
       - 3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?: backend-from-first-principles/03-what-is-a-backend.md
+      - 4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux: backend-from-first-principles/04-benefits-of-learning-backend-engineering-from-first-principles.md
+      - 5. Comprendre HTTP pour les ingénieurs backend: backend-from-first-principles/05-understanding-http-for-backend-engineers.md
+      - 6. Qu'est-ce que le routing dans le backend ?: backend-from-first-principles/06-what-is-routing-in-backend.md
+      - 7. La sérialisation et la désérialisation pour les ingénieurs backend: backend-from-first-principles/07-serialization-and-deserialization-for-backend-engineers.md
+      - 8. L'authentification et l'autorisation pour les ingénieurs backend: backend-from-first-principles/08-authentication-and-authorization-for-backend-engineers.md
+      - 9. Les validations et les transformations pour les ingénieurs backend: backend-from-first-principles/09-validations-and-transformations-for-backend-engineers.md
