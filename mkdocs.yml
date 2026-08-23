@@ -47,3 +47,6 @@ nav:
       - 7. La sérialisation et la désérialisation pour les ingénieurs backend: backend-from-first-principles/07-serialization-and-deserialization-for-backend-engineers.md
       - 8. L'authentification et l'autorisation pour les ingénieurs backend: backend-from-first-principles/08-authentication-and-authorization-for-backend-engineers.md
       - 9. Les validations et les transformations pour les ingénieurs backend: backend-from-first-principles/09-validations-and-transformations-for-backend-engineers.md
+    
+  - Déploiement web:
+      - 1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy): deploiement-web/01-deploiement-ec2-dns-nginx.md
