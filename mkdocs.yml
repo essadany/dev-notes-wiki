@@ -17,6 +17,7 @@ theme:
         icon: material/brightness-4
         name: Passer au mode clair
   features:
+    - navigation.tabs
     - navigation.sections
     - navigation.expand
     - navigation.top
