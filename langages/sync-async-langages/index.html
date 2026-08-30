@@ -1,0 +1,1788 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../fetch-axios-httpclient-observable-promise/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>1. Synchrone vs Asynchrone selon les langages - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#synchrone-vs-asynchrone-selon-les-langages" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1. Synchrone vs Asynchrone selon les langages
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rappel-express-les-3-couches-jsts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rappel express : les 3 couches (JS/TS)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#levent-loop-concretement-cest-quoi-et-ou-elle-vit" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'event loop, concrètement — c'est quoi et où elle vit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="L'event loop, concrètement — c'est quoi et où elle vit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ou-elle-vit-reellement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Où elle vit réellement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lalgorithme-quelle-execute-en-boucle" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'algorithme qu'elle exécute, en boucle
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-structures-quelle-orchestre-elles-sont-bien-en-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les structures qu'elle orchestre (elles, sont bien en mémoire)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implication-pratique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implication pratique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#angular-httpclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      Angular HttpClient
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tableau-de-synthese-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tableau de synthèse global
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    <span class="md-ellipsis">
+      C
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comment-on-simule-de-lasynchrone-en-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comment on simule de l'asynchrone en C
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      C++
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C++">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outils-cles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outils clés
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difference-fondamentale-avec-js" class="md-nav__link">
+    <span class="md-ellipsis">
+      Différence fondamentale avec JS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Java">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evolution-du-modele-async-en-java" class="md-nav__link">
+    <span class="md-ellipsis">
+      Évolution du modèle async en Java
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difference-avec-nodejsjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Différence avec Node.js/JS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#php" class="md-nav__link">
+    <span class="md-ellipsis">
+      PHP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PHP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-modele-php-fpm-comment-ca-scale-quand-meme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le modèle PHP-FPM (comment ça scale quand même)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-en-php-les-evolutions-recentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async en PHP (les évolutions récentes)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difference-philosophique-avec-nodejs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Différence philosophique avec Node.js
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recapitulatif-visuel-qui-peut-tourner-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      Récapitulatif visuel : qui peut tourner où
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-a-retenir" class="md-nav__link">
+    <span class="md-ellipsis">
+      Point à retenir
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rappel-express-les-3-couches-jsts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rappel express : les 3 couches (JS/TS)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#levent-loop-concretement-cest-quoi-et-ou-elle-vit" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'event loop, concrètement — c'est quoi et où elle vit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="L'event loop, concrètement — c'est quoi et où elle vit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ou-elle-vit-reellement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Où elle vit réellement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lalgorithme-quelle-execute-en-boucle" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'algorithme qu'elle exécute, en boucle
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-structures-quelle-orchestre-elles-sont-bien-en-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les structures qu'elle orchestre (elles, sont bien en mémoire)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implication-pratique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implication pratique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#angular-httpclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      Angular HttpClient
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tableau-de-synthese-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tableau de synthèse global
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    <span class="md-ellipsis">
+      C
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comment-on-simule-de-lasynchrone-en-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comment on simule de l'asynchrone en C
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      C++
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C++">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outils-cles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outils clés
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difference-fondamentale-avec-js" class="md-nav__link">
+    <span class="md-ellipsis">
+      Différence fondamentale avec JS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Java">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evolution-du-modele-async-en-java" class="md-nav__link">
+    <span class="md-ellipsis">
+      Évolution du modèle async en Java
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difference-avec-nodejsjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Différence avec Node.js/JS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#php" class="md-nav__link">
+    <span class="md-ellipsis">
+      PHP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PHP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-base_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-modele-php-fpm-comment-ca-scale-quand-meme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le modèle PHP-FPM (comment ça scale quand même)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-en-php-les-evolutions-recentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async en PHP (les évolutions récentes)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difference-philosophique-avec-nodejs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Différence philosophique avec Node.js
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relation-avec-le-navigateur_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relation avec le navigateur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recapitulatif-visuel-qui-peut-tourner-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      Récapitulatif visuel : qui peut tourner où
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-a-retenir" class="md-nav__link">
+    <span class="md-ellipsis">
+      Point à retenir
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="synchrone-vs-asynchrone-selon-les-langages">Synchrone vs Asynchrone selon les langages<a class="headerlink" href="#synchrone-vs-asynchrone-selon-les-langages" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Référence de mastery — comparaison JS/TS, Python, C, C++, Java, PHP, et leur relation avec le navigateur.</p>
+</blockquote>
+<h2 id="rappel-express-les-3-couches-jsts">Rappel express : les 3 couches (JS/TS)<a class="headerlink" href="#rappel-express-les-3-couches-jsts" title="Permanent link">&para;</a></h2>
+<p>Quand du JS/TS s'exécute, trois éléments distincts collaborent :</p>
+<ol>
+<li><strong>Moteur JS</strong> (V8, SpiderMonkey...) — exécute la spec ECMAScript pure. Ne connaît ni <code>document</code>, ni <code>fs</code>.</li>
+<li><strong>Environnement d'exécution</strong> (navigateur ou Node.js) — greffe des API autour du moteur (<code>setTimeout</code>, <code>fetch</code>, <code>fs</code>, DOM...).</li>
+<li><strong>Ton code applicatif</strong> — logique métier (Angular, Express, etc.).</li>
+</ol>
+<div class="highlight"><pre><span></span><code>Ton code JS/TS
+     ↓
+   Moteur JS (V8) — call stack, closures, exécution pure
+     ↓
+  Bindings natifs (C++)
+     ↓
+  libuv (Node) / thread réseau+rendu (navigateur) — event loop, thread pool, I/O système
+     ↓
+    OS
+</code></pre></div>
+<p><strong>Le point clé</strong> : <code>setTimeout</code>, <code>fetch</code>, <code>fs.readFile</code> ne sont <strong>pas du JS</strong>. Ce sont des API fournies par l'environnement (navigateur ou Node), qui déléguent le travail lourd à des threads internes (thread pool libuv, threads réseau du navigateur), puis remettent un callback dans une queue que l'<strong>event loop</strong> exécute uniquement quand la <strong>call stack JS est vide</strong>.</p>
+<p>C'est pour ça que <code>setTimeout(fn, 0)</code> ne s'exécute jamais "immédiatement" : le <code>0</code> fixe un délai minimum d'éligibilité, pas un moment d'exécution garanti — le code synchrone en cours passe toujours avant.</p>
+<p>Deux queues distinctes existent en plus : la <strong>microtask queue</strong> (Promises, <code>queueMicrotask</code>) est vidée en priorité, avant chaque tour de la <strong>macrotask queue</strong> (<code>setTimeout</code>, <code>setInterval</code>, I/O).</p>
+<h2 id="levent-loop-concretement-cest-quoi-et-ou-elle-vit">L'event loop, concrètement — c'est quoi et où elle vit<a class="headerlink" href="#levent-loop-concretement-cest-quoi-et-ou-elle-vit" title="Permanent link">&para;</a></h2>
+<p>L'event loop n'est <strong>pas une structure de données stockée quelque part</strong> (pas un fichier, pas une variable inspectable) — c'est un <strong>algorithme tournant en boucle infinie</strong>, implémenté en code natif (C++), qui fait partie du processus en cours d'exécution.</p>
+<h3 id="ou-elle-vit-reellement">Où elle vit réellement<a class="headerlink" href="#ou-elle-vit-reellement" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Dans le navigateur</strong> : elle fait partie du moteur de rendu (Blink pour Chrome, Gecko pour Firefox), et tourne dans le processus du navigateur/de l'onglet, en RAM, pendant toute la durée de vie de la page.</li>
+<li><strong>Dans Node.js</strong> : elle est implémentée dans <strong>libuv</strong>, une bibliothèque C compilée directement dans le binaire <code>node</code>. Elle démarre au lancement du process et tourne tant qu'il est vivant.</li>
+</ul>
+<p>Concrètement : le PID visible via <code>ps aux | grep node</code> <strong>est</strong> le processus qui contient l'event loop active en mémoire — pas un fichier sur disque, une exécution en RAM.</p>
+<h3 id="lalgorithme-quelle-execute-en-boucle">L'algorithme qu'elle exécute, en boucle<a class="headerlink" href="#lalgorithme-quelle-execute-en-boucle" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>tant que le programme tourne :
+    1. Si la call stack n&#39;est pas vide → exécuter le prochain frame
+    2. Si la call stack est vide :
+        a. Vider ENTIÈREMENT la microtask queue (Promises, queueMicrotask)
+        b. Prendre UNE tâche dans la macrotask queue (setTimeout, I/O, events) et l&#39;exécuter
+        c. Revenir en haut de la boucle
+</code></pre></div>
+<h3 id="les-structures-quelle-orchestre-elles-sont-bien-en-memoire">Les structures qu'elle orchestre (elles, sont bien en mémoire)<a class="headerlink" href="#les-structures-quelle-orchestre-elles-sont-bien-en-memoire" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>Rôle</th>
+<th>Où elle est</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Call stack</strong></td>
+<td>Pile des fonctions en cours d'exécution</td>
+<td>Mémoire du processus (segment stack)</td>
+</tr>
+<tr>
+<td><strong>Heap</strong></td>
+<td>Objets, closures, données allouées dynamiquement</td>
+<td>Mémoire du processus (segment heap)</td>
+</tr>
+<tr>
+<td><strong>Microtask queue</strong></td>
+<td>File des callbacks de Promises en attente</td>
+<td>Mémoire du processus, gérée par le moteur JS (V8)</td>
+</tr>
+<tr>
+<td><strong>Macrotask queue</strong></td>
+<td>File des callbacks setTimeout/I/O/events en attente</td>
+<td>Mémoire du processus, gérée par l'environnement (navigateur/libuv)</td>
+</tr>
+<tr>
+<td><strong>Web APIs / Node APIs</strong></td>
+<td>Timers actifs, requêtes réseau en cours</td>
+<td>Threads séparés gérés par le navigateur ou le thread pool libuv</td>
+</tr>
+</tbody>
+</table>
+<p>L'event loop n'est donc rien d'autre que <strong>la boucle qui fait le lien entre ces structures et la call stack</strong> : elle vérifie en continu si la stack est libre, et si oui, ce qui attend dans les queues.</p>
+<h3 id="implication-pratique">Implication pratique<a class="headerlink" href="#implication-pratique" title="Permanent link">&para;</a></h3>
+<p>Comme l'event loop tourne dans le <strong>même processus</strong> que le code exécuté, un calcul synchrone trop long bloque tout : plus aucun timer, requête réseau ou clic utilisateur n'est traité tant que la call stack n'est pas libérée. C'est la cause du "freeze" d'une UI navigateur, ou d'un serveur Node qui ne répond plus pendant un traitement CPU-intensif bloquant.</p>
+<hr />
+<h3 id="angular-httpclient">Angular <code>HttpClient</code><a class="headerlink" href="#angular-httpclient" title="Permanent link">&para;</a></h3>
+<p><code>HttpClient</code> est une abstraction RxJS (<code>Observable</code>) au-dessus de <code>fetch</code> (backend par défaut depuis Angular 22, juin 2026) ou de <code>XMLHttpRequest</code> (via <code>withXhr()</code>, pour les cas comme le suivi de progression d'upload). Même mécanique que <code>setTimeout</code> : délégation au navigateur, retour via l'event loop. Différence avec une <code>Promise</code> : <code>Observable</code> est <strong>annulable</strong> (<code>unsubscribe()</code>) et peut émettre <strong>plusieurs valeurs</strong>. Détails complets dans <code>fetch-axios-httpclient-observable-promise.md</code>.</p>
+<hr />
+<h2 id="tableau-de-synthese-global">Tableau de synthèse global<a class="headerlink" href="#tableau-de-synthese-global" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Langage</th>
+<th>Sync par défaut ?</th>
+<th>Modèle async natif</th>
+<th>Vrai multithreading (parallélisme CPU)</th>
+<th>Lien direct avec le navigateur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>JavaScript</strong></td>
+<td>Oui</td>
+<td>Event loop native, callbacks/Promises/async-await</td>
+<td>Non (single-thread) — Web Workers pour paralléliser</td>
+<td>Exécuté nativement par le moteur du navigateur</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td>Oui (hérite de JS)</td>
+<td>Identique à JS après compilation</td>
+<td>Identique à JS</td>
+<td>Compilé en JS avant exécution</td>
+</tr>
+<tr>
+<td><strong>Python</strong></td>
+<td>Oui</td>
+<td><code>asyncio</code> (opt-in), event loop explicite</td>
+<td>Non pour le code Python pur (GIL) — <code>multiprocessing</code> pour paralléliser</td>
+<td>Aucun (sauf WASM via Pyodide)</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td>Oui</td>
+<td>Aucun natif — tout est manuel (threads OS, <code>select</code>/<code>epoll</code>)</td>
+<td>Oui, natif (<code>pthread</code>)</td>
+<td>Aucun direct — via WebAssembly compilé</td>
+</tr>
+<tr>
+<td><strong>C++</strong></td>
+<td>Oui</td>
+<td><code>std::async</code>, <code>std::future</code>, <code>std::thread</code> (depuis C++11)</td>
+<td>Oui, natif</td>
+<td>Aucun direct — via WebAssembly compilé</td>
+</tr>
+<tr>
+<td><strong>Java</strong></td>
+<td>Oui</td>
+<td>Threads OS natifs, NIO non-bloquant, <code>CompletableFuture</code>, Virtual Threads (Java 21+)</td>
+<td>Oui, natif</td>
+<td>Aucun direct (sauf applets, obsolètes)</td>
+</tr>
+<tr>
+<td><strong>PHP</strong></td>
+<td>Oui (historiquement bloquant)</td>
+<td>Async optionnel via extensions (Swoole, ReactPHP, Fibers natifs PHP 8.1+)</td>
+<td>Non en PHP classique (process-based, pas de threads partagés)</td>
+<td>Aucun — s'exécute côté serveur uniquement</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="c">C<a class="headerlink" href="#c" title="Permanent link">&para;</a></h2>
+<h3 id="modele-de-base">Modèle de base<a class="headerlink" href="#modele-de-base" title="Permanent link">&para;</a></h3>
+<p>C n'a <strong>aucune notion d'asynchrone dans le langage lui-même</strong>. Tout est synchrone et bloquant par défaut : un appel de fonction bloque le thread jusqu'à son retour.</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;1</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w">       </span><span class="c1">// bloque TOUT le thread pendant 2 secondes</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;2</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="comment-on-simule-de-lasynchrone-en-c">Comment on simule de l'asynchrone en C<a class="headerlink" href="#comment-on-simule-de-lasynchrone-en-c" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Threads OS natifs</strong> (<code>pthread_create</code>) : on lance un thread séparé qui s'exécute en parallèle, avec un vrai parallélisme si plusieurs cœurs CPU sont disponibles.</li>
+<li><strong>I/O non-bloquant</strong> : <code>select()</code>, <code>poll()</code>, <code>epoll()</code> (Linux) permettent de surveiller plusieurs descripteurs de fichiers/sockets sans bloquer — c'est <strong>exactement le mécanisme bas niveau que libuv (donc Node.js) utilise en interne</strong> sur Linux.</li>
+<li>Pas de garbage collector, pas d'event loop fournie par le langage : tout est géré manuellement par le développeur (mutex, sémaphores, condition variables pour la synchronisation entre threads).</li>
+</ul>
+<h3 id="relation-avec-le-navigateur">Relation avec le navigateur<a class="headerlink" href="#relation-avec-le-navigateur" title="Permanent link">&para;</a></h3>
+<p>Aucune, directement. Le C ne s'exécute jamais dans un navigateur nativement. Le seul pont possible est la compilation vers <strong>WebAssembly</strong> (via Emscripten par exemple), qui produit un binaire exécuté par le moteur JS du navigateur dans un environnement sandboxé — mais à ce moment-là, ce n'est plus "du C dans le navigateur", c'est du bytecode WASM piloté par JS.</p>
+<hr />
+<h2 id="c_1">C++<a class="headerlink" href="#c_1" title="Permanent link">&para;</a></h2>
+<h3 id="modele-de-base_1">Modèle de base<a class="headerlink" href="#modele-de-base_1" title="Permanent link">&para;</a></h3>
+<p>Comme le C : synchrone et bloquant par défaut. Mais C++ moderne (C++11 et +) ajoute une <strong>bibliothèque standard de concurrence</strong> directement dans le langage.</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;future&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">calcul_long</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// simulation d&#39;un traitement lourd</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;1</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">resultat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">async</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">launch</span><span class="o">::</span><span class="n">async</span><span class="p">,</span><span class="w"> </span><span class="n">calcul_long</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;3</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// s&#39;exécute pendant que calcul_long tourne sur un autre thread</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">resultat</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// bloque ici jusqu&#39;à ce que le résultat soit prêt</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="outils-cles">Outils clés<a class="headerlink" href="#outils-cles" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>std::thread</code> : création de threads natifs OS.</li>
+<li><code>std::async</code> / <code>std::future</code> / <code>std::promise</code> : équivalent conceptuel d'une <code>Promise</code> JS, mais avec du <strong>vrai parallélisme</strong> (threads OS réels, pas une simulation event-loop sur un seul thread).</li>
+<li><code>std::mutex</code>, <code>std::condition_variable</code> : synchronisation entre threads.</li>
+<li>Bibliothèques tierces (Boost.Asio, libuv elle-même est écrite en C) pour de l'I/O asynchrone événementielle à la Node.js.</li>
+</ul>
+<h3 id="difference-fondamentale-avec-js">Différence fondamentale avec JS<a class="headerlink" href="#difference-fondamentale-avec-js" title="Permanent link">&para;</a></h3>
+<p>En C++, quand tu lances plusieurs threads, ils peuvent <strong>réellement s'exécuter en même temps</strong> sur des cœurs CPU différents (vrai parallélisme). En JS, l'asynchrone ne crée jamais de parallélisme d'exécution du code JS lui-même — un seul thread JS exécute une instruction à la fois, l'event loop ne fait qu'orchestrer l'ordre d'exécution des callbacks.</p>
+<h3 id="relation-avec-le-navigateur_1">Relation avec le navigateur<a class="headerlink" href="#relation-avec-le-navigateur_1" title="Permanent link">&para;</a></h3>
+<p>Identique au C : aucune exécution native, pont uniquement via <strong>WebAssembly</strong>. C'est d'ailleurs le langage historique le plus utilisé pour compiler vers WASM (moteurs de jeux, traitement d'image/vidéo dans le navigateur, Figma par exemple tourne en grande partie sur du C++ compilé en WASM).</p>
+<hr />
+<h2 id="java">Java<a class="headerlink" href="#java" title="Permanent link">&para;</a></h2>
+<h3 id="modele-de-base_2">Modèle de base<a class="headerlink" href="#modele-de-base_2" title="Permanent link">&para;</a></h3>
+<p>Synchrone et bloquant par défaut, mais avec un <strong>vrai support natif du multithreading</strong> depuis toujours (contrairement à Python et son GIL).</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="evolution-du-modele-async-en-java">Évolution du modèle async en Java<a class="headerlink" href="#evolution-du-modele-async-en-java" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Threads classiques</strong> (<code>Thread</code>, <code>Runnable</code>) : un thread OS par tâche — coûteux en mémoire (~1 Mo par thread), limite le nombre de threads simultanés (quelques milliers max).</li>
+<li><strong><code>ExecutorService</code> / Thread pools</strong> : réutilisation de threads pour éviter le coût de création.</li>
+<li><strong>NIO (<code>java.nio</code>)</strong> : I/O non-bloquant, event-driven — base des frameworks réactifs comme Netty (utilisé par Spring WebFlux).</li>
+<li><strong><code>CompletableFuture</code></strong> (Java 8+) : équivalent proche d'une <code>Promise</code> JS, avec chaînage (<code>.thenApply()</code>, <code>.thenCompose()</code>).</li>
+<li><strong>Virtual Threads / Project Loom</strong> (Java 21+, LTS) : threads légers gérés par la JVM plutôt que l'OS — permet des <strong>millions</strong> de threads concurrents sans le coût mémoire des threads OS classiques. C'est la réponse de Java au modèle "un thread par requête" qui redevient viable même à très grande échelle, sans changer le style de code (pas besoin de callbacks/réactif).</li>
+</ul>
+<h3 id="difference-avec-nodejsjs">Différence avec Node.js/JS<a class="headerlink" href="#difference-avec-nodejsjs" title="Permanent link">&para;</a></h3>
+<p>Java peut faire du <strong>vrai parallélisme multi-cœur</strong> nativement (plusieurs threads OS exécutant du bytecode Java simultanément), ce que JS ne peut jamais faire sur son thread principal. Node.js compense via les <strong>Worker Threads</strong> (des threads V8 séparés, chacun avec sa propre stack et event loop, communication par passage de messages) — mais c'est un ajout de l'environnement Node, pas du langage JS lui-même.</p>
+<h3 id="relation-avec-le-navigateur_2">Relation avec le navigateur<a class="headerlink" href="#relation-avec-le-navigateur_2" title="Permanent link">&para;</a></h3>
+<p>Historiquement, Java pouvait tourner dans le navigateur via les <strong>Applets Java</strong> — techno abandonnée depuis longtemps (dépréciée par tous les navigateurs, dernier support retiré il y a des années pour raisons de sécurité). Aujourd'hui, <strong>aucun lien direct</strong> : Java tourne côté serveur (Spring Boot, etc.) ou via des passerelles comme <strong>TeaVM</strong> ou <strong>GWT</strong> qui transpilent du Java en JS/WASM, mais c'est marginal comparé à C++/Rust pour WASM.</p>
+<hr />
+<h2 id="php">PHP<a class="headerlink" href="#php" title="Permanent link">&para;</a></h2>
+<h3 id="modele-de-base_3">Modèle de base<a class="headerlink" href="#modele-de-base_3" title="Permanent link">&para;</a></h3>
+<p><strong>Traditionnellement le plus "purement synchrone" de tous</strong> : PHP a été conçu comme un langage <strong>process-per-request</strong> — chaque requête HTTP démarre un processus (ou un thread géré par PHP-FPM) qui exécute le script du début à la fin, de façon strictement bloquante, puis se termine. Pas d'event loop persistante entre les requêtes comme Node.</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="s2">&quot;1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="nb">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// bloque tout le processus PHP en cours</span>
+<span class="k">echo</span> <span class="s2">&quot;2</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="le-modele-php-fpm-comment-ca-scale-quand-meme">Le modèle PHP-FPM (comment ça scale quand même)<a class="headerlink" href="#le-modele-php-fpm-comment-ca-scale-quand-meme" title="Permanent link">&para;</a></h3>
+<p>PHP ne gère pas la concurrence par de l'asynchrone dans le langage, mais par la <strong>multiplication de processus/threads au niveau du serveur</strong> :</p>
+<div class="highlight"><pre><span></span><code>Nginx/Apache
+     ↓
+PHP-FPM (process manager)
+     ↓
+   Pool de processus workers PHP
+     ↓
+  Chaque requête = 1 processus dédié, exécuté du début à la fin, synchrone
+</code></pre></div>
+<p>Chaque requête est indépendante et bloquante à l'intérieur d'elle-même, mais le serveur gère <strong>plusieurs requêtes en parallèle</strong> en ayant plusieurs processus PHP actifs simultanément (parallélisme au niveau OS, pas au niveau du langage).</p>
+<h3 id="async-en-php-les-evolutions-recentes">Async en PHP (les évolutions récentes)<a class="headerlink" href="#async-en-php-les-evolutions-recentes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Fibers</strong> (PHP 8.1+, natif) : primitive bas niveau permettant de suspendre/reprendre l'exécution d'une fonction, base pour construire des bibliothèques async (comparable aux coroutines).</li>
+<li><strong>ReactPHP</strong> : bibliothèque userland qui implémente une event loop façon Node.js, par-dessus PHP — permet du code non-bloquant explicite (<code>-&gt;then()</code>), mais <strong>rien de natif au langage</strong>, il faut l'installer et l'adopter volontairement.</li>
+<li><strong>Swoole / OpenSwoole</strong> : extension C qui transforme PHP en serveur applicatif persistant avec event loop et coroutines natives, façon Node.js — remplace complètement le modèle PHP-FPM classique, très utilisé pour des APIs haute performance.</li>
+</ul>
+<h3 id="difference-philosophique-avec-nodejs">Différence philosophique avec Node.js<a class="headerlink" href="#difference-philosophique-avec-nodejs" title="Permanent link">&para;</a></h3>
+<p>Node.js a été conçu <strong>dès le départ</strong> autour d'une event loop unique et de l'asynchrone non-bloquant. PHP a été conçu autour du modèle <strong>process-per-request synchrone</strong>, et l'asynchrone y est une couche ajoutée après-coup (Fibers, extensions), pas le cœur du langage.</p>
+<h3 id="relation-avec-le-navigateur_3">Relation avec le navigateur<a class="headerlink" href="#relation-avec-le-navigateur_3" title="Permanent link">&para;</a></h3>
+<p><strong>Aucune, jamais.</strong> PHP est un langage <strong>exclusivement côté serveur</strong> — il n'existe aucun moteur PHP embarqué dans un navigateur, ni de compilation vers WASM significative en usage réel. PHP génère du HTML/JSON envoyé au navigateur, mais ne s'exécute jamais dans le navigateur lui-même.</p>
+<hr />
+<h2 id="recapitulatif-visuel-qui-peut-tourner-ou">Récapitulatif visuel : qui peut tourner où<a class="headerlink" href="#recapitulatif-visuel-qui-peut-tourner-ou" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Langage</th>
+<th>Navigateur (natif)</th>
+<th>Navigateur (via WASM)</th>
+<th>Serveur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JavaScript</td>
+<td>✅ Natif</td>
+<td>—</td>
+<td>✅ (Node.js)</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>✅ (compilé en JS)</td>
+<td>—</td>
+<td>✅ (compilé en JS, via Node)</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>❌</td>
+<td>⚠️ Marginal (Pyodide)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>C</td>
+<td>❌</td>
+<td>✅ Courant (Emscripten)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>C++</td>
+<td>❌</td>
+<td>✅ Très courant</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Java</td>
+<td>❌ (applets mortes)</td>
+<td>⚠️ Marginal (TeaVM/GWT)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>❌</td>
+<td>❌ Quasi inexistant</td>
+<td>✅ Exclusivement</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="point-a-retenir">Point à retenir<a class="headerlink" href="#point-a-retenir" title="Permanent link">&para;</a></h2>
+<p>Le seul langage qui a une <strong>event loop et un modèle asynchrone imposés par le langage lui-même</strong> (via ses environnements d'exécution officiels) est <strong>JavaScript</strong>. Tous les autres langages (C, C++, Java, PHP) proposent l'asynchrone comme une <strong>option construite au-dessus</strong> d'un modèle par défaut synchrone/bloquant — soit via de vrais threads OS avec parallélisme réel (C, C++, Java), soit via des extensions/bibliothèques tierces (PHP). Python se situe entre les deux : asynchrone disponible nativement dans la stdlib (<code>asyncio</code>) mais non actif par défaut, et bridé pour le vrai parallélisme CPU par le GIL.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Accueil">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                Accueil
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../fetch-axios-httpclient-observable-promise/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 2. Intercepteurs, clients HTTP, Observable vs Promise">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                2. Intercepteurs, clients HTTP, Observable vs Promise
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

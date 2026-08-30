@@ -1,0 +1,2103 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../sync-async-langages/">
+      
+      
+        <link rel="next" href="../../deploiement-web/01-deploiement-ec2-dns-nginx/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>2. Intercepteurs, clients HTTP, Observable vs Promise - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#intercepteurs-clients-http-observable-vs-promise" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2. Intercepteurs, clients HTTP, Observable vs Promise
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-concept-dintercepteur-interceptor-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Le concept d'intercepteur (Interceptor / Middleware)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Le concept d'intercepteur (Interceptor / Middleware)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cest-quoi-en-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      C'est quoi, en général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-pattern-sous-jacent-chain-of-responsibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le pattern sous-jacent : Chain of Responsibility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ce-pattern-existe-raison-generale-pas-angular" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ce pattern existe (raison générale, pas Angular)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-generique-en-typescript-independant-de-tout-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple générique en TypeScript (indépendant de tout framework)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Angular 22
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-react-192-via-axios-react-na-pas-de-httpclient-integre" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple React 19.2 (via axios — React n'a pas de HttpClient intégré)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-vue-35-via-axios-consomme-en-composition-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Vue 3.5 (via axios, consommé en Composition API)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-clients-http-le-concept-general-puis-fetch-axios-httpclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cest-quoi-en-general_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      C'est quoi, en général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparatif-fetch-vs-axios-vs-angular-httpclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparatif fetch vs axios vs Angular HttpClient
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#piege-classique-universel-avec-fetch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Piège classique universel avec fetch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ce-qui-change-avec-angular-22-fetchbackend-devient-le-defaut" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ce qui change avec Angular 22 : FetchBackend devient le défaut
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-interne-de-httpclient-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture interne de HttpClient (Angular 22)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeline-complete-dune-requete-httpclient-en-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timeline complète d'une requête HttpClient en Angular 22
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-react-192-pas-de-couche-dabstraction-fetch-ou-axios-directement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple React 19.2 : pas de couche d'abstraction — fetch ou axios directement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-vue-35-meme-logique-syntaxe-composition-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Vue 3.5 : même logique, syntaxe Composition API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-observable-vs-promise-le-concept-general-puis-angularreactvue" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Observable vs Promise : le concept général, puis Angular/React/Vue
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Observable vs Promise : le concept général, puis Angular/React/Vue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cest-quoi-en-general_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      C'est quoi, en général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-deux-differences-fondamentales-independamment-du-langage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les deux différences fondamentales, indépendamment du langage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#demonstration-du-eager-vs-lazy-en-typescript" class="md-nav__link">
+    <span class="md-ellipsis">
+      Démonstration du eager vs lazy, en TypeScript
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ce-choix-compte-independamment-du-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ce choix compte, indépendamment du framework
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-angular-22-pourquoi-httpclient-utilise-observable" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Angular 22 : pourquoi HttpClient utilise Observable
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-nuance-angular-22-la-resource-api-arrive-en-renfort-pas-en-remplacement" class="md-nav__link">
+    <span class="md-ellipsis">
+      La nuance Angular 22 : la Resource API arrive en renfort, pas en remplacement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convertir-de-lun-a-lautre-toujours-valable-en-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Convertir de l'un à l'autre (toujours valable en Angular 22)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-react-192-observable-rxjs-est-utilisable-mais-rarement-idiomatique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple React 19.2 : Observable (RxJS) est utilisable, mais rarement idiomatique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-vue-35-composition-api-vueuse-plutot-que-rxjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Vue 3.5 : Composition API + VueUse plutôt que RxJS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recapitulatif-des-trois-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Récapitulatif des trois concepts
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-concept-dintercepteur-interceptor-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Le concept d'intercepteur (Interceptor / Middleware)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Le concept d'intercepteur (Interceptor / Middleware)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cest-quoi-en-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      C'est quoi, en général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-pattern-sous-jacent-chain-of-responsibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le pattern sous-jacent : Chain of Responsibility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ce-pattern-existe-raison-generale-pas-angular" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ce pattern existe (raison générale, pas Angular)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-generique-en-typescript-independant-de-tout-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple générique en TypeScript (indépendant de tout framework)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Angular 22
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-react-192-via-axios-react-na-pas-de-httpclient-integre" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple React 19.2 (via axios — React n'a pas de HttpClient intégré)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-vue-35-via-axios-consomme-en-composition-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Vue 3.5 (via axios, consommé en Composition API)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-clients-http-le-concept-general-puis-fetch-axios-httpclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cest-quoi-en-general_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      C'est quoi, en général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparatif-fetch-vs-axios-vs-angular-httpclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparatif fetch vs axios vs Angular HttpClient
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#piege-classique-universel-avec-fetch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Piège classique universel avec fetch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ce-qui-change-avec-angular-22-fetchbackend-devient-le-defaut" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ce qui change avec Angular 22 : FetchBackend devient le défaut
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-interne-de-httpclient-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture interne de HttpClient (Angular 22)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeline-complete-dune-requete-httpclient-en-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timeline complète d'une requête HttpClient en Angular 22
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-react-192-pas-de-couche-dabstraction-fetch-ou-axios-directement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple React 19.2 : pas de couche d'abstraction — fetch ou axios directement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-vue-35-meme-logique-syntaxe-composition-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Vue 3.5 : même logique, syntaxe Composition API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-observable-vs-promise-le-concept-general-puis-angularreactvue" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Observable vs Promise : le concept général, puis Angular/React/Vue
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Observable vs Promise : le concept général, puis Angular/React/Vue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cest-quoi-en-general_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      C'est quoi, en général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-deux-differences-fondamentales-independamment-du-langage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les deux différences fondamentales, indépendamment du langage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#demonstration-du-eager-vs-lazy-en-typescript" class="md-nav__link">
+    <span class="md-ellipsis">
+      Démonstration du eager vs lazy, en TypeScript
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ce-choix-compte-independamment-du-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ce choix compte, indépendamment du framework
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-angular-22-pourquoi-httpclient-utilise-observable" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Angular 22 : pourquoi HttpClient utilise Observable
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-nuance-angular-22-la-resource-api-arrive-en-renfort-pas-en-remplacement" class="md-nav__link">
+    <span class="md-ellipsis">
+      La nuance Angular 22 : la Resource API arrive en renfort, pas en remplacement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convertir-de-lun-a-lautre-toujours-valable-en-angular-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Convertir de l'un à l'autre (toujours valable en Angular 22)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-react-192-observable-rxjs-est-utilisable-mais-rarement-idiomatique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple React 19.2 : Observable (RxJS) est utilisable, mais rarement idiomatique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemple-vue-35-composition-api-vueuse-plutot-que-rxjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Vue 3.5 : Composition API + VueUse plutôt que RxJS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recapitulatif-des-trois-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Récapitulatif des trois concepts
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="intercepteurs-clients-http-observable-vs-promise">Intercepteurs, clients HTTP, Observable vs Promise<a class="headerlink" href="#intercepteurs-clients-http-observable-vs-promise" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Référence de mastery — chaque concept est d'abord expliqué <strong>indépendamment de tout framework, en TypeScript</strong>, puis illustré avec <strong>Angular 22</strong> (stable, juin 2026), <strong>React 19.2</strong> (stable, <code>19.2.8</code>, juillet 2026) et <strong>Vue 3.5</strong> (stable, <code>3.5.42</code>, août 2026 — Vue 3.6/Vapor Mode encore en RC, non traité ici).</p>
+</blockquote>
+<hr />
+<h2 id="1-le-concept-dintercepteur-interceptor-middleware">1. Le concept d'intercepteur (Interceptor / Middleware)<a class="headerlink" href="#1-le-concept-dintercepteur-interceptor-middleware" title="Permanent link">&para;</a></h2>
+<h3 id="cest-quoi-en-general">C'est quoi, en général<a class="headerlink" href="#cest-quoi-en-general" title="Permanent link">&para;</a></h3>
+<p>Un <strong>intercepteur</strong> (ou <em>middleware</em> selon les écosystèmes) est un point d'insertion générique dans le trajet d'une requête ou d'un traitement, qui permet d'exécuter du code <strong>avant</strong> et/ou <strong>après</strong> l'opération réelle, sans modifier le code qui déclenche cette opération. Ce n'est pas un concept propre à Angular, ni même propre au HTTP — c'est un <strong>pattern de conception</strong> qu'on retrouve sous des noms différents dans presque tous les écosystèmes :</p>
+<table>
+<thead>
+<tr>
+<th>Écosystème</th>
+<th>Nom du concept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Angular</td>
+<td><code>HttpInterceptor</code> / <code>HttpInterceptorFn</code></td>
+</tr>
+<tr>
+<td>Express.js / Node</td>
+<td><code>middleware</code></td>
+</tr>
+<tr>
+<td>Axios</td>
+<td><code>interceptors.request</code> / <code>interceptors.response</code></td>
+</tr>
+<tr>
+<td>Django</td>
+<td><code>Middleware</code></td>
+</tr>
+<tr>
+<td>Spring (Java)</td>
+<td><code>Interceptor</code> / <code>Filter</code></td>
+</tr>
+<tr>
+<td>gRPC</td>
+<td><code>Interceptor</code></td>
+</tr>
+<tr>
+<td>ASP.NET</td>
+<td><code>Middleware</code> / <code>DelegatingHandler</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="le-pattern-sous-jacent-chain-of-responsibility">Le pattern sous-jacent : Chain of Responsibility<a class="headerlink" href="#le-pattern-sous-jacent-chain-of-responsibility" title="Permanent link">&para;</a></h3>
+<p>Peu importe le langage ou le framework, le principe est identique : chaque requête traverse une <strong>chaîne</strong> d'étapes, dans un ordre défini, avant d'atteindre le traitement final (souvent l'appel réseau réel ou l'exécution du handler métier).</p>
+<div class="highlight"><pre><span></span><code>Requête entrante
+      ↓
+  Étape 1 (ex: authentification)
+      ↓
+  Étape 2 (ex: logging)
+      ↓
+  Étape 3 (ex: validation)
+      ↓
+  Traitement réel
+      ↓
+[La réponse peut retraverser la chaîne dans l&#39;ordre inverse]
+</code></pre></div>
+<p>Chaque étape a le pouvoir de :
+- <strong>laisser passer</strong> la requête vers l'étape suivante (éventuellement modifiée) ;
+- <strong>court-circuiter</strong> la chaîne (ex : renvoyer une erreur 401 sans jamais atteindre le serveur) ;
+- <strong>transformer</strong> la réponse au retour.</p>
+<h3 id="pourquoi-ce-pattern-existe-raison-generale-pas-angular">Pourquoi ce pattern existe (raison générale, pas Angular)<a class="headerlink" href="#pourquoi-ce-pattern-existe-raison-generale-pas-angular" title="Permanent link">&para;</a></h3>
+<p>Sans intercepteur, une préoccupation transverse (authentification, logging, gestion d'erreur, cache) doit être dupliquée dans <strong>chaque appel individuel</strong>. L'intercepteur centralise cette logique en un seul endroit, appliqué <strong>automatiquement</strong> à toutes les requêtes qui passent par le système — c'est une application du principe de <strong>separation of concerns</strong>.</p>
+<p><strong>Cas d'usage universels</strong>, valables dans n'importe quel langage/framework :
+- Injection d'un token d'authentification dans chaque requête sortante.
+- Logging centralisé des entrées/sorties.
+- Gestion globale des erreurs (redirection, retry, normalisation du format d'erreur).
+- Mesure de performance / tracing distribué.
+- Cache de réponses.
+- Transformation de format (adapter une API legacy à un format interne).</p>
+<h3 id="exemple-generique-en-typescript-independant-de-tout-framework">Exemple générique en TypeScript (indépendant de tout framework)<a class="headerlink" href="#exemple-generique-en-typescript-independant-de-tout-framework" title="Permanent link">&para;</a></h3>
+<p>Implémentation minimale du pattern Chain of Responsibility, en TypeScript pur — c'est exactement ce mécanisme qu'implémentent Express (<code>app.use()</code>), Axios (<code>interceptors</code>), et Angular (<code>HttpInterceptorFn</code>), chacun avec sa propre API, mais la même logique de composition en chaîne :</p>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">RequeteHttp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">url</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">body?</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">ReponseHttp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Un intercepteur reçoit la requête + la fonction &quot;suivante&quot; de la chaîne,</span>
+<span class="c1">// et retourne une Promise de réponse</span>
+<span class="kr">type</span><span class="w"> </span><span class="nx">Intercepteur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">RequeteHttp</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">next</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">RequeteHttp</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ReponseHttp</span><span class="o">&gt;</span>
+<span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ReponseHttp</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">composerChaine</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">intercepteurs</span><span class="o">:</span><span class="w"> </span><span class="kt">Intercepteur</span><span class="p">[],</span>
+<span class="w">  </span><span class="nx">traitementFinal</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">RequeteHttp</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ReponseHttp</span><span class="o">&gt;</span>
+<span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">RequeteHttp</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ReponseHttp</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// On construit la chaîne à l&#39;envers pour que chaque intercepteur</span>
+<span class="w">  </span><span class="c1">// enveloppe le suivant</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">intercepteurs</span><span class="p">.</span><span class="nx">reduceRight</span><span class="o">&lt;</span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">RequeteHttp</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ReponseHttp</span><span class="o">&gt;&gt;</span><span class="p">(</span>
+<span class="w">    </span><span class="p">(</span><span class="nx">suivant</span><span class="p">,</span><span class="w"> </span><span class="nx">intercepteur</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">intercepteur</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">suivant</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">traitementFinal</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// --- Exemple d&#39;utilisation ---</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">ajoutToken</span><span class="o">:</span><span class="w"> </span><span class="kt">Intercepteur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">next</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;abc123&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">next</span><span class="p">({</span><span class="w"> </span><span class="p">...</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span><span class="w"> </span><span class="nx">Authorization</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">});</span>
+<span class="p">};</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">logging</span><span class="o">:</span><span class="w"> </span><span class="kt">Intercepteur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">next</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;→ Requête envoyée :&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">reponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">next</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;← Réponse reçue :&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">reponse</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">reponse</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">envoiReel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="o">:</span><span class="w"> </span><span class="kt">RequeteHttp</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ReponseHttp</span><span class="o">&gt;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// ici on appellerait fetch(), axios, etc.</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">200</span><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ok</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+<span class="p">};</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">chaine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">composerChaine</span><span class="p">([</span><span class="nx">ajoutToken</span><span class="p">,</span><span class="w"> </span><span class="nx">logging</span><span class="p">],</span><span class="w"> </span><span class="nx">envoiReel</span><span class="p">);</span>
+<span class="nx">chaine</span><span class="p">({</span><span class="w"> </span><span class="nx">url</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/api/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">));</span>
+</code></pre></div>
+<h3 id="exemple-angular-22">Exemple Angular 22<a class="headerlink" href="#exemple-angular-22" title="Permanent link">&para;</a></h3>
+<p>Depuis Angular 15, la forme recommandée est <strong>fonctionnelle</strong> (la forme basée sur une classe + <code>HTTP_INTERCEPTORS</code> reste supportée mais est considérée comme historique) :</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// auth.interceptor.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">HttpInterceptorFn</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">authInterceptor</span><span class="o">:</span><span class="w"> </span><span class="kt">HttpInterceptorFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">next</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;token&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">cloned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">clone</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">setHeaders</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Authorization</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">next</span><span class="p">(</span><span class="nx">cloned</span><span class="p">);</span><span class="w"> </span><span class="c1">// passe la requête modifiée à l&#39;intercepteur suivant</span>
+<span class="p">};</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// error.interceptor.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">HttpInterceptorFn</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">catchError</span><span class="p">,</span><span class="w"> </span><span class="nx">throwError</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;rxjs&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">inject</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Router</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/router&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">errorInterceptor</span><span class="o">:</span><span class="w"> </span><span class="kt">HttpInterceptorFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">next</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">router</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">inject</span><span class="p">(</span><span class="nx">Router</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">next</span><span class="p">(</span><span class="nx">req</span><span class="p">).</span><span class="nx">pipe</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">catchError</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">401</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span><span class="p">([</span><span class="s1">&#39;/login&#39;</span><span class="p">]);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nx">throwError</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">error</span><span class="p">);</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Enregistrement (Angular 22, standalone par défaut) :</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// app.config.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ApplicationConfig</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">provideHttpClient</span><span class="p">,</span><span class="w"> </span><span class="nx">withInterceptors</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">appConfig</span><span class="o">:</span><span class="w"> </span><span class="kt">ApplicationConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">providers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nx">provideHttpClient</span><span class="p">(</span><span class="nx">withInterceptors</span><span class="p">([</span><span class="nx">authInterceptor</span><span class="p">,</span><span class="w"> </span><span class="nx">errorInterceptor</span><span class="p">]))</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">};</span>
+</code></pre></div>
+<p><strong>Point technique important</strong> : un <code>HttpRequest</code> Angular est <strong>immuable</strong> — impossible de faire <code>req.headers.set(...)</code> directement. Il faut systématiquement passer par <code>req.clone({...})</code>, qui retourne une <strong>nouvelle instance</strong>. C'est volontaire, pour éviter les effets de bord si le même objet requête était partagé ailleurs.</p>
+<p><strong>Ordre d'exécution</strong> : l'ordre déclaré dans <code>withInterceptors([...])</code> définit l'ordre de traversée <strong>à l'aller</strong> ; au retour (traitement de la réponse), c'est l'<strong>ordre inverse</strong>. Avec l'exemple ci-dessus : <code>auth → error</code> à l'aller, <code>error → auth</code> au retour.</p>
+<p><strong>Depuis Angular 22.1</strong> : les intercepteurs sont désormais automatiquement <code>untracked</code> vis-à-vis des Signals — un <code>effect()</code> qui déclenche une requête HTTP ne se re-déclenche plus par erreur à cause d'un signal lu à l'intérieur d'un intercepteur.</p>
+<h3 id="exemple-react-192-via-axios-react-na-pas-de-httpclient-integre">Exemple React 19.2 (via axios — React n'a pas de HttpClient intégré)<a class="headerlink" href="#exemple-react-192-via-axios-react-na-pas-de-httpclient-integre" title="Permanent link">&para;</a></h3>
+<p>React est une bibliothèque UI, pas un framework HTTP — il n'existe aucun concept d'intercepteur natif. Le pattern s'implémente presque toujours via <strong>axios</strong>, dont l'API d'intercepteurs est strictement identique, peu importe le framework autour :</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// api/axiosInstance.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">axios</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;axios&#39;</span><span class="p">;</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">api</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">axios</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span><span class="w"> </span><span class="nx">baseURL</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;/api&#39;</span><span class="w"> </span><span class="p">});</span>
+
+<span class="nx">api</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">config</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;token&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">token</span><span class="p">)</span><span class="w"> </span><span class="nx">config</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">Authorization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">config</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">api</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">response</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">response</span><span class="p">,</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="o">?</span><span class="p">.</span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">401</span><span class="p">)</span><span class="w"> </span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">);</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">api</span><span class="p">;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// useUsers.ts — hook custom consommant l&#39;instance interceptée (React 19.2)</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">api</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./api/axiosInstance&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">useUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">setUsers</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;([]);</span>
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">api</span><span class="p">.</span><span class="nx">get</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;(</span><span class="s1">&#39;/users&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setUsers</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">users</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="exemple-vue-35-via-axios-consomme-en-composition-api">Exemple Vue 3.5 (via axios, consommé en Composition API)<a class="headerlink" href="#exemple-vue-35-via-axios-consomme-en-composition-api" title="Permanent link">&para;</a></h3>
+<p>Même instance axios interceptée que React — c'est le même code, seule la façon de la consommer côté UI change (composable au lieu de hook) :</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// composables/useUsers.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ref</span><span class="p">,</span><span class="w"> </span><span class="nx">onMounted</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vue&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">api</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../api/axiosInstance&#39;</span><span class="p">;</span><span class="w"> </span><span class="c1">// même fichier que l&#39;exemple React</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">useUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ref</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">([]);</span>
+<span class="w">  </span><span class="nx">onMounted</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">api</span><span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">users</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>À retenir</strong> : contrairement à Angular où <code>HttpInterceptor</code> est une brique du framework injectée via DI, React et Vue n'ont <strong>aucun concept d'intercepteur natif</strong> — ils héritent de celui d'axios (ou d'un wrapper <code>fetch</code> maison). C'est la bibliothèque HTTP choisie qui porte le concept, pas le framework UI.</p>
+<hr />
+<h2 id="2-les-clients-http-le-concept-general-puis-fetch-axios-httpclient">2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient<a class="headerlink" href="#2-les-clients-http-le-concept-general-puis-fetch-axios-httpclient" title="Permanent link">&para;</a></h2>
+<h3 id="cest-quoi-en-general_1">C'est quoi, en général<a class="headerlink" href="#cest-quoi-en-general_1" title="Permanent link">&para;</a></h3>
+<p>Un <strong>client HTTP</strong> est simplement un composant logiciel qui construit et envoie une requête HTTP, puis expose la réponse au code appelant. Trois niveaux existent dans à peu près tous les langages :</p>
+<ol>
+<li><strong>Primitive bas niveau du langage/plateforme</strong> (souvent bloquante ou callback-based à l'origine) — ex : <code>HttpURLConnection</code> en Java, <code>requests</code>/<code>httpx</code> en Python, <code>curl</code>/sockets en C.</li>
+<li><strong>API native moderne, généralement basée sur les Promises/futures</strong> — ex : <code>fetch</code> en JS/TS, <code>HttpClient</code> (<code>java.net.http</code>) en Java 11+, <code>httpx.AsyncClient</code> en Python.</li>
+<li><strong>Bibliothèques tierces</strong> qui ajoutent des fonctionnalités par-dessus (retry, intercepteurs, timeout simple, parsing auto) — ex : <code>axios</code> en JS/TS, <code>OkHttp</code>/<code>Retrofit</code> en Java, <code>Guzzle</code> en PHP.</li>
+</ol>
+<p>Angular <code>HttpClient</code> se situe dans une <strong>4ᵉ catégorie propre à Angular</strong> : une couche d'abstraction réactive (RxJS) construite <strong>par-dessus</strong> l'une des API natives du navigateur (1 ou 2), pas une alternative de même niveau.</p>
+<h3 id="comparatif-fetch-vs-axios-vs-angular-httpclient">Comparatif <code>fetch</code> vs <code>axios</code> vs Angular <code>HttpClient</code><a class="headerlink" href="#comparatif-fetch-vs-axios-vs-angular-httpclient" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th><code>fetch</code></th>
+<th><code>axios</code></th>
+<th>Angular <code>HttpClient</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nature</strong></td>
+<td>Web API native du navigateur (+ native Node 18+)</td>
+<td>Bibliothèque tierce (npm), wrapper XHR (navigateur) ou <code>http</code>/<code>https</code> (Node)</td>
+<td>Module Angular, wrapper RxJS autour de <code>fetch</code> (défaut depuis Angular 22) ou XHR</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>Promise&lt;Response&gt;</code></td>
+<td><code>Promise&lt;AxiosResponse&gt;</code></td>
+<td><code>Observable&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td><strong>Parsing JSON</strong></td>
+<td>Manuel : <code>await response.json()</code> (2 étapes)</td>
+<td>Automatique : <code>response.data</code> déjà parsé</td>
+<td>Automatique, typé génériquement (<code>http.get&lt;User[]&gt;(url)</code>)</td>
+</tr>
+<tr>
+<td><strong>Gestion des erreurs HTTP</strong></td>
+<td>Ne rejette <strong>jamais</strong> sur un 404/500 — il faut vérifier <code>response.ok</code> soi-même</td>
+<td>Rejette automatiquement la Promise si status hors 2xx</td>
+<td>Émet une erreur RxJS (<code>catchError</code>) automatiquement si status hors 2xx</td>
+</tr>
+<tr>
+<td><strong>Annulation</strong></td>
+<td><code>AbortController</code> (verbeux)</td>
+<td><code>AbortController</code></td>
+<td><code>unsubscribe()</code> — natif, souvent via <code>takeUntilDestroyed()</code></td>
+</tr>
+<tr>
+<td><strong>Intercepteurs</strong></td>
+<td>Aucun natif — à coder à la main</td>
+<td>Natif (<code>axios.interceptors</code>)</td>
+<td>Natif (<code>HttpInterceptorFn</code>, chaînable via DI)</td>
+</tr>
+<tr>
+<td><strong>Retry / debounce / combinaison</strong></td>
+<td>Aucun — à coder à la main</td>
+<td>Aucun natif (plugins tiers)</td>
+<td>Natif via opérateurs RxJS (<code>retry()</code>, <code>debounceTime()</code>, <code>switchMap()</code>, <code>forkJoin()</code>)</td>
+</tr>
+<tr>
+<td><strong>Progress upload</strong></td>
+<td>Complexe (<code>ReadableStream</code>)</td>
+<td>Natif (<code>onUploadProgress</code>)</td>
+<td><code>reportUploadProgress</code> — <strong>non supporté par <code>FetchBackend</code></strong>, nécessite <code>withXhr()</code></td>
+</tr>
+<tr>
+<td><strong>Timeout</strong></td>
+<td>Aucun natif</td>
+<td>Natif (<code>timeout: 5000</code>)</td>
+<td>Opérateur RxJS <code>timeout()</code></td>
+</tr>
+<tr>
+<td><strong>Usage typique</strong></td>
+<td>Vanilla TS, petits scripts</td>
+<td>React/Vue/Node — hors écosystème Angular</td>
+<td>Exclusivement Angular</td>
+</tr>
+</tbody>
+</table>
+<h3 id="piege-classique-universel-avec-fetch">Piège classique universel avec <code>fetch</code><a class="headerlink" href="#piege-classique-universel-avec-fetch" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// fetch : PAS d&#39;erreur levée sur un 404 !</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/inexistant&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">);</span><span class="w">     </span><span class="c1">// false</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span><span class="w"> </span><span class="c1">// 404</span>
+<span class="c1">// Sans vérification manuelle de response.ok, le code continue comme si de rien n&#39;était</span>
+</code></pre></div>
+<h3 id="ce-qui-change-avec-angular-22-fetchbackend-devient-le-defaut">Ce qui change avec Angular 22 : <code>FetchBackend</code> devient le défaut<a class="headerlink" href="#ce-qui-change-avec-angular-22-fetchbackend-devient-le-defaut" title="Permanent link">&para;</a></h3>
+<p>Jusqu'à Angular 21, <code>HttpClient</code> utilisait <code>XMLHttpRequest</code> par défaut, et il fallait activer <code>withFetch()</code> explicitement pour passer sur <code>fetch</code>. <strong>Depuis Angular 22 (juin 2026), c'est l'inverse</strong> : <code>fetch</code> est le backend par défaut, et <code>withFetch()</code> est devenu inutile (déprécié).</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// app.config.ts — Angular 22, HttpClient utilise fetch par défaut</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ApplicationConfig</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">provideHttpClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">appConfig</span><span class="o">:</span><span class="w"> </span><span class="kt">ApplicationConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">providers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nx">provideHttpClient</span><span class="p">()</span><span class="w"> </span><span class="c1">// FetchBackend en interne, aucune option nécessaire</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Pour revenir à l'ancien comportement basé sur <code>XMLHttpRequest</code> (par exemple si besoin du <code>reportUploadProgress</code>, non supporté par <code>FetchBackend</code>) :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">provideHttpClient</span><span class="p">,</span><span class="w"> </span><span class="nx">withXhr</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">appConfig</span><span class="o">:</span><span class="w"> </span><span class="kt">ApplicationConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">providers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nx">provideHttpClient</span><span class="p">(</span><span class="nx">withXhr</span><span class="p">())</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3 id="architecture-interne-de-httpclient-angular-22">Architecture interne de <code>HttpClient</code> (Angular 22)<a class="headerlink" href="#architecture-interne-de-httpclient-angular-22" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Code applicatif (service Angular)
+        ↓
+   HttpClient (API publique, retourne des Observable)
+        ↓
+   HttpInterceptor(s) (chaîne d&#39;intercepteurs)
+        ↓
+   HttpHandler (orchestre la chaîne)
+        ↓
+   HttpBackend
+        ↓
+   FetchBackend (fetch, PAR DÉFAUT) ou XhrFactory (XMLHttpRequest, via withXhr())
+        ↓
+   Web API du navigateur (hors thread JS)
+</code></pre></div>
+<ul>
+<li>Avec <code>FetchBackend</code> (défaut) : la résolution passe par la <strong>microtask queue</strong>.</li>
+<li>Avec XHR (<code>withXhr()</code>) : les callbacks passent par la <strong>macrotask queue</strong>.</li>
+<li>L'argument historique pour <code>fetch</code> reste valable : le support <strong>SSR</strong>. <code>fetch</code> est nativement disponible dans Node depuis la version 18, alors que <code>XMLHttpRequest</code> n'existe pas côté Node et nécessitait un polyfill.</li>
+</ul>
+<h3 id="timeline-complete-dune-requete-httpclient-en-angular-22">Timeline complète d'une requête <code>HttpClient</code> en Angular 22<a class="headerlink" href="#timeline-complete-dune-requete-httpclient-en-angular-22" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>1. this.http.get(url).subscribe(...)     → code synchrone, retourne un Observable froid
+2. subscribe() déclenche l&#39;exécution réelle → fetch() appelé (backend par défaut)
+3. Requête déléguée au thread réseau du navigateur → thread JS libéré immédiatement
+4. Code Angular continue (autre logique)
+5. Réponse réseau reçue par le navigateur (thread séparé)
+6. Callback placé dans la microtask queue (résolution de la Promise fetch)
+7. Call stack vide → event loop exécute le callback
+8. FetchBackend transforme la réponse en émission RxJS
+9. .subscribe(data =&gt; ...) reçoit la donnée → mise à jour du composant
+</code></pre></div>
+<p>Note sur la mise à jour de l'UI : historiquement, c'était <strong>Zone.js</strong> qui interceptait la fin des callbacks asynchrones pour déclencher la <em>change detection</em>. Angular 22 généralise l'architecture <strong>Signal-first</strong> : la stratégie <code>OnPush</code> devient le comportement par défaut pour tout composant qui ne précise rien, et un état porté par des <code>signal()</code> déclenche une mise à jour ciblée sans dépendre de Zone.js — cohérent avec le mode <strong>zoneless</strong>, de plus en plus la direction par défaut du framework.</p>
+<h3 id="exemple-react-192-pas-de-couche-dabstraction-fetch-ou-axios-directement">Exemple React 19.2 : pas de couche d'abstraction — <code>fetch</code> ou <code>axios</code> directement<a class="headerlink" href="#exemple-react-192-pas-de-couche-dabstraction-fetch-ou-axios-directement" title="Permanent link">&para;</a></h3>
+<p>React ne fournit <strong>aucun client HTTP intégré</strong> (contrairement à Angular) — l'appel réseau se fait directement avec <code>fetch</code>/<code>axios</code>, généralement dans un <code>useEffect</code> ou via une lib de data-fetching (React Query, SWR). En React 19.2, le hook <code>use()</code> (stable depuis la 19.0) permet aussi de consommer directement une Promise en lecture, à combiner avec <code>&lt;Suspense&gt;</code> :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">setUsers</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;([]);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="o">:</span><span class="w"> </span><span class="kt">controller.signal</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nb">Promise</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">setUsers</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">controller</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span><span class="w"> </span><span class="c1">// annulation à la destruction du composant</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;{</span><span class="nx">users</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">u</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">li</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">u</span><span class="p">.</span><span class="nx">id</span><span class="p">}&gt;{</span><span class="nx">u</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">li</span><span class="p">&gt;)}&lt;/</span><span class="nt">ul</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Avec <strong>React Query</strong> (le plus proche en confort de ce que <code>HttpClient</code>/<code>httpResource</code> offrent nativement à Angular — cache, retry, état de chargement) :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useQuery</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@tanstack/react-query&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">api</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./api/axiosInstance&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">users</span><span class="p">,</span><span class="w"> </span><span class="nx">isLoading</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useQuery</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;({</span>
+<span class="w">    </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;users&#39;</span><span class="p">],</span>
+<span class="w">    </span><span class="nx">queryFn</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">api</span><span class="p">.</span><span class="nx">get</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;(</span><span class="s1">&#39;/users&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">data</span><span class="p">),</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">isLoading</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="nx">Chargement</span><span class="p">...&lt;/</span><span class="nt">p</span><span class="p">&gt;;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;{</span><span class="nx">users</span><span class="o">?</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">u</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">li</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">u</span><span class="p">.</span><span class="nx">id</span><span class="p">}&gt;{</span><span class="nx">u</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">li</span><span class="p">&gt;)}&lt;/</span><span class="nt">ul</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="exemple-vue-35-meme-logique-syntaxe-composition-api">Exemple Vue 3.5 : même logique, syntaxe Composition API<a class="headerlink" href="#exemple-vue-35-meme-logique-syntaxe-composition-api" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// composables/useUsers.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ref</span><span class="p">,</span><span class="w"> </span><span class="nx">onMounted</span><span class="p">,</span><span class="w"> </span><span class="nx">onUnmounted</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vue&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">useUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ref</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">([]);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nx">onMounted</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="o">:</span><span class="w"> </span><span class="kt">controller.signal</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">users</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">await</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">User</span><span class="p">[];</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="nx">onUnmounted</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">controller</span><span class="p">.</span><span class="nx">abort</span><span class="p">());</span><span class="w"> </span><span class="c1">// annulation au démontage du composant</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Avec <strong>VueUse</strong> (<code>useFetch</code>, équivalent conceptuel de React Query pour Vue) :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useFetch</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@vueuse/core&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">users</span><span class="p">,</span><span class="w"> </span><span class="nx">isFetching</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useFetch</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">).</span><span class="nx">json</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">();</span>
+</code></pre></div>
+<p><strong>À retenir</strong> : Angular est le seul des trois à imposer <strong>une couche HTTP officielle et unifiée</strong> (<code>HttpClient</code>) dans le framework lui-même. React et Vue laissent ce choix à l'écosystème (fetch natif, axios, React Query/SWR, VueUse) — plus de liberté, mais aussi plus de décisions à prendre soi-même (annulation, cache, retry ne sont pas fournis par défaut).</p>
+<hr />
+<h2 id="3-observable-vs-promise-le-concept-general-puis-angularreactvue">3. <code>Observable</code> vs <code>Promise</code> : le concept général, puis Angular/React/Vue<a class="headerlink" href="#3-observable-vs-promise-le-concept-general-puis-angularreactvue" title="Permanent link">&para;</a></h2>
+<h3 id="cest-quoi-en-general_2">C'est quoi, en général<a class="headerlink" href="#cest-quoi-en-general_2" title="Permanent link">&para;</a></h3>
+<p>Il s'agit de <strong>deux modèles distincts pour représenter une valeur qui arrivera plus tard</strong> (asynchrone) — mais qui répondent à des besoins différents et existent, sous des noms variés, dans la plupart des écosystèmes :</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Représente</th>
+<th>Équivalents dans d'autres langages/écosystèmes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Promise / Future</strong></td>
+<td><strong>Une seule</strong> valeur future, résolue une fois</td>
+<td><code>Future</code> (Java, Scala), <code>CompletableFuture</code> (Java), <code>Task</code> (C#), <code>asyncio.Future</code> (Python)</td>
+</tr>
+<tr>
+<td><strong>Observable / Stream</strong></td>
+<td><strong>Zéro, une, ou plusieurs</strong> valeurs dans le temps</td>
+<td><code>Flux</code>/<code>Mono</code> (Reactor, Java), <code>Flow</code> (Kotlin), <code>IObservable</code> (Rx.NET), <code>Stream</code> (RxJava), Generators/AsyncIterators (JS/TS/Python)</td>
+</tr>
+</tbody>
+</table>
+<p>Le point commun conceptuel à toutes les implémentations "Observable/Stream" est le <strong>pattern Observer</strong> : un producteur (<code>Observable</code>) notifie un ou plusieurs consommateurs (<code>Observer</code>/<code>Subscriber</code>) à chaque nouvelle donnée disponible, jusqu'à ce que le flux se termine ou soit annulé.</p>
+<h3 id="les-deux-differences-fondamentales-independamment-du-langage">Les deux différences fondamentales, indépendamment du langage<a class="headerlink" href="#les-deux-differences-fondamentales-independamment-du-langage" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Cardinalité</strong> : une Promise/Future résout <strong>une fois</strong>. Un Observable/Stream peut émettre <strong>N fois</strong> dans le temps (idéal pour des événements répétés : clics, messages WebSocket, valeurs de capteur, changements de formulaire).</li>
+<li><strong>Eager vs Lazy</strong> : une Promise démarre son exécution <strong>dès sa création</strong>, qu'on l'observe ou non (<code>eager</code>). Un Observable classique ne fait <strong>rien</strong> tant que personne ne s'y abonne (<code>lazy</code>) — chaque abonnement peut même redéclencher toute l'opération depuis le début (comportement "froid").</li>
+</ol>
+<h3 id="demonstration-du-eager-vs-lazy-en-typescript">Démonstration du eager vs lazy, en TypeScript<a class="headerlink" href="#demonstration-du-eager-vs-lazy-en-typescript" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Observable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;rxjs&#39;</span><span class="p">;</span>
+
+<span class="c1">// Promise : eager — s&#39;exécute IMMÉDIATEMENT à la création</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">promise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">resolve</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Je m&#39;exécute tout de suite !&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">resolve</span><span class="p">(</span><span class="mf">42</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// Le message s&#39;affiche même sans .then()</span>
+
+<span class="c1">// Observable : lazy — ne s&#39;exécute QUE si on s&#39;abonne</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">observable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Observable</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">subscriber</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Je ne m&#39;exécute que si on m&#39;observe !&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">subscriber</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mf">42</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// Rien ne s&#39;affiche tant qu&#39;il n&#39;y a pas de subscribe()</span>
+<span class="nx">observable</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">val</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">val</span><span class="p">));</span>
+</code></pre></div>
+<h3 id="pourquoi-ce-choix-compte-independamment-du-framework">Pourquoi ce choix compte, indépendamment du framework<a class="headerlink" href="#pourquoi-ce-choix-compte-independamment-du-framework" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Une API qui représente un <strong>événement DOM</strong>, un <strong>flux WebSocket</strong>, ou une <strong>valeur qui change dans le temps</strong> (température, position GPS, texte d'un champ) a fondamentalement besoin d'un modèle <strong>multi-émissions</strong> — une Promise ne peut structurellement pas représenter ça (elle se résout et c'est terminé).</li>
+<li>Une API qui représente <strong>une seule opération ponctuelle</strong> (lire un fichier une fois, faire un calcul) est plus simplement représentée par une Promise/Future : plus légère conceptuellement, avec <code>async</code>/<code>await</code> nativement supporté dans la plupart des langages modernes.</li>
+</ul>
+<h3 id="exemple-angular-22-pourquoi-httpclient-utilise-observable">Exemple Angular 22 : pourquoi <code>HttpClient</code> utilise <code>Observable</code><a class="headerlink" href="#exemple-angular-22-pourquoi-httpclient-utilise-observable" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Component</span><span class="p">,</span><span class="w"> </span><span class="nx">inject</span><span class="p">,</span><span class="w"> </span><span class="nx">DestroyRef</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">HttpClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">takeUntilDestroyed</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core/rxjs-interop&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">@Component</span><span class="p">({</span><span class="w"> </span><span class="nx">selector</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;app-user-list&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">template</span><span class="o">:</span><span class="w"> </span><span class="sb">`...`</span><span class="w"> </span><span class="p">})</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">UserListComponent</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">http</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">inject</span><span class="p">(</span><span class="nx">HttpClient</span><span class="p">);</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">destroyRef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">inject</span><span class="p">(</span><span class="nx">DestroyRef</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">signal</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">([]);</span>
+
+<span class="w">  </span><span class="nx">loadUsers</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">takeUntilDestroyed</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">destroyRef</span><span class="p">))</span><span class="w"> </span><span class="c1">// annule si le composant est détruit</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">users</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">users</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// switchMap : annule automatiquement la requête précédente à chaque nouvelle frappe</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">debounceTime</span><span class="p">,</span><span class="w"> </span><span class="nx">switchMap</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;rxjs&#39;</span><span class="p">;</span>
+
+<span class="nx">searchControl</span><span class="p">.</span><span class="nx">valueChanges</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">debounceTime</span><span class="p">(</span><span class="mf">300</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">switchMap</span><span class="p">((</span><span class="nx">query</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="nx">Result</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(</span><span class="sb">`/api/search?q=</span><span class="si">${</span><span class="nx">query</span><span class="si">}</span><span class="sb">`</span><span class="p">))</span>
+<span class="p">).</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">results</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">results</span><span class="p">));</span>
+</code></pre></div>
+<p>Ce comportement (annulation, debounce, switch automatique) est <strong>trivial en RxJS</strong>, et laborieux à reproduire à la main avec des Promises seules — c'est la vraie justification du choix d'Angular.</p>
+<h3 id="la-nuance-angular-22-la-resource-api-arrive-en-renfort-pas-en-remplacement">La nuance Angular 22 : la Resource API arrive en renfort, pas en remplacement<a class="headerlink" href="#la-nuance-angular-22-la-resource-api-arrive-en-renfort-pas-en-remplacement" title="Permanent link">&para;</a></h3>
+<p>Angular 22 stabilise la <strong>Resource API</strong> (<code>resource()</code>, <code>rxResource()</code>, <code>httpResource()</code>) : une troisième façon de représenter une donnée asynchrone, pensée nativement pour les <strong>Signals</strong> — avec état de chargement, erreur, et rechargement intégrés dans un seul objet réactif.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Component</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">httpResource</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/common/http&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">@Component</span><span class="p">({</span><span class="w"> </span><span class="nx">selector</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;app-user-list&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">template</span><span class="o">:</span><span class="w"> </span><span class="sb">`...`</span><span class="w"> </span><span class="p">})</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">UserListComponent</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">selectedPage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">signal</span><span class="p">(</span><span class="mf">1</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">usersResource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">httpResource</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="sb">`/api/users?page=</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPage</span><span class="p">()</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// usersResource.value(), usersResource.isLoading(), usersResource.error() — tout est un Signal</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>L'objectif n'est pas de remplacer RxJS partout, mais de simplifier le cas courant "charger une donnée liée à un Signal", sans avoir à écrire un <code>Observable</code> + <code>subscribe()</code> + gestion manuelle du unsubscribe pour un cas simple d'affichage.</p>
+<h3 id="convertir-de-lun-a-lautre-toujours-valable-en-angular-22">Convertir de l'un à l'autre (toujours valable en Angular 22)<a class="headerlink" href="#convertir-de-lun-a-lautre-toujours-valable-en-angular-22" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="nx">firstValueFrom</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;rxjs&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">toSignal</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core/rxjs-interop&#39;</span><span class="p">;</span>
+
+<span class="c1">// Promise → Observable</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">obs$</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">from</span><span class="p">(</span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/data&#39;</span><span class="p">));</span>
+
+<span class="c1">// Observable → Promise (récupère la 1ère valeur émise, puis se désabonne)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">firstValueFrom</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/api/data&#39;</span><span class="p">));</span>
+
+<span class="c1">// Observable → Signal (Angular, natif depuis Angular 16+)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">usersSignal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">toSignal</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">initialValue</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">User</span><span class="p">[]</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div>
+<h3 id="exemple-react-192-observable-rxjs-est-utilisable-mais-rarement-idiomatique">Exemple React 19.2 : <code>Observable</code> (RxJS) est utilisable, mais rarement idiomatique<a class="headerlink" href="#exemple-react-192-observable-rxjs-est-utilisable-mais-rarement-idiomatique" title="Permanent link">&para;</a></h3>
+<p>RxJS n'est <strong>pas propre à Angular</strong> — c'est une bibliothèque TS/JS pure, utilisable dans n'importe quel contexte. En React, ça reste possible mais peu courant, car l'écosystème React privilégie plutôt les Promises + hooks :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">fromEvent</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;rxjs&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">debounceTime</span><span class="p">,</span><span class="w"> </span><span class="nx">switchMap</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;rxjs/operators&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">Result</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">label</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">SearchBox</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">results</span><span class="p">,</span><span class="w"> </span><span class="nx">setResults</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">&lt;</span><span class="nt">Result</span><span class="err">[]</span><span class="p">&gt;([]);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;search&#39;</span><span class="p">)</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">HTMLInputElement</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fromEvent</span><span class="p">&lt;</span><span class="nt">InputEvent</span><span class="p">&gt;(</span><span class="nx">input</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;input&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">debounceTime</span><span class="p">(</span><span class="mf">300</span><span class="p">),</span>
+<span class="w">        </span><span class="nx">switchMap</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span>
+<span class="w">          </span><span class="nx">fetch</span><span class="p">(</span><span class="sb">`/api/search?q=</span><span class="si">${</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">HTMLInputElement</span><span class="p">).</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span>
+<span class="w">            </span><span class="p">(</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nb">Promise</span><span class="p">&lt;</span><span class="nt">Result</span><span class="err">[]</span><span class="p">&gt;</span>
+<span class="w">          </span><span class="p">)</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">setResults</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">sub</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span><span class="w"> </span><span class="c1">// annulation propre au démontage</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">input</span><span class="w"> </span><span class="na">id</span><span class="o">=</span><span class="s">&quot;search&quot;</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;{</span><span class="nx">results</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">li</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">r</span><span class="p">.</span><span class="nx">id</span><span class="p">}&gt;{</span><span class="nx">r</span><span class="p">.</span><span class="nx">label</span><span class="p">}&lt;/</span><span class="nt">li</span><span class="p">&gt;)}&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;/&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>L'idiome React natif pour ce même besoin (debounce + annulation de la requête précédente) repose sur des Promises + <code>AbortController</code>, sans RxJS — combiné en 19.2 avec <code>useEffectEvent</code> pour lire la dernière valeur de <code>query</code> sans la mettre dans le tableau de dépendances :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">useDebouncedSearch</span><span class="p">(</span><span class="nx">query</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">300</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">results</span><span class="p">,</span><span class="w"> </span><span class="nx">setResults</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">&lt;</span><span class="nt">Result</span><span class="err">[]</span><span class="p">&gt;([]);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">setTimeout</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">fetch</span><span class="p">(</span><span class="sb">`/api/search?q=</span><span class="si">${</span><span class="nx">query</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="o">:</span><span class="w"> </span><span class="kt">controller.signal</span><span class="w"> </span><span class="p">})</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nb">Promise</span><span class="p">&lt;</span><span class="nt">Result</span><span class="err">[]</span><span class="p">&gt;)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">setResults</span><span class="p">);</span>
+<span class="w">    </span><span class="p">},</span><span class="w"> </span><span class="nx">delay</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">timeout</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">controller</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="nx">delay</span><span class="p">]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">results</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="exemple-vue-35-composition-api-vueuse-plutot-que-rxjs">Exemple Vue 3.5 : Composition API + VueUse plutôt que RxJS<a class="headerlink" href="#exemple-vue-35-composition-api-vueuse-plutot-que-rxjs" title="Permanent link">&para;</a></h3>
+<p>Vue propose nativement un système réactif (<code>ref</code>, <code>watch</code>) qui couvre une bonne partie des cas où Angular utiliserait un <code>Observable</code>. Pour le même besoin (debounce + annulation) :</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ref</span><span class="p">,</span><span class="w"> </span><span class="nx">watch</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vue&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useDebounceFn</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@vueuse/core&#39;</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">Result</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">label</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">useSearch</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ref</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ref</span><span class="o">&lt;</span><span class="nx">Result</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">([]);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">search</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useDebounceFn</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">q</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="sb">`/api/search?q=</span><span class="si">${</span><span class="nx">q</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">results</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">await</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Result</span><span class="p">[];</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="mf">300</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">watch</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">q</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">search</span><span class="p">(</span><span class="nx">q</span><span class="p">));</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="nx">results</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>À retenir</strong> : <code>Observable</code>/RxJS est <strong>au cœur</strong> d'Angular (utilisé partout : <code>HttpClient</code>, <code>Router</code>, <code>FormControl.valueChanges</code>), alors que React et Vue s'appuient par défaut sur des <strong>Promises + primitives réactives propres au framework</strong> (state/hooks pour React, <code>ref</code>/<code>watch</code>/Composition API pour Vue) pour couvrir les mêmes besoins de flux multi-valeurs — RxJS y reste une option externe, jamais un pilier du framework.</p>
+<hr />
+<h2 id="recapitulatif-des-trois-concepts">Récapitulatif des trois concepts<a class="headerlink" href="#recapitulatif-des-trois-concepts" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Le principe général</th>
+<th>Angular 22</th>
+<th>React 19.2</th>
+<th>Vue 3.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intercepteur</td>
+<td>Chain of Responsibility appliquée aux requêtes/réponses</td>
+<td><code>HttpInterceptorFn</code> + <code>withInterceptors()</code>, natif au framework, <code>untracked</code> depuis 22.1</td>
+<td>Aucun natif — via <code>axios.interceptors</code></td>
+<td>Aucun natif — via <code>axios.interceptors</code></td>
+</tr>
+<tr>
+<td>Client HTTP</td>
+<td>Construire/envoyer une requête, exposer la réponse</td>
+<td><code>HttpClient</code> (RxJS) au-dessus de <code>FetchBackend</code>, par défaut depuis Angular 22, imposé par le framework</td>
+<td>Aucun officiel — <code>fetch</code>/<code>axios</code> + React Query/SWR</td>
+<td>Aucun officiel — <code>fetch</code>/<code>axios</code> + VueUse <code>useFetch</code></td>
+</tr>
+<tr>
+<td>Promise vs Observable/Stream</td>
+<td>Valeur unique vs flux de valeurs dans le temps, eager vs lazy</td>
+<td><code>Observable</code> central au framework ; <code>resource()</code>/<code>httpResource()</code> pour l'asynchrone Signal-first</td>
+<td>RxJS possible mais marginal — Promises + hooks (<code>useEffect</code>, <code>useEffectEvent</code>) + <code>AbortController</code> privilégiés</td>
+<td>RxJS possible mais marginal — réactivité native (<code>ref</code>/<code>watch</code>) + VueUse privilégiés</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../sync-async-langages/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 1. Synchrone vs Asynchrone selon les langages">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                1. Synchrone vs Asynchrone selon les langages
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 1. Déploiement d&#39;une app sur EC2 (DNS, ports, reverse proxy)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
