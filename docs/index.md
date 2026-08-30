@@ -8,6 +8,8 @@ Base de connaissances technique personnelle — notes issues de cours, de playli
 
 - **[Déploiement web](deploiement-web/index.md)** — notes issues de conversations avec l'AI, qui explore le déploiement d'applications web
 
+- **[Langages de programmation](langages/index.md)** — notes issues de conversation avec l'AI, qui explore le fonctionnement des langages de programmation en lien avec queleques concepts (Sync/Async, API, etc.)
+
 ## Organisation
 
 Chaque sujet possède son propre dossier sous `docs/`, indépendant des autres. Les sujets basés sur une playlist sont découpés vidéo par vidéo, dans l'ordre.
