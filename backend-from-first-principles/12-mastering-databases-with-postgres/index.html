@@ -683,28 +683,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-sql-relationnel-vs-nosql-non-relationnel" class="md-nav__link">
+  <a href="#1-pourquoi-avons-nous-besoin-dune-base-de-donnees" class="md-nav__link">
     <span class="md-ellipsis">
-      1. ⚔️ SQL (Relationnel) vs NoSQL (Non-Relationnel)
+      1. Pourquoi avons-nous besoin d'une Base de Données ?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-anatomie-dune-base-postgres-schemas-relations" class="md-nav__link">
+  <a href="#2-quest-ce-quun-dbms-database-management-system" class="md-nav__link">
     <span class="md-ellipsis">
-      2. 🏛️ Anatomie d'une Base Postgres : Schémas &amp; Relations
+      2. Qu'est-ce qu'un DBMS (Database Management System) ?
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. 🏛️ Anatomie d'une Base Postgres : Schémas & Relations">
+    <nav class="md-nav" aria-label="2. Qu'est-ce qu'un DBMS (Database Management System) ?">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#les-cles-et-contraintes-essentielles" class="md-nav__link">
+  <a href="#les-4-responsabilites-dun-dbms" class="md-nav__link">
     <span class="md-ellipsis">
-      🗝️ Les Clés et Contraintes Essentielles :
+      Les 4 Responsabilités d'un DBMS :
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ne-pas-utiliser-de-simples-fichiers-texte-txt-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ne pas utiliser de simples fichiers texte (.txt / .json) ?
     </span>
   </a>
   
@@ -716,38 +725,113 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-les-garanties-acid-le-bouclier-de-postgres" class="md-nav__link">
+  <a href="#3-dbms-relationnel-sql-vs-non-relationnel-nosql" class="md-nav__link">
     <span class="md-ellipsis">
-      3. 🛡️ Les Garanties ACID (Le Bouclier de Postgres)
+      3. DBMS Relationnel (SQL) vs Non-Relationnel (NoSQL)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures" class="md-nav__link">
+  <a href="#4-pourquoi-choisir-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
-      4. ⚡ Indexation : Accélérer les Lectures sans Ruiner les Écritures
+      4. Pourquoi choisir PostgreSQL ?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-connection-pooling-gerer-les-milliers-de-connexions" class="md-nav__link">
+  <a href="#5-tour-dhorizon-des-types-de-donnees-dans-postgres" class="md-nav__link">
     <span class="md-ellipsis">
-      5. 🔌 Connection Pooling : Gérer les Milliers de Connexions
+      5. Tour d'Horizon des Types de Données dans Postgres
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm" class="md-nav__link">
+  <a href="#6-le-workflow-des-migrations-de-base-de-donnees" class="md-nav__link">
     <span class="md-ellipsis">
-      6. 🛠️ Abstractions de Base de Données : Raw SQL, Query Builder &amp; ORM
+      6. Le Workflow des Migrations de Base de Données
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-modelisation-pratique-saas-de-gestion-de-projet" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Modélisation Pratique : SaaS de Gestion de Projet
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Modélisation Pratique : SaaS de Gestion de Projet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-les-enums-custom-types-enumeres" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.1. Les Enums Custom (Types Énumérés)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-les-tables-et-leurs-relations" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.2. Les Tables et leurs Relations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-requetes-parametrees-parameterized-queries-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Requêtes Paramétrées (Parameterized Queries) &amp; Sécurité
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-notions-avancees-triggers-indexation-b-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Notions Avancées : Triggers &amp; Indexation B-Tree
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Notions Avancées : Triggers & Indexation B-Tree">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-les-triggers-automatisations-bdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      9.1. Les Triggers (Automatisations BDD)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-les-index-de-base-de-donnees-b-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      9.2. Les Index de Base de Données (B-Tree)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -976,28 +1060,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-sql-relationnel-vs-nosql-non-relationnel" class="md-nav__link">
+  <a href="#1-pourquoi-avons-nous-besoin-dune-base-de-donnees" class="md-nav__link">
     <span class="md-ellipsis">
-      1. ⚔️ SQL (Relationnel) vs NoSQL (Non-Relationnel)
+      1. Pourquoi avons-nous besoin d'une Base de Données ?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-anatomie-dune-base-postgres-schemas-relations" class="md-nav__link">
+  <a href="#2-quest-ce-quun-dbms-database-management-system" class="md-nav__link">
     <span class="md-ellipsis">
-      2. 🏛️ Anatomie d'une Base Postgres : Schémas &amp; Relations
+      2. Qu'est-ce qu'un DBMS (Database Management System) ?
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. 🏛️ Anatomie d'une Base Postgres : Schémas & Relations">
+    <nav class="md-nav" aria-label="2. Qu'est-ce qu'un DBMS (Database Management System) ?">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#les-cles-et-contraintes-essentielles" class="md-nav__link">
+  <a href="#les-4-responsabilites-dun-dbms" class="md-nav__link">
     <span class="md-ellipsis">
-      🗝️ Les Clés et Contraintes Essentielles :
+      Les 4 Responsabilités d'un DBMS :
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ne-pas-utiliser-de-simples-fichiers-texte-txt-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ne pas utiliser de simples fichiers texte (.txt / .json) ?
     </span>
   </a>
   
@@ -1009,38 +1102,113 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-les-garanties-acid-le-bouclier-de-postgres" class="md-nav__link">
+  <a href="#3-dbms-relationnel-sql-vs-non-relationnel-nosql" class="md-nav__link">
     <span class="md-ellipsis">
-      3. 🛡️ Les Garanties ACID (Le Bouclier de Postgres)
+      3. DBMS Relationnel (SQL) vs Non-Relationnel (NoSQL)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures" class="md-nav__link">
+  <a href="#4-pourquoi-choisir-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
-      4. ⚡ Indexation : Accélérer les Lectures sans Ruiner les Écritures
+      4. Pourquoi choisir PostgreSQL ?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-connection-pooling-gerer-les-milliers-de-connexions" class="md-nav__link">
+  <a href="#5-tour-dhorizon-des-types-de-donnees-dans-postgres" class="md-nav__link">
     <span class="md-ellipsis">
-      5. 🔌 Connection Pooling : Gérer les Milliers de Connexions
+      5. Tour d'Horizon des Types de Données dans Postgres
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm" class="md-nav__link">
+  <a href="#6-le-workflow-des-migrations-de-base-de-donnees" class="md-nav__link">
     <span class="md-ellipsis">
-      6. 🛠️ Abstractions de Base de Données : Raw SQL, Query Builder &amp; ORM
+      6. Le Workflow des Migrations de Base de Données
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-modelisation-pratique-saas-de-gestion-de-projet" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Modélisation Pratique : SaaS de Gestion de Projet
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Modélisation Pratique : SaaS de Gestion de Projet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-les-enums-custom-types-enumeres" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.1. Les Enums Custom (Types Énumérés)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-les-tables-et-leurs-relations" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.2. Les Tables et leurs Relations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-requetes-parametrees-parameterized-queries-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Requêtes Paramétrées (Parameterized Queries) &amp; Sécurité
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-notions-avancees-triggers-indexation-b-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Notions Avancées : Triggers &amp; Indexation B-Tree
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Notions Avancées : Triggers & Indexation B-Tree">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-les-triggers-automatisations-bdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      9.1. Les Triggers (Automatisations BDD)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-les-index-de-base-de-donnees-b-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      9.2. Les Index de Base de Données (B-Tree)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1062,156 +1230,155 @@
   
 
 
-<h1 id="12-maitriser-les-bases-de-donnees-avec-postgres">🗄️ 12. Maîtriser les Bases de Données avec Postgres<a class="headerlink" href="#12-maitriser-les-bases-de-donnees-avec-postgres" title="Permanent link">&para;</a></h1>
-<p>Aujourd'hui, on entre dans le cœur dur du backend : <strong>les bases de données</strong>, et plus particulièrement <strong>PostgreSQL (Postgres)</strong> ! Une API REST sans base de données, c'est comme une voiture sans réservoir : ça ne conserve rien. Voici mes notes personnelles rédigées avec mes propres mots, des schémas visuels et des antisèches pour être au niveau en dev !</p>
+<h1 id="12-maitriser-les-bases-de-donnees-avec-postgres">12. Maîtriser les Bases de Données avec Postgres<a class="headerlink" href="#12-maitriser-les-bases-de-donnees-avec-postgres" title="Permanent link">&para;</a></h1>
+<p>Voici mes notes de cours rédigées chapitre par chapitre en suivant fidèlement la vidéo de Sriniously sur <strong>Postgres et les bases de données backend</strong>.</p>
 <hr />
-<h2 id="1-sql-relationnel-vs-nosql-non-relationnel">1. ⚔️ SQL (Relationnel) vs NoSQL (Non-Relationnel)<a class="headerlink" href="#1-sql-relationnel-vs-nosql-non-relationnel" title="Permanent link">&para;</a></h2>
-<p>Avant de choisir un SGBD (Système de Gestion de Base de Données), il faut comprendre la grande fracture du stockage :</p>
-<div class="highlight"><pre><span></span><code>                        ┌─────────────────────────────────────────┐
-                        │      CHOIX DE LA BASE DE DONNÉES        │
-                        └────────────────────┬────────────────────┘
-                                             │
-               ┌─────────────────────────────┴─────────────────────────────┐
-               ▼                                                           ▼
-┌──────────────────────────────┐                         ┌──────────────────────────────┐
-│       SQL (RELATIONNEL)      │                         │     NoSQL (DOCUMENT / KEY)   │
-├──────────────────────────────┤                         ├──────────────────────────────┤
-│ • Exemple : PostgreSQL, MySQL│                         │ • Exemple : MongoDB, Redis   │
-│ • Structure : Tables strictes│                         │ • Structure : Documents JSON │
-│   avec lignes et colonnes    │                         │   ou paires Clé-Valeur       │
-│ • Schéma : Fixe et prévisib. │                         │ • Schéma : Flexible/Dynamique│
-│ • Garantie : ACID stricte    │                         │ • Garantie : BASE/Éventuelle │
-│ • Cas idéal : Données liées  │                         │ • Cas idéal : Données en vrac│
-│   (Users, Orders, Payments)  │                         │   (Logs, Cache, Analytics)   │
-└──────────────────────────────┘                         └──────────────────────────────┘
-</code></pre></div>
-<blockquote>
-<p>💡 <strong>Mon aide-mémoire de Dev</strong> : Pour 90% des projets web modernes (SaaS, E-commerce, Réseaux sociaux), <strong>PostgreSQL est le choix par défaut</strong>. Les relations entre utilisateurs, projets et paiements nécessitent la cohérence stricte du SQL.</p>
-</blockquote>
-<hr />
-<h2 id="2-anatomie-dune-base-postgres-schemas-relations">2. 🏛️ Anatomie d'une Base Postgres : Schémas &amp; Relations<a class="headerlink" href="#2-anatomie-dune-base-postgres-schemas-relations" title="Permanent link">&para;</a></h2>
-<p>Dans Postgres, les données sont organisées sous forme de <strong>Tables</strong> reliées entre elles par des <strong>Clés</strong>.</p>
-<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────────────────────┐
-│ TABLE: users                                                           │
-├────────────┬───────────────────┬───────────────────┬───────────────────┤
-│ id (PK)    │ email             │ password_hash     │ created_at        │
-├────────────┼───────────────────┼───────────────────┼───────────────────┤
-│ 101        │ alex@dev.io       │ $2b$12$...        │ 2026-10-31        │
-└────────────┴─────────┬─────────┴───────────────────┴───────────────────┘
-                       │
-                       │ 🔗 Relation 1-to-N (Un utilisateur a plusieurs projets)
-                       ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│ TABLE: projects                                                        │
-├────────────┬───────────────────┬───────────────────┬───────────────────┤
-│ id (PK)    │ title             │ user_id (FK)      │ status            │
-├────────────┼───────────────────┼───────────────────┼───────────────────┤
-│ 1          │ API Redesign      │ 101               │ ACTIVE            │
-│ 2          │ Mobile App        │ 101               │ PLANNED           │
-└────────────┴───────────────────┴───────────────────┴───────────────────┘
-</code></pre></div>
-<h3 id="les-cles-et-contraintes-essentielles">🗝️ Les Clés et Contraintes Essentielles :<a class="headerlink" href="#les-cles-et-contraintes-essentielles" title="Permanent link">&para;</a></h3>
+<h2 id="1-pourquoi-avons-nous-besoin-dune-base-de-donnees">1. Pourquoi avons-nous besoin d'une Base de Données ?<a class="headerlink" href="#1-pourquoi-avons-nous-besoin-dune-base-de-donnees" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Primary Key (PK)</strong> : Identifiant unique de la ligne (souvent un <code>BIGINT</code> auto-incrémenté ou un <code>UUID</code>).</li>
-<li><strong>Foreign Key (FK)</strong> : Lien pointant vers la <code>PK</code> d'une autre table pour garantir l'intégrité référentielle.</li>
-<li><strong>Contraintes d'intégrité</strong> :</li>
-<li><code>NOT NULL</code> : Empêche d'enregistrer une donnée vide.</li>
-<li><code>UNIQUE</code> : Garantit qu'aucun doublon n'existe (ex: adresse email).</li>
-<li><code>CHECK</code> : Valide une condition (ex: <code>age &gt;= 18</code> ou <code>price &gt; 0</code>).</li>
+<li><strong>Le concept de Persistance</strong> : Stocker des données de manière à ce qu'elles survivent même après l'arrêt ou le redémarrage du programme qui les a créées.</li>
+<li><strong>Disque Dur (Stockage Secondaire) vs RAM (Mémoire Principale)</strong> :<ul>
+<li><em>RAM</em> : Ultra-rapide mais très chère, limitée en capacité (8-32 Go) et volatile (s'efface à l'extinction). Utilisée pour les caches (ex: Redis).</li>
+<li><em>Disque (HDD / SSD)</em> : Plus lent que la RAM, mais très peu cher avec une énorme capacité (512 Go - 2 To). C'est là que les bases de données traditionnelles enregistrent les données de manière permanente.</li>
+</ul>
+</li>
 </ul>
 <hr />
-<h2 id="3-les-garanties-acid-le-bouclier-de-postgres">3. 🛡️ Les Garanties ACID (Le Bouclier de Postgres)<a class="headerlink" href="#3-les-garanties-acid-le-bouclier-de-postgres" title="Permanent link">&para;</a></h2>
-<p>Pour éviter que des transactions simultanées ne corrompent les données, Postgres respecte à la lettre les 4 principes <strong>ACID</strong> :</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Principe</th>
-<th style="text-align: left;">Signification</th>
-<th style="text-align: left;">Ce que ça garantit en pratique</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>A</strong> - Atomicity</td>
-<td style="text-align: left;">Atomicité</td>
-<td style="text-align: left;">Tout passe ou tout s'annule (Pas de demi-transaction).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>C</strong> - Consistency</td>
-<td style="text-align: left;">Cohérence</td>
-<td style="text-align: left;">La base respecte toujours les règles et contraintes de schéma.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>I</strong> - Isolation</td>
-<td style="text-align: left;">Isolation</td>
-<td style="text-align: left;">Deux transactions simultanées ne se marchent pas dessus.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>D</strong> - Durability</td>
-<td style="text-align: left;">Durabilité</td>
-<td style="text-align: left;">Une fois la transaction validée (<code>COMMIT</code>), la donnée est sauvée sur disque.</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight"><pre><span></span><code>                    EXEMPLE DE TRANSACTION BANCAIRE (BEGIN -&gt; COMMIT)
-
- [ Client A ] ───&gt;  1. DÉBIT 100€ (Compte A)  ─────┐
-                                                   ├─&gt; [ TRANSACTION ACID ]
- [ Client B ] ───&gt;  2. CRÉDIT 100€ (Compte B) ─────┘     (Si le serveur plante au milieu,
-                                                         TOUT est annulé via ROLLBACK !)
-</code></pre></div>
-<hr />
-<h2 id="4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures">4. ⚡ Indexation : Accélérer les Lectures sans Ruiner les Écritures<a class="headerlink" href="#4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures" title="Permanent link">&para;</a></h2>
-<p>Un <strong>Index</strong> (souvent sous forme d'arbre B-Tree) fonctionne exactement comme l'index à la fin d'un livre d'apprentissage.</p>
-<div class="highlight"><pre><span></span><code>       RECHERCHE SANS INDEX (Sequential Scan)           RECHERCHE AVEC INDEX (Index Scan)
-┌──────────────────────────────────────────────┐ ┌──────────────────────────────────────────────┐
-│ Le serveur lit TOUTES les 1 000 000 lignes   │ │ Le serveur consulte l&#39;arbre B-Tree en 3 ms  │
-│ une par une pour trouver &quot;email=alex@dev.io&quot;.│ │ et pointe direct sur le bloc mémoire exact ! │
-│ ⏱️ Temps : 450 ms (Lent &amp; Gourmand)          │ │ ⏱️ Temps : 2 ms (Ultra-Rapide)               │
-└──────────────────────────────────────────────┘ └──────────────────────────────────────────────┘
-</code></pre></div>
-<blockquote>
-<p>⚠️ <strong>Le Compromis de l'Index</strong> :
-* ➕ <strong>Lecture (<code>SELECT</code>)</strong> : Divisée par 100 en vitesse.
-* ➖ <strong>Écriture (<code>INSERT</code> / <code>UPDATE</code> / <code>DELETE</code>)</strong> : Légèrement ralentie car Postgres doit aussi mettre à jour l'index à chaque modification.
-* <strong>Règle d'or</strong> : Mettre un Index (<code>CREATE INDEX</code>) uniquement sur les colonnes souvent utilisées dans les clauses <code>WHERE</code>, <code>JOIN</code> et <code>ORDER BY</code> (ex: <code>user_id</code>, <code>email</code>, <code>status</code>).</p>
-</blockquote>
-<hr />
-<h2 id="5-connection-pooling-gerer-les-milliers-de-connexions">5. 🔌 Connection Pooling : Gérer les Milliers de Connexions<a class="headerlink" href="#5-connection-pooling-gerer-les-milliers-de-connexions" title="Permanent link">&para;</a></h2>
-<p>Ouvrir une nouvelle connexion réseau vers Postgres coûte cher en CPU et en mémoire (chaque connexion Postgres fork un processus lourd côté serveur).</p>
-<div class="highlight"><pre><span></span><code>┌──────────┐                     ┌───────────────────────┐                     ┌──────────┐
-│  CLIENTS │ ─── Requêtes ───&gt;  │  CONNECTION POOL      │ ─── Connexions ───&gt; │ SERVEUR  │
-│  (Node)  │                     │  (ex: pg-pool / PgBouncer)                  │ POSTGRES │
-│          │                     │  [ 10 connexions réutilisables en boucle ]  │          │
-└──────────┘                     └───────────────────────┘                     └──────────┘
-</code></pre></div>
+<h2 id="2-quest-ce-quun-dbms-database-management-system">2. Qu'est-ce qu'un DBMS (Database Management System) ?<a class="headerlink" href="#2-quest-ce-quun-dbms-database-management-system" title="Permanent link">&para;</a></h2>
+<p>Un DBMS est un logiciel dont le rôle est d'organiser le stockage sur disque et de fournir un accès efficace aux opérations CRUD (Create, Read, Update, Delete).</p>
+<h3 id="les-4-responsabilites-dun-dbms">Les 4 Responsabilités d'un DBMS :<a class="headerlink" href="#les-4-responsabilites-dun-dbms" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Organisation des données</strong> : Structuration sur disque pour des recherches rapides.</li>
+<li><strong>Accès aux données</strong> : Fournir une interface pour exécuter des requêtes.</li>
+<li><strong>Intégrité des données</strong> : Garantir que la donnée est exacte, valide et non corrompue (ex: interdire d'insérer du texte dans un champ de prix numérique).</li>
+<li><strong>Sécurité</strong> : Contrôle des accès et gestion des utilisateurs/rôles.</li>
+</ol>
+<h3 id="pourquoi-ne-pas-utiliser-de-simples-fichiers-texte-txt-json">Pourquoi ne pas utiliser de simples fichiers texte (.txt / .json) ?<a class="headerlink" href="#pourquoi-ne-pas-utiliser-de-simples-fichiers-texte-txt-json" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Sans Pool</strong> : 1 000 requêtes simultanées = 1 000 connexions Postgres = <strong>Crash du serveur (<code>Too many connections</code>)</strong>.</li>
-<li><strong>Avec Pool</strong> : 1 000 requêtes se partagent un sous-ensemble fixe de connexions réutilisables (ex: 10 ou 20 connexions ouvertes en permanence).</li>
+<li><strong>Parsing lourd &amp; lent</strong> : Lire un fichier texte ligne par ligne en code applicatif consomme énormément de CPU/RAM.</li>
+<li><strong>Absence de structure et de contraintes</strong> : Impossible de garantir le type ou la validité des données.</li>
+<li><strong>Concurrence (Race Conditions)</strong> : Si deux utilisateurs modifient le même fichier texte en même temps, les données sont écrasées ou corrompues.</li>
 </ul>
 <hr />
-<h2 id="6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm">6. 🛠️ Abstractions de Base de Données : Raw SQL, Query Builder &amp; ORM<a class="headerlink" href="#6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm" title="Permanent link">&para;</a></h2>
-<p>Comment interagir avec Postgres depuis notre code Backend ? Il existe 3 approches :</p>
-<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ 1. RAW SQL (Requêtes brutes)                                                           │
-│    • ex: client.query(&#39;SELECT * FROM users WHERE id = $1&#39;, [userId])                   │
-│    • Pros : Contrôle total, performances maximales.                                     │
-│    • Cons : Pas de typage, risques d&#39;injections SQL si mal écrit.                     │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 2. QUERY BUILDERS (Constructeurs de requêtes)                                          │
-│    • ex: knex(&#39;users&#39;).where({ id: userId }).select()                                  │
-│    • Pros : Syntaxe JS/TS fluide, requêtes dynamiques sécurisées.                     │
-│    • Cons : Requêtes très complexes parfois difficiles à exprimer.                      │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 3. ORM (Object-Relational Mapping)                                                     │
-│    • ex: prisma.user.findUnique({ where: { id: userId } })                             │
-│    • Pros : Typage TypeScript automatique, migrations faciles, code très lisible.       │
-│    • Cons : Légère surcouche d&#39;abstraction, risque de requêtes SQL générées sous-optim.│
-└────────────────────────────────────────────────────────────────────────────────────────┘
+<h2 id="3-dbms-relationnel-sql-vs-non-relationnel-nosql">3. DBMS Relationnel (SQL) vs Non-Relationnel (NoSQL)<a class="headerlink" href="#3-dbms-relationnel-sql-vs-non-relationnel-nosql" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>┌───────────────────────────────────────────┬───────────────────────────────────────────┐
+│        RELATIONNEL (ex: Postgres)         │       NON-RELATIONNEL (ex: MongoDB)       │
+├───────────────────────────────────────────┼───────────────────────────────────────────┤
+│ • Structure en Tables, Lignes et Colonnes │ • Structure en Collections et Documents   │
+│ • Schéma STRICT défini à l&#39;avance         │ • Schéma FLEXIBLE (Dynamic Schema)        │
+│ • Forte intégrité des données (ACID)      │ • Évolution rapide / Prototypage          │
+│ • Cas d&#39;usage : CRM, E-commerce, Banque   │ • Cas d&#39;usage : CMS, Blogs, Contenu varié │
+└───────────────────────────────────────────┴───────────────────────────────────────────┘
 </code></pre></div>
-<blockquote>
-<p>🎯 <strong>Conseil pour dev junior</strong> : Utiliser un <strong>ORM moderne comme Prisma ou Drizzle</strong> pour aller vite et sécuriser les types, mais <strong>toujours inspecter le SQL généré</strong> en arrière-plan pour éviter les pièges de requêtes N+1 !</p>
-</blockquote>
+<hr />
+<h2 id="4-pourquoi-choisir-postgresql">4. Pourquoi choisir PostgreSQL ?<a class="headerlink" href="#4-pourquoi-choisir-postgresql" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Open Source &amp; Gratuit</strong> : Pas de frais de licence, hébergeable partout.</li>
+<li><strong>Respect du Standard SQL</strong> : Très facile de migrer vers ou depuis d'autres bases SQL.</li>
+<li><strong>Extensible &amp; Fiable</strong> : Plus de 1400 pages de documentation et des décennies de stabilité en production.</li>
+<li><strong>Support Natif d'Exception pour le JSON (JSONB)</strong> : Permet de stocker des données dynamiques comme dans du NoSQL sans quitter Postgres !</li>
+</ol>
+<hr />
+<h2 id="5-tour-dhorizon-des-types-de-donnees-dans-postgres">5. Tour d'Horizon des Types de Données dans Postgres<a class="headerlink" href="#5-tour-dhorizon-des-types-de-donnees-dans-postgres" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Identifiants &amp; Entiers</strong> :<ul>
+<li><code>SERIAL</code> / <code>BIGSERIAL</code> : Entier auto-incrémenté automatique (1, 2, 3...).</li>
+<li><code>SMALLINT</code> &lt; <code>INTEGER</code> &lt; <code>BIGINT</code> : Selon la taille maximale requise.</li>
+<li><code>UUID</code> : Identifiant unique universel sur 128 bits (recommandé en production).</li>
+</ul>
+</li>
+<li><strong>Nombres Décimaux &amp; Flottants</strong> :<ul>
+<li><code>DECIMAL(10, 2)</code> / <code>NUMERIC</code> : <strong>Précision exacte</strong>. Indispensable pour l'argent/prix (évite les erreurs d'arrondi).</li>
+<li><code>REAL</code> / <code>DOUBLE PRECISION</code> / <code>FLOAT</code> : Nombres à virgule flottante. Ultra-rapides en calcul mais avec de légères imprécisions.</li>
+</ul>
+</li>
+<li><strong>Chaînes de Caractères (Strings)</strong> :<ul>
+<li><code>CHAR(n)</code> : Rempli avec des espaces si le texte est plus court (obsolète).</li>
+<li><code>VARCHAR(n)</code> : Longueur variable avec une limite max $n$.</li>
+<li><code>TEXT</code> : <strong>Recommandation officielle de Postgres</strong> ! Aucune limite de taille arbitraire et aucune perte de performance par rapport à Varchar.</li>
+</ul>
+</li>
+<li><strong>Dates &amp; Heures</strong> :<ul>
+<li><code>DATE</code> (Jour/Mois/Année), <code>TIME</code> (Heure/Min/Sec).</li>
+<li><code>TIMESTAMP WITH TIME ZONE</code> (<code>TIMESTAMPTZ</code>) : Stocke la date, l'heure ET le fuseau horaire.</li>
+</ul>
+</li>
+<li><strong>JSON</strong> :<ul>
+<li><code>JSON</code> : Stocke le texte JSON brut.</li>
+<li><code>JSONB</code> : Stocke le JSON sous format binaire sérialisé (beaucoup plus rapide à requêter et indexer).</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="6-le-workflow-des-migrations-de-base-de-donnees">6. Le Workflow des Migrations de Base de Données<a class="headerlink" href="#6-le-workflow-des-migrations-de-base-de-donnees" title="Permanent link">&para;</a></h2>
+<p>On n'exécute jamais de requêtes de structure à la main en production. On utilise un outil de migration (ex: <code>dbmate</code>, <code>go-migrate</code>).</p>
+<ul>
+<li><strong>Fichiers horodatés</strong> : Ex: <code>20261031_create_users_table.sql</code>.</li>
+<li><strong>Up Migration</strong> : Contient les instructions SQL d'application (créer des tables, ajouter des colonnes).</li>
+<li><strong>Down Migration</strong> : Contient les instructions d'annulation / rollback (ex: <code>DROP TABLE</code>) si la mise en production échoue.</li>
+<li><strong>Table <code>schema_migrations</code></strong> : Gérée automatiquement par l'outil pour suivre la version courante de la BDD.</li>
+</ul>
+<hr />
+<h2 id="7-modelisation-pratique-saas-de-gestion-de-projet">7. Modélisation Pratique : SaaS de Gestion de Projet<a class="headerlink" href="#7-modelisation-pratique-saas-de-gestion-de-projet" title="Permanent link">&para;</a></h2>
+<h3 id="71-les-enums-custom-types-enumeres">7.1. Les Enums Custom (Types Énumérés)<a class="headerlink" href="#71-les-enums-custom-types-enumeres" title="Permanent link">&para;</a></h3>
+<p>Permettent de restreindre les valeurs autorisées directement au niveau BDD (doc &amp; intégrité) :
+*   <code>project_status</code> : <code>'active'</code>, <code>'completed'</code>, <code>'archived'</code>
+*   <code>task_status</code> : <code>'pending'</code>, <code>'in_progress'</code>, <code>'completed'</code>, <code>'cancelled'</code>
+*   <code>member_role</code> : <code>'owner'</code>, <code>'admin'</code>, <code>'member'</code></p>
+<h3 id="72-les-tables-et-leurs-relations">7.2. Les Tables et leurs Relations<a class="headerlink" href="#72-les-tables-et-leurs-relations" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────┐       1:1       ┌─────────────────────┐
+│      USERS      ├─────────────────►    USER_PROFILES    │
+│  (id, email...) │ (user_id PK/FK) │ (bio, avatar_url...)│
+└────────┬────────┘                 └─────────────────────┘
+         │
+         │ 1:N (Owner)
+         ▼
+┌─────────────────┐       1:N       ┌─────────────────────┐
+│    PROJECTS     ├─────────────────►        TASKS        │
+│  (id, name...)  │  (project_id)   │(priority CHECK 1..5)│
+└────────┬────────┘                 └─────────────────────┘
+         │
+         │ N:M (Table de liaison)
+         ▼
+┌───────────────────────────────────┐
+│          PROJECT_MEMBERS          │
+│ (project_id, user_id) Composite PK│
+└───────────────────────────────────┘
+</code></pre></div>
+<ol>
+<li><strong>Relation 1:1 (Users $\rightarrow$ User Profiles)</strong> : La clé primaire de <code>user_profiles</code> est aussi sa clé étrangère (<code>user_id</code>). Permet d'alléger la table principale <code>users</code>.</li>
+<li><strong>Relation 1:N (Projects $\rightarrow$ Tasks)</strong> : <code>tasks</code> contient la clé étrangère <code>project_id</code>.</li>
+<li><strong>Contrainte <code>CHECK</code> (ex: Priority)</strong> : <code>CHECK (priority &gt;= 1 AND priority &lt;= 5)</code> empêche d'insérer une priorité invalide.</li>
+<li><strong>Intégrité Référentielle (ON DELETE)</strong> :<ul>
+<li><code>ON DELETE RESTRICT</code> : Empêche la suppression d'un utilisateur s'il possède encore des projets.</li>
+<li><code>ON DELETE CASCADE</code> : Supprime automatiquement toutes les tâches liées quand un projet est supprimé.</li>
+<li><code>ON DELETE SET NULL</code> : Met le champ <code>assigned_to</code> à <code>NULL</code> si l'utilisateur assigné est supprimé.</li>
+</ul>
+</li>
+<li><strong>Relation N:M (Projects $\leftrightarrow$ Users)</strong> : Utilisation d'une table de liaison <code>project_members</code> avec une <strong>Clé Primaire Composée</strong> <code>(project_id, user_id)</code> pour empêcher qu'un membre soit ajouté deux fois au même projet.</li>
+</ol>
+<hr />
+<h2 id="8-requetes-parametrees-parameterized-queries-securite">8. Requêtes Paramétrées (Parameterized Queries) &amp; Sécurité<a class="headerlink" href="#8-requetes-parametrees-parameterized-queries-securite" title="Permanent link">&para;</a></h2>
+<p>Pour exécuter une requête dynamic sans risque d'<strong>Injection SQL</strong> :
+*   On laisse un slot de paramètre (ex: <code>$1</code> ou <code>?</code>).
+*   Le driver BDD envoie la valeur sous forme de simple chaîne échappée, empêchant tout code SQL malveillant d'être exécuté.</p>
+<hr />
+<h2 id="9-notions-avancees-triggers-indexation-b-tree">9. Notions Avancées : Triggers &amp; Indexation B-Tree<a class="headerlink" href="#9-notions-avancees-triggers-indexation-b-tree" title="Permanent link">&para;</a></h2>
+<h3 id="91-les-triggers-automatisations-bdd">9.1. Les Triggers (Automatisations BDD)<a class="headerlink" href="#91-les-triggers-automatisations-bdd" title="Permanent link">&para;</a></h3>
+<p>Pour éviter de mettre à jour manuellement la colonne <code>updated_at</code> dans le code applicatif à chaque modification, on crée :
+1.  Une fonction PL/pgSQL qui fixe <code>NEW.updated_at = CURRENT_TIMESTAMP</code>.
+2.  Un <strong>Trigger</strong> configuré <code>BEFORE UPDATE</code> sur chaque table.</p>
+<h3 id="92-les-index-de-base-de-donnees-b-tree">9.2. Les Index de Base de Données (B-Tree)<a class="headerlink" href="#92-les-index-de-base-de-donnees-b-tree" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Le problème du Sequential Scan</strong> : Sans index, pour trouver une ligne parmi 1 million, Postgres doit lire tout le disque ligne par ligne.</li>
+<li><strong>Le fonctionnement de l'Index</strong> : C'est une table de correspondance séparée (ordonnée sous forme d'arbre B-Tree) qui associe la valeur d'une colonne à son emplacement physique précis sur le disque.</li>
+<li><strong>Quand créer un Index ?</strong><ul>
+<li>Sur les colonnes fréquemment utilisées dans un <strong><code>WHERE</code></strong>.</li>
+<li>Sur les clés étrangères utilisées dans un <strong><code>JOIN</code></strong>.</li>
+<li>Sur les colonnes utilisées dans un <strong><code>ORDER BY</code></strong> (ex: <code>created_at DESC</code>).</li>
+</ul>
+</li>
+<li>⚠️ <strong>Le compromis de l'Index</strong> : Les index accélèrent la LECTURE (<code>SELECT</code>), mais ralentissent légèrement l'ÉCRITURE (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>) car chaque index doit être réactualisé à chaque modification.</li>
+</ul>
 
 
 

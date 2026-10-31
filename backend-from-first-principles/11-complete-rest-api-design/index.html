@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#11-conception-dapis-rest-complete-rest-api-design" class="md-skip">
+        <a href="#11-design-complet-dune-api-rest-complete-rest-api-design" class="md-skip">
           Aller au contenu
         </a>
       
@@ -662,19 +662,64 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-cest-quoi-rest-en-gros-le-modele-mental" class="md-nav__link">
+  <a href="#1-introduction-problematique-du-design-dapi-rest" class="md-nav__link">
     <span class="md-ellipsis">
-      1. C'est quoi REST en gros ? (Le modèle mental)
+      1. Introduction &amp; Problématique du Design d'API REST
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. C'est quoi REST en gros ? (Le modèle mental)">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-contexte-historique-pourquoi-rest-a-ete-cree" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Contexte Historique : Pourquoi REST a été créé ?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-6-contraintes-dune-architecture-restful-roy-fielding" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Les 6 Contraintes d'une Architecture RESTful (Roy Fielding)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-demystification-que-signifie-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Démystification : Que signifie "R.E.S.T" ?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-anatomie-dune-url-conventions-de-nommage-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Anatomie d'une URL &amp; Conventions de Nommage REST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Anatomie d'une URL & Conventions de Nommage REST">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#la-difference-entre-la-vue-action-et-la-vue-ressource" class="md-nav__link">
+  <a href="#a-structure-dune-url-classique-vs-url-dapi" class="md-nav__link">
     <span class="md-ellipsis">
-      La différence entre la vue "Action" et la vue "Ressource" :
+      A. Structure d'une URL classique vs URL d'API
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-bonnes-pratiques-pour-les-slugs-dans-lurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Bonnes pratiques pour les Slugs dans l'URL
     </span>
   </a>
   
@@ -686,28 +731,37 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-les-regles-dor-du-naming-des-endpoints-urls" class="md-nav__link">
+  <a href="#6-lidempotence-des-methodes-http" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Les Règles d'Or du Naming des Endpoints (URLs)
+      6. L'Idempotence des Méthodes HTTP
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Les Règles d'Or du Naming des Endpoints (URLs)">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-demo-pratique-sur-insomnia-modelisation-dun-saas-de-gestion-de-projet" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Démo Pratique sur Insomnia : Modélisation d'un SaaS de Gestion de Projet
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Démo Pratique sur Insomnia : Modélisation d'un SaaS de Gestion de Projet">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#a-noms-au-pluriel-minuscules" class="md-nav__link">
+  <a href="#71-gestion-des-organisations-organizations" class="md-nav__link">
     <span class="md-ellipsis">
-      A. Noms au pluriel &amp; minuscules
+      7.1. Gestion des Organisations (/organizations)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#b-hierarchie-et-ressources-imbriquees-nested-resources" class="md-nav__link">
+  <a href="#72-gestion-des-projets-projects" class="md-nav__link">
     <span class="md-ellipsis">
-      B. Hiérarchie et Ressources Imbriquées (Nested Resources)
+      7.2. Gestion des Projets (/projects)
     </span>
   </a>
   
@@ -719,60 +773,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-matrice-generale-des-operations-crud-en-rest" class="md-nav__link">
+  <a href="#8-les-5-regles-dor-pour-devenir-un-excellent-ingenieur-backend" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Matrice Générale des Opérations CRUD en REST
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-filtrage-tri-et-pagination-query-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Filtrage, Tri et Pagination (Query Parameters)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Filtrage, Tri et Pagination (Query Parameters)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#format-type-dune-reponse-paginee" class="md-nav__link">
-    <span class="md-ellipsis">
-      Format type d'une réponse paginée :
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-gestion-des-erreurs-et-format-standardise" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Gestion des Erreurs et Format Standardisé
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-versioning-de-lapi-eviter-de-casser-le-front" class="md-nav__link">
-    <span class="md-ellipsis">
-      6. Versioning de l'API (Éviter de casser le Front)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7-resume-des-bonnes-pratiques-en-fiche-reflexe" class="md-nav__link">
-    <span class="md-ellipsis">
-      7. Résumé des Bonnes Pratiques en Fiche Réflexe
+      8. Les 5 Règles d'Or pour devenir un Excellent Ingénieur Backend
     </span>
   </a>
   
@@ -1024,19 +1027,64 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-cest-quoi-rest-en-gros-le-modele-mental" class="md-nav__link">
+  <a href="#1-introduction-problematique-du-design-dapi-rest" class="md-nav__link">
     <span class="md-ellipsis">
-      1. C'est quoi REST en gros ? (Le modèle mental)
+      1. Introduction &amp; Problématique du Design d'API REST
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. C'est quoi REST en gros ? (Le modèle mental)">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-contexte-historique-pourquoi-rest-a-ete-cree" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Contexte Historique : Pourquoi REST a été créé ?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-6-contraintes-dune-architecture-restful-roy-fielding" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Les 6 Contraintes d'une Architecture RESTful (Roy Fielding)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-demystification-que-signifie-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Démystification : Que signifie "R.E.S.T" ?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-anatomie-dune-url-conventions-de-nommage-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Anatomie d'une URL &amp; Conventions de Nommage REST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Anatomie d'une URL & Conventions de Nommage REST">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#la-difference-entre-la-vue-action-et-la-vue-ressource" class="md-nav__link">
+  <a href="#a-structure-dune-url-classique-vs-url-dapi" class="md-nav__link">
     <span class="md-ellipsis">
-      La différence entre la vue "Action" et la vue "Ressource" :
+      A. Structure d'une URL classique vs URL d'API
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-bonnes-pratiques-pour-les-slugs-dans-lurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Bonnes pratiques pour les Slugs dans l'URL
     </span>
   </a>
   
@@ -1048,28 +1096,37 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-les-regles-dor-du-naming-des-endpoints-urls" class="md-nav__link">
+  <a href="#6-lidempotence-des-methodes-http" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Les Règles d'Or du Naming des Endpoints (URLs)
+      6. L'Idempotence des Méthodes HTTP
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Les Règles d'Or du Naming des Endpoints (URLs)">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-demo-pratique-sur-insomnia-modelisation-dun-saas-de-gestion-de-projet" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Démo Pratique sur Insomnia : Modélisation d'un SaaS de Gestion de Projet
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Démo Pratique sur Insomnia : Modélisation d'un SaaS de Gestion de Projet">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#a-noms-au-pluriel-minuscules" class="md-nav__link">
+  <a href="#71-gestion-des-organisations-organizations" class="md-nav__link">
     <span class="md-ellipsis">
-      A. Noms au pluriel &amp; minuscules
+      7.1. Gestion des Organisations (/organizations)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#b-hierarchie-et-ressources-imbriquees-nested-resources" class="md-nav__link">
+  <a href="#72-gestion-des-projets-projects" class="md-nav__link">
     <span class="md-ellipsis">
-      B. Hiérarchie et Ressources Imbriquées (Nested Resources)
+      7.2. Gestion des Projets (/projects)
     </span>
   </a>
   
@@ -1081,60 +1138,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-matrice-generale-des-operations-crud-en-rest" class="md-nav__link">
+  <a href="#8-les-5-regles-dor-pour-devenir-un-excellent-ingenieur-backend" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Matrice Générale des Opérations CRUD en REST
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-filtrage-tri-et-pagination-query-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Filtrage, Tri et Pagination (Query Parameters)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Filtrage, Tri et Pagination (Query Parameters)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#format-type-dune-reponse-paginee" class="md-nav__link">
-    <span class="md-ellipsis">
-      Format type d'une réponse paginée :
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-gestion-des-erreurs-et-format-standardise" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Gestion des Erreurs et Format Standardisé
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-versioning-de-lapi-eviter-de-casser-le-front" class="md-nav__link">
-    <span class="md-ellipsis">
-      6. Versioning de l'API (Éviter de casser le Front)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7-resume-des-bonnes-pratiques-en-fiche-reflexe" class="md-nav__link">
-    <span class="md-ellipsis">
-      7. Résumé des Bonnes Pratiques en Fiche Réflexe
+      8. Les 5 Règles d'Or pour devenir un Excellent Ingénieur Backend
     </span>
   </a>
   
@@ -1158,177 +1164,203 @@
   
 
 
-<h1 id="11-conception-dapis-rest-complete-rest-api-design">11. Conception d'APIs REST (Complete REST API Design)<a class="headerlink" href="#11-conception-dapis-rest-complete-rest-api-design" title="Permanent link">&para;</a></h1>
-<p>Aujourd'hui, chapitre capital dans la formation backend : <strong>la conception d'APIs REST (Representational State Transfer)</strong>. Après avoir compris HTTP, le routage et la sérialisation, il s'agit d'apprendre à concevoir des APIs propres, prévisibles et intuitives pour les équipes front-end et mobiles !</p>
+<h1 id="11-design-complet-dune-api-rest-complete-rest-api-design">11. Design Complet d'une API REST (Complete REST API Design)<a class="headerlink" href="#11-design-complet-dune-api-rest-complete-rest-api-design" title="Permanent link">&para;</a></h1>
+<p>Aujourd'hui, gros chapitre sur le <strong>Design d'API REST</strong>. Sriniously insiste : le design de l'interface d'une API se fait <strong>avant d'écrire la moindre ligne de code</strong>. Voici mes notes structurées chapitre par chapitre en suivant exactement le déroulé de la vidéo !</p>
 <hr />
-<h2 id="1-cest-quoi-rest-en-gros-le-modele-mental">1. C'est quoi REST en gros ? (Le modèle mental)<a class="headerlink" href="#1-cest-quoi-rest-en-gros-le-modele-mental" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>💡 <strong>REST (Representational State Transfer)</strong> est un style architectural standardisé pour concevoir des services web. Au lieu d'inventer nos propres conventions bizarres, REST impose de structurer nos APIs autour de <strong>Ressources</strong> manipulables via les verbes HTTP standards.</p>
-</blockquote>
-<h3 id="la-difference-entre-la-vue-action-et-la-vue-ressource">La différence entre la vue "Action" et la vue "Ressource" :<a class="headerlink" href="#la-difference-entre-la-vue-action-et-la-vue-ressource" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>❌ ARCHITECTURE ORIENTÉE ACTIONS (Non REST / Style RPC antique)
-┌─────────────────────────────────────────────────────────────┐
-│ GET  /getUserDetails?id=42                                  │
-│ POST /createNewUser                                         │
-│ POST /updateUserEmail                                       │
-│ POST /deleteUserPermanently                                 │
-└─────────────────────────────────────────────────────────────┘
-
-✅ ARCHITECTURE ORIENTÉE RESSOURCES (RESTful)
-┌─────────────────────────────────────────────────────────────┐
-│ GET    /api/v1/users/42   ──&gt; Récupérer l&#39;utilisateur 42    │
-│ POST   /api/v1/users      ──&gt; Créer un utilisateur          │
-│ PATCH  /api/v1/users/42   ──&gt; Modifier l&#39;email / profil    │
-│ DELETE /api/v1/users/42   ──&gt; Supprimer l&#39;utilisateur 42    │
-└─────────────────────────────────────────────────────────────┘
-</code></pre></div>
-<p><strong>Règle d'or de dev</strong> : L'URL désigne la <strong>Ressource</strong> (un nom au pluriel). La <strong>Méthode HTTP</strong> désigne l'<strong>Action</strong> à accomplir sur cette ressource.</p>
-<hr />
-<h2 id="2-les-regles-dor-du-naming-des-endpoints-urls">2. Les Règles d'Or du Naming des Endpoints (URLs)<a class="headerlink" href="#2-les-regles-dor-du-naming-des-endpoints-urls" title="Permanent link">&para;</a></h2>
-<p>Pour qu'une API soit agréable à utiliser par les devs front-end, les URLs doivent être hyper prévisibles.</p>
-<h3 id="a-noms-au-pluriel-minuscules">A. Noms au pluriel &amp; minuscules<a class="headerlink" href="#a-noms-au-pluriel-minuscules" title="Permanent link">&para;</a></h3>
+<h2 id="1-introduction-problematique-du-design-dapi-rest">1. Introduction &amp; Problématique du Design d'API REST<a class="headerlink" href="#1-introduction-problematique-du-design-dapi-rest" title="Permanent link">&para;</a></h2>
 <ul>
-<li>❌ <code>/api/user</code> ou <code>/api/GetUser</code></li>
-<li>✅ <code>/api/v1/users</code></li>
+<li><strong>Le problème fréquent</strong> : En début de carrière, on se pose toujours les mêmes questions (Singulier ou pluriel pour les URL ? <code>PUT</code> ou <code>PATCH</code> pour mettre à jour ? Quel code de statut HTTP renvoyer ? Comment gérer une action personnalisée ?).</li>
+<li><strong>L'objectif du cours</strong> : Extraire et appliquer les directives et standards existants pour que l'interface soit <strong>prévisible, cohérente et agréable</strong> pour les développeurs front-end ou autres serveurs qui l'intègrent.</li>
+<li><strong>Deux approches web</strong> :<ul>
+<li><em>MPA (Multi-Page Applications)</em> : L'ancien modèle où le serveur renvoyait du HTML à chaque clic.</li>
+<li><em>SPA (Single Page Applications)</em> : Le modèle moderne où le navigateur télécharge le JS au départ et fait des appels API pour échanger des données.</li>
 </ul>
-<h3 id="b-hierarchie-et-ressources-imbriquees-nested-resources">B. Hiérarchie et Ressources Imbriquées (Nested Resources)<a class="headerlink" href="#b-hierarchie-et-ressources-imbriquees-nested-resources" title="Permanent link">&para;</a></h3>
-<p>Quand une ressource dépend directement d'une autre (ex: les commentaires d'un article spécifique) :</p>
-<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────┐
-│ GET  /api/v1/posts/108/comments      ──&gt; Tous les commentaires du post 108│
-│ POST /api/v1/posts/108/comments      ──&gt; Ajouter un commentaire au post │
-│ GET  /api/v1/posts/108/comments/5    ──&gt; Le commentaire spécifique #5   │
-└─────────────────────────────────────────────────────────────────────────┘
-</code></pre></div>
-<p><em>⚠️ Attention à la profondeur</em> : Ne jamais dépasser 2 niveaux d'imbrication (<code>/posts/108/comments/5</code>). Si c'est plus profond, ré-aplatir la route (ex: <code>/api/v1/comments/5</code>).</p>
+</li>
+</ul>
 <hr />
-<h2 id="3-matrice-generale-des-operations-crud-en-rest">3. Matrice Générale des Opérations CRUD en REST<a class="headerlink" href="#3-matrice-generale-des-operations-crud-en-rest" title="Permanent link">&para;</a></h2>
-<p>Voici l'antisèche complète des méthodes, routes et codes HTTP de retour :</p>
+<h2 id="2-contexte-historique-pourquoi-rest-a-ete-cree">2. Contexte Historique : Pourquoi REST a été créé ?<a class="headerlink" href="#2-contexte-historique-pourquoi-rest-a-ete-cree" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>1990 (Tim Berners-Lee)</strong> : Création du projet <em>World Wide Web</em> pour partager le savoir. En un an, il invente :<ol>
+<li><code>URI</code> (Uniform Resource Identifier)</li>
+<li><code>HTTP</code> (Protocole de communication)</li>
+<li><code>HTML</code> (Langage de balisage)</li>
+<li>Le premier serveur web</li>
+<li>Le premier navigateur web</li>
+<li>Le premier éditeur HTML</li>
+</ol>
+</li>
+<li><strong>La crise de scalabilité (1993)</strong> : L'explosion exponentielle du nombre d'utilisateurs a failli faire s'effondrer le web, car l'architecture initiale n'était pas prévue pour cette échelle.</li>
+<li><strong>L'intervention de Roy Fielding (1993-2000)</strong> : Co-fondateur du projet Apache HTTP Server, il propose un ensemble de contraintes pour rendre le web extensible à très grande échelle. En 2000, dans sa thèse de doctorat, il nomme ce style d'architecture : <strong>REST (Representational State Transfer)</strong>.</li>
+</ul>
+<hr />
+<h2 id="3-les-6-contraintes-dune-architecture-restful-roy-fielding">3. Les 6 Contraintes d'une Architecture RESTful (Roy Fielding)<a class="headerlink" href="#3-les-6-contraintes-dune-architecture-restful-roy-fielding" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────┐
+│                    LES 6 CONTRAINTES DE ROY FIELDING                    │
+├───────────────────┬───────────────────┬─────────────────────────────────┤
+│ 1. Client-Serveur │ Separation des    │ Le client gère l&#39;UI/UX,         │
+│                   │ responsabilités   │ le serveur gère la BDD/métier.  │
+├───────────────────┼───────────────────┼─────────────────────────────────┤
+│ 2. Uniform        │ Interface         │ Standardisation absolue de la   │
+│    Interface      │ unifiée           │ communication entre composants. │
+├───────────────────┼───────────────────┼─────────────────────────────────┤
+│ 3. Layered System │ Système en        │ Architecture hiérarchique       │
+│                   │ couches           │ (Proxies, Load Balancers).      │
+├───────────────────┼───────────────────┼─────────────────────────────────┤
+│ 4. Cache          │ Gestion du        │ Les réponses doivent se déclarer│
+│                   │ cache             │ cachables ou non-cachables.     │
+├───────────────────┼───────────────────┼─────────────────────────────────┤
+│ 5. Stateless      │ Sans état         │ Chaque requête contient TOUTES  │
+│                   │                   │ les infos nécessaires au serveur│
+├───────────────────┼───────────────────┼─────────────────────────────────┤
+│ 6. Code on Demand │ Code à la demande │ (Optionnel) Le serveur envoie   │
+│                   │                   │ du JS exécutable au client.     │
+└───────────────────┴───────────────────┴─────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="4-demystification-que-signifie-rest">4. Démystification : Que signifie "R.E.S.T" ?<a class="headerlink" href="#4-demystification-que-signifie-rest" title="Permanent link">&para;</a></h2>
+<p>REST veut dire <strong>Representational State Transfer</strong> :</p>
+<ol>
+<li><strong>Representational (Représentation)</strong> : Une même ressource (ex: un utilisateur) peut être représentée dans différents formats selon le client : <code>JSON</code> (pour une API / communication inter-serveurs), <code>HTML</code> (pour un navigateur), ou <code>XML</code>.</li>
+<li><strong>State (État)</strong> : L'état actuel d'une ressource à un instant T (ex: les articles présentés dans un panier d'achat avec leurs quantités et le montant total).</li>
+<li><strong>Transfer (Transfert)</strong> : Le déplacement des représentations d'état entre le client et le serveur via le protocole HTTP (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.).</li>
+</ol>
+<hr />
+<h2 id="5-anatomie-dune-url-conventions-de-nommage-rest">5. Anatomie d'une URL &amp; Conventions de Nommage REST<a class="headerlink" href="#5-anatomie-dune-url-conventions-de-nommage-rest" title="Permanent link">&para;</a></h2>
+<h3 id="a-structure-dune-url-classique-vs-url-dapi">A. Structure d'une URL classique vs URL d'API<a class="headerlink" href="#a-structure-dune-url-classique-vs-url-dapi" title="Permanent link">&para;</a></h3>
+<p><code>https://api.example.com/v1/books</code>
+*   <strong>Scheme</strong> : <code>https://</code> (Sécurisé/chiffré).
+*   <strong>Subdomain / Authority</strong> : <code>api.example.com</code> (Pratique courante en industrie d'isoler l'API sur un sous-domaine <code>api.</code>).
+*   <strong>Versioning</strong> : <code>/v1/</code> ou <code>/v2/</code> (Pour éviter de casser le front-end lors d'évolutions).
+*   <strong>Path Segment / Resource</strong> : <code>/books</code> (<strong>Règle d'or : Toujours utiliser des noms au PLURIEL</strong>, même pour récupérer un seul élément comme <code>/books/123</code>).</p>
+<h3 id="b-bonnes-pratiques-pour-les-slugs-dans-lurl">B. Bonnes pratiques pour les Slugs dans l'URL<a class="headerlink" href="#b-bonnes-pratiques-pour-les-slugs-dans-lurl" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Pas de majuscules (ex: <code>/books/harry-potter</code> et non <code>/books/HarryPotter</code>).</li>
+<li>Remplacer les espaces par des <strong>tirets du haut <code>-</code></strong> (kebab-case) et bannir les tirets bas <code>_</code> ou espaces.</li>
+<li>Le caractère slash <code>/</code> exprime une <strong>relation hiérarchique</strong> entre ressources (ex: <code>/organizations/5/projects</code> = la collection de projets qui appartiennent à l'organisation 5).</li>
+</ul>
+<hr />
+<h2 id="6-lidempotence-des-methodes-http">6. L'Idempotence des Méthodes HTTP<a class="headerlink" href="#6-lidempotence-des-methodes-http" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💡 <strong>Définition</strong> : Une opération est <strong>idempotente</strong> si le fait de l'exécuter une seule fois ou plusieurs fois produit exactement le même effet et le même état sur le serveur.</p>
+</blockquote>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Opération CRUD</th>
 <th style="text-align: left;">Méthode HTTP</th>
-<th style="text-align: left;">Exemple d'Endpoint</th>
-<th style="text-align: center;">Body de Requête</th>
-<th style="text-align: left;">Code HTTP de Succès</th>
+<th style="text-align: left;">Usage principal</th>
+<th style="text-align: center;">Idempotente ?</th>
+<th style="text-align: left;">Explication concrète</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Lire la liste</strong></td>
 <td style="text-align: left;"><code>GET</code></td>
-<td style="text-align: left;"><code>/api/v1/products</code></td>
-<td style="text-align: center;">Non</td>
-<td style="text-align: left;"><code>200 OK</code> (avec tableau JSON)</td>
+<td style="text-align: left;">Récupérer des données</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Ne modifie rien sur le serveur. 1000 appels renvoient le même état.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Lire un élément</strong></td>
-<td style="text-align: left;"><code>GET</code></td>
-<td style="text-align: left;"><code>/api/v1/products/42</code></td>
-<td style="text-align: center;">Non</td>
-<td style="text-align: left;"><code>200 OK</code> (avec objet JSON)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Créer</strong></td>
-<td style="text-align: left;"><code>POST</code></td>
-<td style="text-align: left;"><code>/api/v1/products</code></td>
-<td style="text-align: center;"><strong>OUI</strong> (JSON)</td>
-<td style="text-align: left;"><code>201 Created</code> (avec la ressource créée)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Remplacement total</strong></td>
 <td style="text-align: left;"><code>PUT</code></td>
-<td style="text-align: left;"><code>/api/v1/products/42</code></td>
-<td style="text-align: center;"><strong>OUI</strong> (JSON)</td>
-<td style="text-align: left;"><code>200 OK</code></td>
+<td style="text-align: left;">Remplacer entièrement une ressource</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Remplace tout l'objet. Répéter le même payload laisse l'état identique.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Mise à jour partielle</strong></td>
 <td style="text-align: left;"><code>PATCH</code></td>
-<td style="text-align: left;"><code>/api/v1/products/42</code></td>
-<td style="text-align: center;"><strong>OUI</strong> (JSON)</td>
-<td style="text-align: left;"><code>200 OK</code></td>
+<td style="text-align: left;">Modifier partiellement une ressource</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Met à jour certains champs. Le résultat reste identique après le 1er appel.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Supprimer</strong></td>
 <td style="text-align: left;"><code>DELETE</code></td>
-<td style="text-align: left;"><code>/api/v1/products/42</code></td>
-<td style="text-align: center;">Non</td>
-<td style="text-align: left;"><code>204 No Content</code> (body vide)</td>
+<td style="text-align: left;">Supprimer une ressource</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Le 1er appel supprime la ressource. Les appels suivants renvoient <code>404</code> mais aucun autre effet de bord n'a lieu.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>POST</code></td>
+<td style="text-align: left;">Créer une ressource / Action</td>
+<td style="text-align: center;"><strong>NON</strong></td>
+<td style="text-align: left;">Chaque appel crée une nouvelle ressource en BDD (nouveau ID généré).</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="4-filtrage-tri-et-pagination-query-parameters">4. Filtrage, Tri et Pagination (Query Parameters)<a class="headerlink" href="#4-filtrage-tri-et-pagination-query-parameters" title="Permanent link">&para;</a></h2>
-<p>On ne renvoie JAMAIS 100 000 lignes de base de données d'un coup ! On passe par les <strong>Query Parameters</strong> dans l'URL.</p>
-<div class="highlight"><pre><span></span><code>                  REQUÊTE DE RECHERCHE AVANCÉE EN REST
-┌─────────────────────────────────────────────────────────────────────────┐
-│ GET /api/v1/products?category=electronics&amp;sort=-price&amp;page=2&amp;limit=20  │
-└──────────────────────────────────┬──────────────────────────────────────┘
-                                   │
-      ┌────────────────────────────┼────────────────────────────┐
-      ▼                            ▼                            ▼
-  FILTRAGE                      TRIER                      PAGINATION
-category=electronics      sort=-price (- = décroissant)    page=2 &amp; limit=20
-</code></pre></div>
-<h3 id="format-type-dune-reponse-paginee">Format type d'une réponse paginée :<a class="headerlink" href="#format-type-dune-reponse-paginee" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;pagination&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;current_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;per_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;total_items&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">142</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;total_pages&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Clavier Mécanique&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">89.99</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-<hr />
-<h2 id="5-gestion-des-erreurs-et-format-standardise">5. Gestion des Erreurs et Format Standardisé<a class="headerlink" href="#5-gestion-des-erreurs-et-format-standardise" title="Permanent link">&para;</a></h2>
-<p>Une API professionnelle doit renvoyer un format d'erreur prévisible et lisible par la machine comme par l'humain.</p>
-<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────┐
-│ ERREUR TYPIQUE D&#39;UNE API REST (HTTP 400 BAD REQUEST)   │
-├────────────────────────────────────────────────────────┤
-│ {                                                      │
-│   &quot;error&quot;: {                                           │
-│     &quot;code&quot;: &quot;INVALID_INPUT&quot;,                           │
-│     &quot;message&quot;: &quot;La validation des données a échoué&quot;,   │
-│     &quot;details&quot;: [                                       │
-│       {                                                │
-│         &quot;field&quot;: &quot;email&quot;,                              │
-│         &quot;issue&quot;: &quot;L&#39;adresse email n&#39;est pas valide&quot;    │
-│       }                                                │
-│     ]                                                  │
-│   }                                                    │
-│ }                                                      │
-└────────────────────────────────────────────────────────┘
-</code></pre></div>
 <ul>
-<li><strong>Les Règles d'Erreurs REST</strong> :</li>
-<li>Toujours utiliser les vrais codes de statut HTTP (<code>400</code>, <code>401</code>, <code>403</code>, <code>404</code>, <code>422</code>, <code>500</code>).</li>
-<li>Ne JAMAIS renvoyer un <code>200 OK</code> avec un corps <code>{ "error": "Problème" }</code> (anti-pattern absolu !).</li>
+<li><strong>POST comme méthode "Open-Ended" (Actions Personnalisées)</strong> : Quand une opération ne rentre pas dans le CRUD classique (ex: <code>send-email</code>, <code>archive</code>, <code>clone</code>), la spécification REST stipule d'utiliser <code>POST</code>.</li>
 </ul>
 <hr />
-<h2 id="6-versioning-de-lapi-eviter-de-casser-le-front">6. Versioning de l'API (Éviter de casser le Front)<a class="headerlink" href="#6-versioning-de-lapi-eviter-de-casser-le-front" title="Permanent link">&para;</a></h2>
-<p>Quand l'API évolue, on doit pouvoir mettre à jour le backend sans faire planter l'application mobile ou le front-end existant.</p>
-<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────┐
-│ METHODE RECOMMANDÉE : URI VERSIONING                                    │
-├─────────────────────────────────────────────────────────────────────────┤
-│ • Ancienne version : GET /api/v1/users (Toujours maintenue)             │
-│ • Nouvelle version : GET /api/v2/users (Nouvelle structure de données)  │
-└─────────────────────────────────────────────────────────────────────────┘
-</code></pre></div>
+<h2 id="7-demo-pratique-sur-insomnia-modelisation-dun-saas-de-gestion-de-projet">7. Démo Pratique sur Insomnia : Modélisation d'un SaaS de Gestion de Projet<a class="headerlink" href="#7-demo-pratique-sur-insomnia-modelisation-dun-saas-de-gestion-de-projet" title="Permanent link">&para;</a></h2>
+<p>Dans la démo, Sriniously modélise les endpoints pour une plateforme style Jira/Linear autour de 3 ressources : <code>organizations</code>, <code>projects</code>, <code>tasks</code>.</p>
+<h3 id="71-gestion-des-organisations-organizations">7.1. Gestion des Organisations (<code>/organizations</code>)<a class="headerlink" href="#71-gestion-des-organisations-organizations" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Lister les organisations</strong> (<code>GET /organizations</code>) :</p>
+<ul>
+<li>Renvoie une réponse paginée avec le code <code>200 OK</code>.</li>
+<li><strong>Structure d'une réponse paginée</strong> :
+    <div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Org 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;active&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;totalPages&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><strong>Paramètres de pagination</strong> : <code>?limit=10&amp;page=1</code>.</li>
+<li><strong>Tri (Sorting)</strong> : <code>?sortBy=created_at&amp;sortOrder=desc</code> (Tri par défaut : date de création décroissante).</li>
+<li><strong>Filtrage (Filtering)</strong> : <code>?status=archived</code> ou <code>?name=Org</code>.</li>
+<li>⚠️ <strong>Règle pour les listes vides</strong> : Si aucun résultat ne correspond aux filtres, renvoyer un tableau vide <code>[]</code> avec <code>200 OK</code> (et <strong>jamais de 404</strong> ! Le 404 est réservé à la recherche d'un identifiant spécifique inexistant).</li>
+</ul>
+</li>
+<li>
+<p><strong>Créer une organisation</strong> (<code>POST /organizations</code>) :</p>
+<ul>
+<li>Payload JSON en dromadaire (<code>camelCase</code>).</li>
+<li>Renvoie la ressource créée avec le code <strong><code>201 Created</code></strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Récupérer une organisation spécifique</strong> (<code>GET /organizations/:id</code>) :</p>
+<ul>
+<li>Renvoie <code>200 OK</code> avec l'objet, ou <strong><code>404 Not Found</code></strong> si l'ID n'existe pas.</li>
+</ul>
+</li>
+<li>
+<p><strong>Mettre à jour une organisation</strong> (<code>PATCH /organizations/:id</code>) :</p>
+<ul>
+<li>Renvoie <code>200 OK</code> avec l'objet mis à jour.</li>
+</ul>
+</li>
+<li>
+<p><strong>Supprimer une organisation</strong> (<code>DELETE /organizations/:id</code>) :</p>
+<ul>
+<li>Renvoie le code <strong><code>204 No Content</code></strong> avec un corps de réponse vide.</li>
+</ul>
+</li>
+<li>
+<p><strong>Action personnalisée : Archiver</strong> (<code>POST /organizations/:id/archive</code>) :</p>
+<ul>
+<li>Puisque l'archivage déclenche un effet cascade (notification, suppression des projets sous-jacents, etc.), ce n'est pas un simple PATCH. On utilise <code>POST</code> avec le nom de l'action à la fin du chemin hiérarchique, et cela renvoie <code>200 OK</code>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="72-gestion-des-projets-projects">7.2. Gestion des Projets (<code>/projects</code>)<a class="headerlink" href="#72-gestion-des-projets-projects" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /projects</code> $\rightarrow$ Création (<code>201 Created</code>).</li>
+<li><code>GET /projects</code> $\rightarrow$ Liste paginée (<code>200 OK</code>).</li>
+<li><code>GET /projects/:id</code> $\rightarrow$ Détail (<code>200 OK</code>).</li>
+<li><code>PATCH /projects/:id</code> $\rightarrow$ Mise à jour partielle (<code>200 OK</code>).</li>
+<li><code>DELETE /projects/:id</code> $\rightarrow$ Suppression (<code>204 No Content</code>).</li>
+<li><code>POST /projects/:id/clone</code> $\rightarrow$ <strong>Action personnalisée de clonage</strong> : Génère un nouveau projet dupliqué sur le serveur et renvoie <code>201 Created</code>.</li>
+</ul>
 <hr />
-<h2 id="7-resume-des-bonnes-pratiques-en-fiche-reflexe">7. Résumé des Bonnes Pratiques en Fiche Réflexe<a class="headerlink" href="#7-resume-des-bonnes-pratiques-en-fiche-reflexe" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>  ✔ REST = Ressources (Noms au pluriel) + Verbes HTTP (Actions)
-  ✔ Utiliser des codes HTTP appropriés (200, 201, 204, 400, 401, 403, 404, 500)
-  ✔ Toujours paginer et filtrer via des Query Parameters
-  ✔ Garantir un format JSON d&#39;erreur clair et constant
-  ✔ Versionner les routes d&#39;API dès le départ (/api/v1/)
-</code></pre></div>
+<h2 id="8-les-5-regles-dor-pour-devenir-un-excellent-ingenieur-backend">8. Les 5 Règles d'Or pour devenir un Excellent Ingénieur Backend<a class="headerlink" href="#8-les-5-regles-dor-pour-devenir-un-excellent-ingenieur-backend" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Conception de l'Interface avant le Code</strong> : Utiliser Figma/Wireframes pour identifier les noms (ressources) et actions, puis prototyper les endpoints dans Postman/Insomnia ou Swagger avant d'écrire le code métier.</li>
+<li><strong>Documentation Interactive (OpenAPI / Swagger)</strong> : Maintenir une documentation d'API à jour et testable pour éviter les devinettes.</li>
+<li><strong>Consistance Absolue (Styling &amp; Naming)</strong> : Ne jamais mélanger le camelCase et le snake_case dans les payloads JSON. Utiliser la même convention sur l'ensemble des ressources.</li>
+<li><strong>Sane Defaults (Valeurs par défaut intelligentes)</strong> : Le serveur doit fonctionner même si le client ne fournit pas les paramètres de pagination (ex: par défaut <code>page=1</code>, <code>limit=10</code>, <code>status=active</code>).</li>
+<li><strong>Éviter les Abbréviations</strong> : Écrire <code>description</code> et non <code>desc</code>, <code>organization</code> et non <code>org</code> dans les clés JSON pour garantir la lisibilité.</li>
+</ol>
 
 
 
