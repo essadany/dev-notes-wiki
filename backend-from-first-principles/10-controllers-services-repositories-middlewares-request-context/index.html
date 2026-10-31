@@ -1,0 +1,1467 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../09-validations-and-transformations-for-backend-engineers/">
+      
+      
+        <link rel="next" href="../11-complete-rest-api-design/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>10. Les contrôleurs, services, dépôts, middlewares et contexte de requête - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#10-architecture-en-couches-middlewares-request-context" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-decouper-le-code-la-layered-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 1. Pourquoi Découper le Code ? (La Layered Architecture)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-role-detalle-de-chaque-couche" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧱 2. Le Rôle Détallé de Chaque Couche
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧱 2. Le Rôle Détallé de Chaque Couche">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-le-controller-handler-le-gendarme-du-trafic-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Le Controller / Handler (Le Gendarme du Trafic HTTP)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-service-le-cur-metier" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Le Service (Le Cœur Métier)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-le-repository-la-couche-de-persistence-bdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      C. Le Repository (La Couche de Persistence BDD)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tableau-comparatif-des-3-couches" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Tableau Comparatif des 3 Couches
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-middlewares-les-douaniers-du-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚦 3. Les Middlewares (Les Douaniers du Flux)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚦 3. Les Middlewares (Les Douaniers du Flux)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-quun-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce qu'un Middleware ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-les-utiliser" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi les utiliser ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lordre-dexecution-des-middlewares-crucial" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ L'Ordre d'Exécution des Middlewares (CRUCIAL)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-le-request-context-le-sac-a-dos-de-la-requete" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎒 4. Le Request Context (Le Sac à Dos de la Requête)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎒 4. Le Request Context (Le Sac à Dos de la Requête)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-que-le-request-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce que le Request Context ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cas-dusages-fondamentaux-du-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cas d'usages fondamentaux du Context :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-decouper-le-code-la-layered-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 1. Pourquoi Découper le Code ? (La Layered Architecture)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-role-detalle-de-chaque-couche" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧱 2. Le Rôle Détallé de Chaque Couche
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧱 2. Le Rôle Détallé de Chaque Couche">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-le-controller-handler-le-gendarme-du-trafic-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Le Controller / Handler (Le Gendarme du Trafic HTTP)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-service-le-cur-metier" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Le Service (Le Cœur Métier)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-le-repository-la-couche-de-persistence-bdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      C. Le Repository (La Couche de Persistence BDD)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tableau-comparatif-des-3-couches" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Tableau Comparatif des 3 Couches
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-middlewares-les-douaniers-du-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚦 3. Les Middlewares (Les Douaniers du Flux)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚦 3. Les Middlewares (Les Douaniers du Flux)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-quun-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce qu'un Middleware ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-les-utiliser" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi les utiliser ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lordre-dexecution-des-middlewares-crucial" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ L'Ordre d'Exécution des Middlewares (CRUCIAL)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-le-request-context-le-sac-a-dos-de-la-requete" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎒 4. Le Request Context (Le Sac à Dos de la Requête)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎒 4. Le Request Context (Le Sac à Dos de la Requête)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-que-le-request-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce que le Request Context ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cas-dusages-fondamentaux-du-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cas d'usages fondamentaux du Context :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="10-architecture-en-couches-middlewares-request-context">10. Architecture en Couches, Middlewares &amp; Request Context<a class="headerlink" href="#10-architecture-en-couches-middlewares-request-context" title="Permanent link">&para;</a></h1>
+<p>Aujourd'hui, gros morceau sur la structuration interne d'un serveur backend : <strong>comment organiser proprement son code quand l'application grandit</strong> ! Sriniously explique pourquoi mettre tout le code dans une seule fonction géante est un piège et comment découper proprement une application avec la <strong>Layered Architecture</strong> (Controllers, Services, Repositories), utiliser les <strong>Middlewares</strong> et exploiter le <strong>Request Context</strong>.</p>
+<hr />
+<h2 id="1-pourquoi-decouper-le-code-la-layered-architecture">🌐 1. Pourquoi Découper le Code ? (La Layered Architecture)<a class="headerlink" href="#1-pourquoi-decouper-le-code-la-layered-architecture" title="Permanent link">&para;</a></h2>
+<p>Au tout début, quand on apprend le backend, on a tendance à tout écrire dans le Handler de route : la lecture de la requête, la validation, la requête SQL, l'envoi d'email et la réponse HTTP. </p>
+<p>Sur une petite application, ça marche. Mais sur un projet de production avec des dizaines ou des centaines de routes, le code devient un cauchemar impossible à tester, maintenir ou faire évoluer.</p>
+<p>Pour éviter le bazar, on utilise un modèle de conception classique : la <strong>Séparation des Responsabilités (Separation of Concerns)</strong> en découpant le code en 3 couches distinctes.</p>
+<div class="highlight"><pre><span></span><code> [ CLIENT ] ──(Requête HTTP)──&gt; [ ROUTEUR ]
+                                   │
+                                   ▼
+                         ┌──────────────────┐
+                         │ 1. CONTROLLER /  │ ──&gt; Reçoit req/res, Désérialise, Valide &amp; Transforme,
+                         │    HANDLER       │     Gère les Status Codes HTTP (200, 400, 500)
+                         └─────────┬────────┘
+                                   │ (Données pures &amp; Contexte)
+                                   ▼
+                         ┌──────────────────┐
+                         │ 2. SERVICE LAYER │ ──&gt; Logique Métier pure (Calculs, Orchestration,
+                         │    (Business)    │     envoi d&#39;emails, APIs externes). Zero HTTP !
+                         └─────────┬────────┘
+                                   │ (Requêtes BDD)
+                                   ▼
+                         ┌──────────────────┐
+                         │ 3. REPOSITORY    │ ──&gt; Accès direct à la Base de Données (SQL/ORM).
+                         │    LAYER (Data)  │     Une méthode = Une tâche BDD précise.
+                         └──────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="2-le-role-detalle-de-chaque-couche">🧱 2. Le Rôle Détallé de Chaque Couche<a class="headerlink" href="#2-le-role-detalle-de-chaque-couche" title="Permanent link">&para;</a></h2>
+<h3 id="a-le-controller-handler-le-gendarme-du-trafic-http">A. Le Controller / Handler (Le Gendarme du Trafic HTTP)<a class="headerlink" href="#a-le-controller-handler-le-gendarme-du-trafic-http" title="Permanent link">&para;</a></h3>
+<p>Le Controller est la seule couche qui parle le langage du protocole HTTP. Dans la plupart des langages (Go, Node.js avec Express, Python avec FastAPI), le Controller reçoit automatiquement deux objets : la requête (<code>req</code>) et la réponse (<code>res</code>).</p>
+<ul>
+<li><strong>Ses Responsabilités :</strong></li>
+<li><strong>Extraction</strong> : Récupère les données envoyées par le client (<code>query params</code>, <code>request body</code>, <code>path params</code>).</li>
+<li><strong>Désérialisation / Binding</strong> : Convertit le JSON reçu en objet/struct natif du langage. Si la désérialisation échoue, il renvoie immédiatement une erreur <code>400 Bad Request</code>.</li>
+<li><strong>Validation &amp; Transformation</strong> : S'assure que les données sont valides et applique les valeurs par défaut (ex: trier par date par défaut si le client n'a rien précisé).</li>
+<li><strong>Appel du Service</strong> : Transmet les données validées et le contexte d'authentification à la couche Service.</li>
+<li><strong>Réponse HTTP</strong> : Reçoit le résultat du Service et choisit le code d'état HTTP approprié (<code>200 OK</code>, <code>201 Created</code>, <code>204 No Content</code>, <code>400 Bad Request</code>, <code>500 Server Error</code>).</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Astuce de dev</strong> : Le Controller est la frontière HTTP. Dès qu'on quitte le Controller pour entrer dans le Service, le protocole HTTP n'existe plus !</p>
+</blockquote>
+<h3 id="b-le-service-le-cur-metier">B. Le Service (Le Cœur Métier)<a class="headerlink" href="#b-le-service-le-cur-metier" title="Permanent link">&para;</a></h3>
+<p>La couche Service contient toute la <strong>logique applicative / métier</strong>. Elle est totalement isolée et agnostique du web.</p>
+<ul>
+<li><strong>Ses Responsabilités :</strong></li>
+<li>Effectuer les calculs métier et appliquer les règles d'entreprise.</li>
+<li>Orchestrer plusieurs requêtes vers la base de données (en appelant plusieurs méthodes de Repository).</li>
+<li>Déclencher des actions externes : envoi d'emails, notifications Push, appels à des API tiers (Stripe, Twilio, etc.).</li>
+<li><strong>Règle d'or</strong> : Si on regarde une fonction de Service, on ne doit <strong>pas</strong> pouvoir deviner qu'elle est appelée par une API HTTP. Elle prend des données pures en entrée, réalise un traitement et retourne un résultat pur.</li>
+</ul>
+<h3 id="c-le-repository-la-couche-de-persistence-bdd">C. Le Repository (La Couche de Persistence BDD)<a class="headerlink" href="#c-le-repository-la-couche-de-persistence-bdd" title="Permanent link">&para;</a></h3>
+<p>La couche Repository est la seule autorisée à exécuter des requêtes vers la base de données (SQL, MongoDB, Redis).</p>
+<ul>
+<li><strong>Ses Responsabilités :</strong></li>
+<li>Construire et exécuter les requêtes de base de données (Insert, Select, Update, Delete).</li>
+<li>Retourner les données brutes sous forme d'objets ou d'enregistrements à la couche Service.</li>
+<li>⚠️ <strong>Bonne pratique</strong> : Une méthode de Repository doit avoir une <strong>seule et unique responsabilité</strong> (ex: <code>findBookById(id)</code>, <code>getAllBooks(sort)</code>). On évite de créer des méthodes géantes avec plein de paramètres optionnels pour gérer plusieurs cas.</li>
+</ul>
+<h3 id="tableau-comparatif-des-3-couches">📊 Tableau Comparatif des 3 Couches<a class="headerlink" href="#tableau-comparatif-des-3-couches" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Couche</th>
+<th style="text-align: left;">Ce qu'elle reçoit</th>
+<th style="text-align: left;">Ce qu'elle traite</th>
+<th style="text-align: center;">Manipule HTTP (<code>req</code>/<code>res</code>) ?</th>
+<th style="text-align: left;">Rôle Principal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Controller</strong></td>
+<td style="text-align: left;">Requête HTTP (<code>req</code>)</td>
+<td style="text-align: left;">Parsing JSON, Validation, Code de réponse</td>
+<td style="text-align: center;"><strong>OUI</strong></td>
+<td style="text-align: left;">Interface HTTP &amp; Contrôle du flux</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Service</strong></td>
+<td style="text-align: left;">Données pures / DTO</td>
+<td style="text-align: left;">Règles métier, Orchestration, APIs externes</td>
+<td style="text-align: center;"><strong>NON</strong></td>
+<td style="text-align: left;">Cœur applicatif &amp; Logique métier</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Repository</strong></td>
+<td style="text-align: left;">Paramètres de recherche</td>
+<td style="text-align: left;">Requêtes BDD (SQL, ORM)</td>
+<td style="text-align: center;"><strong>NON</strong></td>
+<td style="text-align: left;">Persistence &amp; Lecture Base de données</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-les-middlewares-les-douaniers-du-flux">🚦 3. Les Middlewares (Les Douaniers du Flux)<a class="headerlink" href="#3-les-middlewares-les-douaniers-du-flux" title="Permanent link">&para;</a></h2>
+<h3 id="quest-ce-quun-middleware">Qu'est-ce qu'un Middleware ?<a class="headerlink" href="#quest-ce-quun-middleware" title="Permanent link">&para;</a></h3>
+<p>Un middleware est une fonction qui s'exécute <strong>dans l'intervalle</strong> (au milieu) du cycle de vie d'une requête, entre l'entrée sur le serveur et l'arrivée au Controller final.</p>
+<p>Chaque middleware reçoit trois arguments de la part du runtime : <code>(req, res, next)</code>.
+* <code>req</code> : L'objet requête pour lire ou modifier les données.
+* <code>res</code> : L'objet réponse pour pouvoir envoyer une réponse anticipée (ex: erreur 401).
+* <code>next()</code> : Une fonction clé qui permet de passer la main au middleware suivant dans la chaîne.</p>
+<h3 id="pourquoi-les-utiliser">Pourquoi les utiliser ?<a class="headerlink" href="#pourquoi-les-utiliser" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Réduire la duplication de code (DRY)</strong> : Éviter de répéter le même code de sécurité, de logs ou d'authentification sur des centaines de routes API.</li>
+<li><strong>Couper court à la requête (Short-Circuit)</strong> : Si une vérification échoue (ex: jeton d'authentification manquant ou expiré), le middleware renvoie immédiatement une erreur <code>401 Unauthorized</code> au client sans gaspiller les ressources du serveur.</li>
+</ol>
+<h3 id="lordre-dexecution-des-middlewares-crucial">⚠️ L'Ordre d'Exécution des Middlewares (CRUCIAL)<a class="headerlink" href="#lordre-dexecution-des-middlewares-crucial" title="Permanent link">&para;</a></h3>
+<p>L'ordre dans lequel on déclare les middlewares est d'une importance capitale car la requête les traverse dans un sens séquentiel strict !</p>
+<div class="highlight"><pre><span></span><code>[ Entrée de la Requête HTTP ]
+         │
+         ▼
+ ┌───────────────┐
+ │  1. CORS      │ ──&gt; Rejette immédiatement les origines non autorisées
+ └───────┬───────┘
+         ▼
+ ┌───────────────┐
+ │  2. LOGGING   │ ──&gt; Enregistre la méthode, l&#39;URL, l&#39;IP et l&#39;horodatage
+ └───────┬───────┘
+         ▼
+ ┌───────────────┐
+ │  3. SECURITY  │ ──&gt; Applique le Rate Limiting (ex: max 30 req/sec → 429) &amp; Headers CSP
+ └───────┬───────┘
+         ▼
+ ┌───────────────┐
+ │  4. BODY PARSE│ ──&gt; Désérialise le JSON du Body en objet natif
+ └───────┬───────┘
+         ▼
+ ┌───────────────┐
+ │  5. AUTH      │ ──&gt; Vérifie le Token JWT, extrait l&#39;User ID &amp; l&#39;injecte dans le Context
+ └───────┬───────┘
+         ▼
+ ┌───────────────┐
+ │  6. ROUTEUR &amp; │ ──&gt; Exécute la chaîne : Controller ──&gt; Service ──&gt; Repository
+ │     HANDLER   │
+ └───────┬───────┘
+         ▼
+ ┌───────────────┐
+ │  7. GLOBAL    │ ──&gt; PLACÉ EN DERNIER ! Attrape toutes les erreurs non gérées
+ │     ERROR     │     dans l&#39;application et renvoie une réponse propre (400 / 500).
+ └───────────────┘
+</code></pre></div>
+<blockquote>
+<p>🚨 <strong>Piège classique en entretien</strong> : Pourquoi le middleware de gestion globale des erreurs doit-il TOUJOURS être placé en dernier ? Parce que si une erreur survient dans un Controller ou un Service, le flux remonte vers le bas. S'il était placé en premier, il ne verrait jamais les erreurs survenues plus bas dans la chaîne !</p>
+</blockquote>
+<hr />
+<h2 id="4-le-request-context-le-sac-a-dos-de-la-requete">🎒 4. Le Request Context (Le Sac à Dos de la Requête)<a class="headerlink" href="#4-le-request-context-le-sac-a-dos-de-la-requete" title="Permanent link">&para;</a></h2>
+<h3 id="quest-ce-que-le-request-context">Qu'est-ce que le Request Context ?<a class="headerlink" href="#quest-ce-que-le-request-context" title="Permanent link">&para;</a></h3>
+<p>Le <strong>Request Context</strong> est un espace de stockage temporaire (sous forme de dictionnaire clé-valeur) créé au moment où une requête HTTP arrive sur le serveur, et détruit dès que la réponse est envoyée.</p>
+<p>Il permet de partager des informations d'état <strong>entre différents middlewares et controllers</strong> sans coupler le code ni passer des dizaines d'arguments manuellement.</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                       REQUEST CONTEXT (Stockage Clé-Valeur)                  │
+│                                                                             │
+│  • user_id : &quot;usr_987654&quot;        &lt;── Injecté par le Middleware d&#39;Auth       │
+│  • user_role : &quot;admin&quot;           &lt;── Injecté par le Middleware d&#39;Auth       │
+│  • request_id : &quot;uuid-1234-5678&quot; &lt;── Injecté par le Middleware de Logging │
+└─────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="cas-dusages-fondamentaux-du-context">Cas d'usages fondamentaux du Context :<a class="headerlink" href="#cas-dusages-fondamentaux-du-context" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Sécurité &amp; Isolation des données Utilisateur</strong> :</li>
+<li><strong>Le problème</strong> : Si le client envoyait son <code>user_id</code> directement dans le body JSON de la requête, un utilisateur malveillant pourrait envoyer l'ID d'un autre utilisateur et pirater ses données.</li>
+<li><strong>La solution avec Context</strong> : Le middleware d'authentification valide le Token JWT, extrait le vrai <code>user_id</code> vérifié et l'enregistre dans le Request Context. Plus bas dans la chaîne, le Controller et le Service récupèrent cet <code>user_id</code> depuis le Context en toute sécurité.</li>
+<li><strong>Traçabilité des Logs (Distributed Tracing)</strong> :</li>
+<li>Un middleware génère un identifiant unique <code>X-Request-ID</code> (ex: UUID) au tout début de la requête.</li>
+<li>Toutes les fonctions de l'application et tous les appels vers d'autres microservices réutilisent cet ID depuis le Context pour suivre le cheminement complet de la requête dans les logs.</li>
+<li><strong>Gestion des Timeouts &amp; Annulations</strong> :</li>
+<li>Permet de propager des signaux d'annulation (<em>Abort signals</em>) si le client ferme son navigateur avant que le serveur n'ait fini d'exécuter la requête en base de données.</li>
+</ol>
+<hr />
+<p><em>Notes de cours rédigées avec soin sur l'architecture backend moderne.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 9. Les validations et les transformations pour les ingénieurs backend">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                9. Les validations et les transformations pour les ingénieurs backend
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../11-complete-rest-api-design/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 11. Conception d&#39;APIs REST (Complete REST API Design)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                11. Conception d'APIs REST (Complete REST API Design)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

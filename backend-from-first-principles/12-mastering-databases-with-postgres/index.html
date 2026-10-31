@@ -1,0 +1,1314 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../11-complete-rest-api-design/">
+      
+      
+        <link rel="next" href="../../langages/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>12. Maîtriser les bases de données avec Postgres - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#12-maitriser-les-bases-de-donnees-avec-postgres" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              12. Maîtriser les bases de données avec Postgres
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-sql-relationnel-vs-nosql-non-relationnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. ⚔️ SQL (Relationnel) vs NoSQL (Non-Relationnel)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-anatomie-dune-base-postgres-schemas-relations" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 🏛️ Anatomie d'une Base Postgres : Schémas &amp; Relations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 🏛️ Anatomie d'une Base Postgres : Schémas & Relations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-cles-et-contraintes-essentielles" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗝️ Les Clés et Contraintes Essentielles :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-garanties-acid-le-bouclier-de-postgres" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 🛡️ Les Garanties ACID (Le Bouclier de Postgres)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. ⚡ Indexation : Accélérer les Lectures sans Ruiner les Écritures
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-connection-pooling-gerer-les-milliers-de-connexions" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 🔌 Connection Pooling : Gérer les Milliers de Connexions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 🛠️ Abstractions de Base de Données : Raw SQL, Query Builder &amp; ORM
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-sql-relationnel-vs-nosql-non-relationnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. ⚔️ SQL (Relationnel) vs NoSQL (Non-Relationnel)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-anatomie-dune-base-postgres-schemas-relations" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 🏛️ Anatomie d'une Base Postgres : Schémas &amp; Relations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 🏛️ Anatomie d'une Base Postgres : Schémas & Relations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-cles-et-contraintes-essentielles" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗝️ Les Clés et Contraintes Essentielles :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-garanties-acid-le-bouclier-de-postgres" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 🛡️ Les Garanties ACID (Le Bouclier de Postgres)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. ⚡ Indexation : Accélérer les Lectures sans Ruiner les Écritures
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-connection-pooling-gerer-les-milliers-de-connexions" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 🔌 Connection Pooling : Gérer les Milliers de Connexions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 🛠️ Abstractions de Base de Données : Raw SQL, Query Builder &amp; ORM
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="12-maitriser-les-bases-de-donnees-avec-postgres">🗄️ 12. Maîtriser les Bases de Données avec Postgres<a class="headerlink" href="#12-maitriser-les-bases-de-donnees-avec-postgres" title="Permanent link">&para;</a></h1>
+<p>Aujourd'hui, on entre dans le cœur dur du backend : <strong>les bases de données</strong>, et plus particulièrement <strong>PostgreSQL (Postgres)</strong> ! Une API REST sans base de données, c'est comme une voiture sans réservoir : ça ne conserve rien. Voici mes notes personnelles rédigées avec mes propres mots, des schémas visuels et des antisèches pour être au niveau en dev !</p>
+<hr />
+<h2 id="1-sql-relationnel-vs-nosql-non-relationnel">1. ⚔️ SQL (Relationnel) vs NoSQL (Non-Relationnel)<a class="headerlink" href="#1-sql-relationnel-vs-nosql-non-relationnel" title="Permanent link">&para;</a></h2>
+<p>Avant de choisir un SGBD (Système de Gestion de Base de Données), il faut comprendre la grande fracture du stockage :</p>
+<div class="highlight"><pre><span></span><code>                        ┌─────────────────────────────────────────┐
+                        │      CHOIX DE LA BASE DE DONNÉES        │
+                        └────────────────────┬────────────────────┘
+                                             │
+               ┌─────────────────────────────┴─────────────────────────────┐
+               ▼                                                           ▼
+┌──────────────────────────────┐                         ┌──────────────────────────────┐
+│       SQL (RELATIONNEL)      │                         │     NoSQL (DOCUMENT / KEY)   │
+├──────────────────────────────┤                         ├──────────────────────────────┤
+│ • Exemple : PostgreSQL, MySQL│                         │ • Exemple : MongoDB, Redis   │
+│ • Structure : Tables strictes│                         │ • Structure : Documents JSON │
+│   avec lignes et colonnes    │                         │   ou paires Clé-Valeur       │
+│ • Schéma : Fixe et prévisib. │                         │ • Schéma : Flexible/Dynamique│
+│ • Garantie : ACID stricte    │                         │ • Garantie : BASE/Éventuelle │
+│ • Cas idéal : Données liées  │                         │ • Cas idéal : Données en vrac│
+│   (Users, Orders, Payments)  │                         │   (Logs, Cache, Analytics)   │
+└──────────────────────────────┘                         └──────────────────────────────┘
+</code></pre></div>
+<blockquote>
+<p>💡 <strong>Mon aide-mémoire de Dev</strong> : Pour 90% des projets web modernes (SaaS, E-commerce, Réseaux sociaux), <strong>PostgreSQL est le choix par défaut</strong>. Les relations entre utilisateurs, projets et paiements nécessitent la cohérence stricte du SQL.</p>
+</blockquote>
+<hr />
+<h2 id="2-anatomie-dune-base-postgres-schemas-relations">2. 🏛️ Anatomie d'une Base Postgres : Schémas &amp; Relations<a class="headerlink" href="#2-anatomie-dune-base-postgres-schemas-relations" title="Permanent link">&para;</a></h2>
+<p>Dans Postgres, les données sont organisées sous forme de <strong>Tables</strong> reliées entre elles par des <strong>Clés</strong>.</p>
+<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────────────────────┐
+│ TABLE: users                                                           │
+├────────────┬───────────────────┬───────────────────┬───────────────────┤
+│ id (PK)    │ email             │ password_hash     │ created_at        │
+├────────────┼───────────────────┼───────────────────┼───────────────────┤
+│ 101        │ alex@dev.io       │ $2b$12$...        │ 2026-10-31        │
+└────────────┴─────────┬─────────┴───────────────────┴───────────────────┘
+                       │
+                       │ 🔗 Relation 1-to-N (Un utilisateur a plusieurs projets)
+                       ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ TABLE: projects                                                        │
+├────────────┬───────────────────┬───────────────────┬───────────────────┤
+│ id (PK)    │ title             │ user_id (FK)      │ status            │
+├────────────┼───────────────────┼───────────────────┼───────────────────┤
+│ 1          │ API Redesign      │ 101               │ ACTIVE            │
+│ 2          │ Mobile App        │ 101               │ PLANNED           │
+└────────────┴───────────────────┴───────────────────┴───────────────────┘
+</code></pre></div>
+<h3 id="les-cles-et-contraintes-essentielles">🗝️ Les Clés et Contraintes Essentielles :<a class="headerlink" href="#les-cles-et-contraintes-essentielles" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Primary Key (PK)</strong> : Identifiant unique de la ligne (souvent un <code>BIGINT</code> auto-incrémenté ou un <code>UUID</code>).</li>
+<li><strong>Foreign Key (FK)</strong> : Lien pointant vers la <code>PK</code> d'une autre table pour garantir l'intégrité référentielle.</li>
+<li><strong>Contraintes d'intégrité</strong> :</li>
+<li><code>NOT NULL</code> : Empêche d'enregistrer une donnée vide.</li>
+<li><code>UNIQUE</code> : Garantit qu'aucun doublon n'existe (ex: adresse email).</li>
+<li><code>CHECK</code> : Valide une condition (ex: <code>age &gt;= 18</code> ou <code>price &gt; 0</code>).</li>
+</ul>
+<hr />
+<h2 id="3-les-garanties-acid-le-bouclier-de-postgres">3. 🛡️ Les Garanties ACID (Le Bouclier de Postgres)<a class="headerlink" href="#3-les-garanties-acid-le-bouclier-de-postgres" title="Permanent link">&para;</a></h2>
+<p>Pour éviter que des transactions simultanées ne corrompent les données, Postgres respecte à la lettre les 4 principes <strong>ACID</strong> :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Principe</th>
+<th style="text-align: left;">Signification</th>
+<th style="text-align: left;">Ce que ça garantit en pratique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>A</strong> - Atomicity</td>
+<td style="text-align: left;">Atomicité</td>
+<td style="text-align: left;">Tout passe ou tout s'annule (Pas de demi-transaction).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>C</strong> - Consistency</td>
+<td style="text-align: left;">Cohérence</td>
+<td style="text-align: left;">La base respecte toujours les règles et contraintes de schéma.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>I</strong> - Isolation</td>
+<td style="text-align: left;">Isolation</td>
+<td style="text-align: left;">Deux transactions simultanées ne se marchent pas dessus.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>D</strong> - Durability</td>
+<td style="text-align: left;">Durabilité</td>
+<td style="text-align: left;">Une fois la transaction validée (<code>COMMIT</code>), la donnée est sauvée sur disque.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>                    EXEMPLE DE TRANSACTION BANCAIRE (BEGIN -&gt; COMMIT)
+
+ [ Client A ] ───&gt;  1. DÉBIT 100€ (Compte A)  ─────┐
+                                                   ├─&gt; [ TRANSACTION ACID ]
+ [ Client B ] ───&gt;  2. CRÉDIT 100€ (Compte B) ─────┘     (Si le serveur plante au milieu,
+                                                         TOUT est annulé via ROLLBACK !)
+</code></pre></div>
+<hr />
+<h2 id="4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures">4. ⚡ Indexation : Accélérer les Lectures sans Ruiner les Écritures<a class="headerlink" href="#4-indexation-accelerer-les-lectures-sans-ruiner-les-ecritures" title="Permanent link">&para;</a></h2>
+<p>Un <strong>Index</strong> (souvent sous forme d'arbre B-Tree) fonctionne exactement comme l'index à la fin d'un livre d'apprentissage.</p>
+<div class="highlight"><pre><span></span><code>       RECHERCHE SANS INDEX (Sequential Scan)           RECHERCHE AVEC INDEX (Index Scan)
+┌──────────────────────────────────────────────┐ ┌──────────────────────────────────────────────┐
+│ Le serveur lit TOUTES les 1 000 000 lignes   │ │ Le serveur consulte l&#39;arbre B-Tree en 3 ms  │
+│ une par une pour trouver &quot;email=alex@dev.io&quot;.│ │ et pointe direct sur le bloc mémoire exact ! │
+│ ⏱️ Temps : 450 ms (Lent &amp; Gourmand)          │ │ ⏱️ Temps : 2 ms (Ultra-Rapide)               │
+└──────────────────────────────────────────────┘ └──────────────────────────────────────────────┘
+</code></pre></div>
+<blockquote>
+<p>⚠️ <strong>Le Compromis de l'Index</strong> :
+* ➕ <strong>Lecture (<code>SELECT</code>)</strong> : Divisée par 100 en vitesse.
+* ➖ <strong>Écriture (<code>INSERT</code> / <code>UPDATE</code> / <code>DELETE</code>)</strong> : Légèrement ralentie car Postgres doit aussi mettre à jour l'index à chaque modification.
+* <strong>Règle d'or</strong> : Mettre un Index (<code>CREATE INDEX</code>) uniquement sur les colonnes souvent utilisées dans les clauses <code>WHERE</code>, <code>JOIN</code> et <code>ORDER BY</code> (ex: <code>user_id</code>, <code>email</code>, <code>status</code>).</p>
+</blockquote>
+<hr />
+<h2 id="5-connection-pooling-gerer-les-milliers-de-connexions">5. 🔌 Connection Pooling : Gérer les Milliers de Connexions<a class="headerlink" href="#5-connection-pooling-gerer-les-milliers-de-connexions" title="Permanent link">&para;</a></h2>
+<p>Ouvrir une nouvelle connexion réseau vers Postgres coûte cher en CPU et en mémoire (chaque connexion Postgres fork un processus lourd côté serveur).</p>
+<div class="highlight"><pre><span></span><code>┌──────────┐                     ┌───────────────────────┐                     ┌──────────┐
+│  CLIENTS │ ─── Requêtes ───&gt;  │  CONNECTION POOL      │ ─── Connexions ───&gt; │ SERVEUR  │
+│  (Node)  │                     │  (ex: pg-pool / PgBouncer)                  │ POSTGRES │
+│          │                     │  [ 10 connexions réutilisables en boucle ]  │          │
+└──────────┘                     └───────────────────────┘                     └──────────┘
+</code></pre></div>
+<ul>
+<li><strong>Sans Pool</strong> : 1 000 requêtes simultanées = 1 000 connexions Postgres = <strong>Crash du serveur (<code>Too many connections</code>)</strong>.</li>
+<li><strong>Avec Pool</strong> : 1 000 requêtes se partagent un sous-ensemble fixe de connexions réutilisables (ex: 10 ou 20 connexions ouvertes en permanence).</li>
+</ul>
+<hr />
+<h2 id="6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm">6. 🛠️ Abstractions de Base de Données : Raw SQL, Query Builder &amp; ORM<a class="headerlink" href="#6-abstractions-de-base-de-donnees-raw-sql-query-builder-orm" title="Permanent link">&para;</a></h2>
+<p>Comment interagir avec Postgres depuis notre code Backend ? Il existe 3 approches :</p>
+<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ 1. RAW SQL (Requêtes brutes)                                                           │
+│    • ex: client.query(&#39;SELECT * FROM users WHERE id = $1&#39;, [userId])                   │
+│    • Pros : Contrôle total, performances maximales.                                     │
+│    • Cons : Pas de typage, risques d&#39;injections SQL si mal écrit.                     │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ 2. QUERY BUILDERS (Constructeurs de requêtes)                                          │
+│    • ex: knex(&#39;users&#39;).where({ id: userId }).select()                                  │
+│    • Pros : Syntaxe JS/TS fluide, requêtes dynamiques sécurisées.                     │
+│    • Cons : Requêtes très complexes parfois difficiles à exprimer.                      │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ 3. ORM (Object-Relational Mapping)                                                     │
+│    • ex: prisma.user.findUnique({ where: { id: userId } })                             │
+│    • Pros : Typage TypeScript automatique, migrations faciles, code très lisible.       │
+│    • Cons : Légère surcouche d&#39;abstraction, risque de requêtes SQL générées sous-optim.│
+└────────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<blockquote>
+<p>🎯 <strong>Conseil pour dev junior</strong> : Utiliser un <strong>ORM moderne comme Prisma ou Drizzle</strong> pour aller vite et sécuriser les types, mais <strong>toujours inspecter le SQL généré</strong> en arrière-plan pour éviter les pièges de requêtes N+1 !</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../11-complete-rest-api-design/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 11. Conception d&#39;APIs REST (Complete REST API Design)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                11. Conception d'APIs REST (Complete REST API Design)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../langages/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Accueil">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Accueil
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
