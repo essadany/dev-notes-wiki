@@ -48,7 +48,9 @@ nav:
       - 7. La sérialisation et la désérialisation pour les ingénieurs backend: backend-from-first-principles/07-serialization-and-deserialization-for-backend-engineers.md
       - 8. L'authentification et l'autorisation pour les ingénieurs backend: backend-from-first-principles/08-authentication-and-authorization-for-backend-engineers.md
       - 9. Les validations et les transformations pour les ingénieurs backend: backend-from-first-principles/09-validations-and-transformations-for-backend-engineers.md
-    
+      - 10. Les contrôleurs, services, dépôts, middlewares et contexte de requête: backend-from-first-principles/10-controllers-services-repositories-middlewares-request-context.md
+      - 11. Conception d'APIs REST (Complete REST API Design): backend-from-first-principles/11-complete-rest-api-design.md
+      - 12. Maîtriser les bases de données avec Postgres: backend-from-first-principles/12-mastering-databases-with-postgres.md
   - Langages de programmation:
       - Accueil: langages/index.md
       - 1. Synchrone vs Asynchrone selon les langages: langages/sync-async-langages.md

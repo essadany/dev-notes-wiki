@@ -12,3 +12,6 @@ Notes issues de [cette playlist](https://www.youtube.com/playlist?list=PLui3EUku
 6. [La sérialisation et la désérialisation pour les ingénieurs backend](07-serialization-and-deserialization-for-backend-engineers.md)
 7. [L'authentification et l'autorisation pour les ingénieurs backend](08-authentication-and-authorization-for-backend-engineers.md)
 8. [Les validations et les transformations pour les ingénieurs backend](09-validations-and-transformations-for-backend-engineers.md)
+9. [Les contrôleurs, services, dépôts, middlewares et contexte de requête](10-controllers-services-repositories-middlewares-request-context.md)
+10. [Conception d'APIs REST (Complete REST API Design)](11-complete-rest-api-design.md)
+11. [Maîtriser les bases de données avec Postgres](12-mastering-databases-with-postgres.md)
