@@ -1,0 +1,1597 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../12-mastering-databases-with-postgres/">
+      
+      
+        <link rel="next" href="../../langages/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>13. Le Caching (Le secret des systèmes haute performance) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#13-le-caching-le-secret-des-systemes-haute-performance" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              13. Le Caching (Le secret des systèmes haute performance)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-quest-ce-que-le-caching-definition-exemples-geants" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Qu'est-ce que le Caching ? (Définition &amp; Exemples Géants)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Qu'est-ce que le Caching ? (Définition & Exemples Géants)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-definition-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Définition Technique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-3-exemples-du-monde-reel" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. 3 Exemples du Monde Réel
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-3-niveaux-de-caching-en-ingenierie-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗺️ 2. Les 3 Niveaux de Caching en Ingénierie Backend
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗺️ 2. Les 3 Niveaux de Caching en Ingénierie Backend">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-le-cache-niveau-reseau-network-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 A. Le Cache Niveau Réseau (Network Level)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 A. Le Cache Niveau Réseau (Network Level)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-les-cdn-content-delivery-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Les CDN (Content Delivery Networks)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-la-hierarchie-du-cache-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. La Hiérarchie du Cache DNS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-cache-niveau-materiel-hardware-level-la-ram" class="md-nav__link">
+    <span class="md-ellipsis">
+      💻 B. Le Cache Niveau Matériel (Hardware Level) &amp; La RAM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-le-cache-logicielles-bases-in-memory-redis-memcached" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ C. Le Cache Logicielles &amp; Bases In-Memory (Redis / Memcached)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-strategies-decriture-politiques-deviction" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ 3. Stratégies d'Écriture &amp; Politiques d'Éviction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ 3. Stratégies d'Écriture & Politiques d'Éviction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-strategies-dacces-aux-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Stratégies d'Accès aux Données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-les-4-politiques-deviction-eviction-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Les 4 Politiques d'Éviction (Eviction Policies)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-4-cas-dusage-incontournables-en-backend-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 4. Les 4 Cas d'Usage Incontournables en Backend (Redis)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ 4. Les 4 Cas d'Usage Incontournables en Backend (Redis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-caching-de-requetes-bdd-complexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Caching de Requêtes BDD Complexes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stockage-de-sessions-utilisateurs-auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Stockage de Sessions Utilisateurs (Auth)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-caching-dapi-externes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Caching d'API Externes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-implementation-du-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Implémentation du Rate Limiting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-quest-ce-que-le-caching-definition-exemples-geants" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Qu'est-ce que le Caching ? (Définition &amp; Exemples Géants)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Qu'est-ce que le Caching ? (Définition & Exemples Géants)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-definition-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Définition Technique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-3-exemples-du-monde-reel" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. 3 Exemples du Monde Réel
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-3-niveaux-de-caching-en-ingenierie-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗺️ 2. Les 3 Niveaux de Caching en Ingénierie Backend
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗺️ 2. Les 3 Niveaux de Caching en Ingénierie Backend">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-le-cache-niveau-reseau-network-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 A. Le Cache Niveau Réseau (Network Level)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 A. Le Cache Niveau Réseau (Network Level)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-les-cdn-content-delivery-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Les CDN (Content Delivery Networks)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-la-hierarchie-du-cache-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. La Hiérarchie du Cache DNS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-cache-niveau-materiel-hardware-level-la-ram" class="md-nav__link">
+    <span class="md-ellipsis">
+      💻 B. Le Cache Niveau Matériel (Hardware Level) &amp; La RAM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-le-cache-logicielles-bases-in-memory-redis-memcached" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ C. Le Cache Logicielles &amp; Bases In-Memory (Redis / Memcached)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-strategies-decriture-politiques-deviction" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ 3. Stratégies d'Écriture &amp; Politiques d'Éviction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ 3. Stratégies d'Écriture & Politiques d'Éviction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-strategies-dacces-aux-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Stratégies d'Accès aux Données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-les-4-politiques-deviction-eviction-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Les 4 Politiques d'Éviction (Eviction Policies)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-4-cas-dusage-incontournables-en-backend-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 4. Les 4 Cas d'Usage Incontournables en Backend (Redis)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ 4. Les 4 Cas d'Usage Incontournables en Backend (Redis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-caching-de-requetes-bdd-complexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Caching de Requêtes BDD Complexes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stockage-de-sessions-utilisateurs-auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Stockage de Sessions Utilisateurs (Auth)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-caching-dapi-externes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Caching d'API Externes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-implementation-du-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Implémentation du Rate Limiting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="13-le-caching-le-secret-des-systemes-haute-performance">13. Le Caching (Le secret des systèmes haute performance)<a class="headerlink" href="#13-le-caching-le-secret-des-systemes-haute-performance" title="Permanent link">&para;</a></h1>
+<p>Si on devait résumer l'impact du caching en une phrase : <strong>c'est LE mécanisme ultime qui permet d'économiser du temps et de l'effort réseau/calcul pour servir des millions d'utilisateurs sans faire exploser les serveurs</strong>. Voici mes notes personnelles rédigées avec mes schémas, mes tableaux et mon modèle mental de dev junior !</p>
+<hr />
+<h2 id="1-quest-ce-que-le-caching-definition-exemples-geants">🧭 1. Qu'est-ce que le Caching ? (Définition &amp; Exemples Géants)<a class="headerlink" href="#1-quest-ce-que-le-caching-definition-exemples-geants" title="Permanent link">&para;</a></h2>
+<h3 id="a-definition-technique">A. Définition Technique<a class="headerlink" href="#a-definition-technique" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>💡 <strong>Définition simple</strong> : C'est un mécanisme qui diminue le temps et l'effort nécessaires pour exécuter une opération.</p>
+<p>⚙️ <strong>Définition technique</strong> : Cela consiste à conserver un <strong>sous-ensemble (subset)</strong> de la donnée primaire dans un emplacement mémoire beaucoup plus rapide à lire (ex: la RAM ou un serveur Edge) pour répondre aux requêtes fréquentes.</p>
+</blockquote>
+<h3 id="b-3-exemples-du-monde-reel">B. 3 Exemples du Monde Réel<a class="headerlink" href="#b-3-exemples-du-monde-reel" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                EXEMPLES DU MONDE RÉEL                                  │
+├────────────────────────┬────────────────────────────────┬──────────────────────────────┤
+│ Google Search          │ Netflix                        │ X (Twitter)                  │
+├────────────────────────┼────────────────────────────────┼──────────────────────────────┤
+│ Avoid re-running heavy │ CDN &amp; Edge Locations           │ Trending Topics              │
+│ ranking algorithms for │ Streams HD (1080p, 720p)       │ Real-time ML analysis of     │
+│ millions of queries    │ served from local edge nodes   │ millions of tweets cached    │
+│ like &quot;weather today&quot;.  │ to prevent origin crash.       │ in Redis for instant load.   │
+└────────────────────────┴────────────────────────────────┴──────────────────────────────┘
+</code></pre></div>
+<ol>
+<li><strong>Google Search</strong> : Recalculer l'indexation et le classement de milliards de pages web pour une requête répétée des millions de fois ("météo aujourd'hui") détruirait les serveurs. Google utilise un <strong>système de cache in-memory distribué</strong> à travers le monde pour renvoyer instantanément le résultat.</li>
+<li><strong>Netflix</strong> : Pour livrer des terabytes de données vidéo HD sans Latence/Buffering, Netflix encode ses vidéos en plusieurs résolutions (1080p, 720p, 480p) et <strong>cache ces fichiers sur des serveurs Edge (CDN)</strong> géographiquement proches de l'utilisateur final.</li>
+<li><strong>X (ex-Twitter)</strong> : Le calcul des <em>Trending Topics</em> nécessite d'analyser en temps réel des milliards de tweets avec des modèles ML lourds. Pour éviter de relancer ce calcul à chaque rafraîchissement d'écran, X calcule les tendances toutes les X minutes et stocke le résultat dans une base in-memory comme <strong>Redis</strong>.</li>
+</ol>
+<hr />
+<h2 id="2-les-3-niveaux-de-caching-en-ingenierie-backend">🗺️ 2. Les 3 Niveaux de Caching en Ingénierie Backend<a class="headerlink" href="#2-les-3-niveaux-de-caching-en-ingenierie-backend" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>                      ┌─────────────────────────────────────────┐
+                      │    LES 3 NIVEAUX DE CACHING BACKEND     │
+                      └────────────────────┬────────────────────┘
+                                           │
+      ┌────────────────────────────────────┼────────────────────────────────────┐
+      ▼                                    ▼                                    ▼
+┌─────────────────────────┐   ┌─────────────────────────┐   ┌─────────────────────────┐
+│   1. CACHE RÉSEAU       │   │   2. CACHE MATÉRIEL     │   │  3. CACHE LOGICIEL /    │
+│  (Network Level Cache)  │   │   (Hardware Level)      │   │     IN-MEMORY (BDD)     │
+├─────────────────────────┤   ├─────────────────────────┤   ├─────────────────────────┤
+│ • CDN / Edge Locations  │   │ • Registres CPU &amp; L1/L2/│   │ • Redis / Memcached     │
+│ • PoP (Point of Pres.)  │   │   L3 Caches             │   │ • AWS ElastiCache       │
+│ • Hiérarchie Cache DNS  │   │ • RAM (Main Memory) vs  │   │ • In-Memory Key-Value   │
+│   (OS, Browser, ISP)    │   │   Stockage Disque/SSD   │   │   NoSQL Storage         │
+└─────────────────────────┘   └─────────────────────────┘   └─────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="a-le-cache-niveau-reseau-network-level">🌐 A. Le Cache Niveau Réseau (Network Level)<a class="headerlink" href="#a-le-cache-niveau-reseau-network-level" title="Permanent link">&para;</a></h3>
+<h4 id="1-les-cdn-content-delivery-networks">1. Les CDN (Content Delivery Networks)<a class="headerlink" href="#1-les-cdn-content-delivery-networks" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Serveurs d'Origine (Origin Server)</strong> : Le serveur central (ex: hébergé aux USA) qui possède la version originale des données.</li>
+<li><strong>Edge Locations / PoP (Point of Presence)</strong> : Des grappes de serveurs distribués partout dans le monde.</li>
+<li><strong>Flux de travail</strong> :</li>
+<li>Le client fait une requête HTTP.</li>
+<li>Le serveur Edge le plus proche vérifie son cache.</li>
+<li><strong>Cache Hit</strong> : La ressource est renvoyée immédiatement.</li>
+<li><strong>Cache Miss</strong> : Le serveur Edge va chercher la ressource sur le serveur d'origine, la stocke localement avec un <strong>TTL (Time To Live)</strong> et la sert au client.</li>
+</ul>
+<h4 id="2-la-hierarchie-du-cache-dns">2. La Hiérarchie du Cache DNS<a class="headerlink" href="#2-la-hierarchie-du-cache-dns" title="Permanent link">&para;</a></h4>
+<p>Résoudre un nom de domaine (ex: <code>example.com</code> en IP) coûte cher en requêtes réseau récursives (Root Server $
+ightarrow$ TLD <code>.com</code> $
+ightarrow$ Authoritative Name Server). Pour éviter cela, le DNS utilise <strong>4 niveaux de cache successifs</strong> :</p>
+<div class="highlight"><pre><span></span><code> étape   niveau de cache DNS              action si trouvé (Cache Hit)
+─────── ────────────────────             ────────────────────────────
+  ①     [ Cache du Navigateur ]   ───&gt;   Renvoie l&#39;IP instantanément
+                 │ (Cache Miss)
+  ②     [ Cache de l&#39;OS (Win/Mac) ] ───&gt; Renvoie l&#39;IP et évite le réseau
+                 │ (Cache Miss)
+  ③     [ Résolveur FAI / Cloudflare ] ─&gt; Renvoie l&#39;IP stockée en mémoire
+                 │ (Cache Miss)
+  ④     [ Requête Récursive Complète ] ──&gt; Interroge Root $
+ightarrow$ TLD $
+ightarrow$ Authoritative
+</code></pre></div>
+<hr />
+<h3 id="b-le-cache-niveau-materiel-hardware-level-la-ram">💻 B. Le Cache Niveau Matériel (Hardware Level) &amp; La RAM<a class="headerlink" href="#b-le-cache-niveau-materiel-hardware-level-la-ram" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>La hiérarchie mémoire</strong> : CPU Registres $
+ightarrow$ Caches L1 / L2 / L3 $
+ightarrow$ <strong>RAM (Main Memory)</strong> $
+ightarrow$ Disque SSD/HDD.</li>
+<li><strong>Pourquoi la RAM est-elle si rapide ?</strong></li>
+<li>La RAM (Random Access Memory) accède aux données via des signaux électriques directs sur des adresses mémoire avec un temps d'accès quasi constant.</li>
+<li>Les disques secondaires (SSD/HDD) effectuent des lectures électroniques ou mécaniques plus lentes mais <strong>non-volatiles</strong> (persistantes).</li>
+<li><strong>Le compromis de la RAM</strong> : </li>
+<li>⚡ <strong>Vitesse extrême</strong> mais ⚠️ <strong>Capacité limitée</strong> et 🔴 <strong>Volatilité</strong> (si le serveur redémarre, la RAM se vide).</li>
+</ul>
+<hr />
+<h3 id="c-le-cache-logicielles-bases-in-memory-redis-memcached">🗄️ C. Le Cache Logicielles &amp; Bases In-Memory (Redis / Memcached)<a class="headerlink" href="#c-le-cache-logicielles-bases-in-memory-redis-memcached" title="Permanent link">&para;</a></h3>
+<p>Pour nos applications backend, on utilise des bases de données <strong>In-Memory Key-Value NoSQL</strong> comme <strong>Redis</strong> ou <strong>Memcached</strong>.</p>
+<ul>
+<li><strong>In-Memory</strong> : Les données résident en RAM pour des lectures en fractions de milliseconde.</li>
+<li><strong>Key-Value</strong> : Pas de tables SQL complexes ni de contraintes jointures, juste des clés associées à des structures (strings, JSON, listes, sets).</li>
+<li><strong>Persistance</strong> : Redis synchronise périodiquement la RAM sur le disque secondaire pour restaurer les données en cas de crash.</li>
+</ul>
+<hr />
+<h2 id="3-strategies-decriture-politiques-deviction">⚙️ 3. Stratégies d'Écriture &amp; Politiques d'Éviction<a class="headerlink" href="#3-strategies-decriture-politiques-deviction" title="Permanent link">&para;</a></h2>
+<h3 id="a-strategies-dacces-aux-donnees">A. Stratégies d'Accès aux Données<a class="headerlink" href="#a-strategies-dacces-aux-donnees" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code> ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                              STRATÉGIES DE LECTURE &amp; ÉCRITURE                          │
+ ├────────────────────────────────────────┬───────────────────────────────────────────────┤
+ │ Lazy Caching (Cache-Aside)             │ Write-Through Caching                         │
+ ├────────────────────────────────────────┼───────────────────────────────────────────────┤
+ │ 1. Le serveur lit le cache.            │ 1. Lors d&#39;un POST/PUT/PATCH, le serveur écrit │
+ │ 2. Si Cache Miss, lit la BDD.          │    dans la BDD ET dans le cache simultanément.│
+ │ 3. Écrit le résultat dans le cache.    │ 2. Avantage : Le cache est TOUJOURS frais.    │
+ │ 4. Renvoie la réponse au client.       │ 3. Inconvénient : Surcoût de latence à        │
+ │ • Avantage : Ne cache que le nécessaire.│    l&#39;écriture.                                │
+ └────────────────────────────────────────┴───────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="b-les-4-politiques-deviction-eviction-policies">B. Les 4 Politiques d'Éviction (Eviction Policies)<a class="headerlink" href="#b-les-4-politiques-deviction-eviction-policies" title="Permanent link">&para;</a></h3>
+<p>Puisque la RAM a une capacité limitée, lorsque le cache est plein, il doit supprimer d'anciennes données pour faire de la place aux nouvelles :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Politique</th>
+<th style="text-align: left;">Nom Complet</th>
+<th style="text-align: left;">Principe d'Éviction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>No Eviction</strong></td>
+<td style="text-align: left;">Pas d'éviction</td>
+<td style="text-align: left;">Le cache renvoie une erreur si la mémoire est pleine (à éviter en prod).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>LRU</strong></td>
+<td style="text-align: left;">Least Recently Used</td>
+<td style="text-align: left;">Supprime la clé dont la <strong>dernière consultation est la plus ancienne</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>LFU</strong></td>
+<td style="text-align: left;">Least Frequently Used</td>
+<td style="text-align: left;">Supprime la clé qui a le <strong>nombre total de consultations le plus bas</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>TTL</strong></td>
+<td style="text-align: left;">Time-To-Live</td>
+<td style="text-align: left;">Supprime automatiquement les clés dont le <strong>délai d'expiration est dépassé</strong>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-les-4-cas-dusage-incontournables-en-backend-redis">🛠️ 4. Les 4 Cas d'Usage Incontournables en Backend (Redis)<a class="headerlink" href="#4-les-4-cas-dusage-incontournables-en-backend-redis" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>             ┌─────────────────────────────────────────────────────────┐
+             │         LES 4 CAS D&#39;USAGE MAJEURS DE REDIS EN PROD      │
+             └────────────────────────────┬────────────────────────────┘
+                                          │
+       ┌─────────────────────┬────────────┴────────────┬─────────────────────┐
+       ▼                     ▼                         ▼                     ▼
+┌──────────────┐      ┌──────────────┐          ┌──────────────┐      ┌──────────────┐
+│  1. REQUÊTES │      │ 2. SESSIONS  │          │ 3. CACHING   │      │ 4. RATE      │
+│  BDD LOURDES │      │ UTILISATEURS │          │ API EXTERNES │      │ LIMITING     │
+└──────┬───────┘      └──────┬───────┘          └──────┬───────┘      └──────┬───────┘
+       │                     │                         │                     │
+• Cache le résultat    • Stocke les tokens de    • Stocke les réponses  • Compteur d&#39;IP
+  de requêtes SQL        session Auth en RAM.      d&#39;API tierces (ex:     dans un middleware
+  complexes (JOINs).                               météo) pour éviter     gérant le header
+                       • Évite de taper dans     d&#39;atteindre les        `X-Forwarded-For`.
+• Idéal pour e-commerce  la BDD SQL à chaque       quotas et réduire      
+  (prix, catalogue) et   requête entrante.         la facturation.        • Renvoyer un code
+  profils utilisateurs.                                                   `429 Too Many Req`.
+</code></pre></div>
+<h3 id="1-caching-de-requetes-bdd-complexes">1. Caching de Requêtes BDD Complexes<a class="headerlink" href="#1-caching-de-requetes-bdd-complexes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Le problème</strong> : Une requête SQL avec plusieurs <code>JOIN</code> et agrégations sur 1 million de lignes prend du temps CPU.</li>
+<li><strong>La solution</strong> : Stocker la réponse JSON dans Redis avec un TTL d'une heure. Les requêtes suivantes lisent directement dans Redis en 2 ms.</li>
+</ul>
+<h3 id="2-stockage-de-sessions-utilisateurs-auth">2. Stockage de Sessions Utilisateurs (Auth)<a class="headerlink" href="#2-stockage-de-sessions-utilisateurs-auth" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Le problème</strong> : Vérifier la validité de la session d'un utilisateur à chaque appel d'API sur une BDD SQL génère un trafic monstre.</li>
+<li><strong>La solution</strong> : Placer le jeton de session dans Redis. La vérification se fait à la vitesse de la RAM.</li>
+</ul>
+<h3 id="3-caching-dapi-externes">3. Caching d'API Externes<a class="headerlink" href="#3-caching-dapi-externes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Le problème</strong> : Appeler une API tierce payante ou limitée en quota (ex: API météo) à chaque requête client coûte cher.</li>
+<li><strong>La solution</strong> : Mettre en cache la réponse de l'API externe pendant 1 heure.</li>
+</ul>
+<h3 id="4-implementation-du-rate-limiting">4. Implémentation du Rate Limiting<a class="headerlink" href="#4-implementation-du-rate-limiting" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Le problème</strong> : Bloquer les attaques de bots et prévenir le déni de service.</li>
+<li><strong>La solution</strong> : Un middleware extrait l'IP du header <code>X-Forwarded-For</code>, incrémente un compteur dans Redis pour la minute en cours, et si le compte dépasse 50 requêtes/min, renvoie immédiatement une erreur <strong><code>429 Too Many Requests</code></strong>.</li>
+</ul>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../12-mastering-databases-with-postgres/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 12. Maîtriser les bases de données avec Postgres">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                12. Maîtriser les bases de données avec Postgres
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../langages/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Accueil">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Accueil
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
