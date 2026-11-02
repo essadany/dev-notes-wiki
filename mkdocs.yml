@@ -51,6 +51,7 @@ nav:
       - 10. Les contrôleurs, services, dépôts, middlewares et contexte de requête: backend-from-first-principles/10-controllers-services-repositories-middlewares-request-context.md
       - 11. Conception d'APIs REST (Complete REST API Design): backend-from-first-principles/11-complete-rest-api-design.md
       - 12. Maîtriser les bases de données avec Postgres: backend-from-first-principles/12-mastering-databases-with-postgres.md
+      - 13. Le Caching (Le secret des systèmes haute performance): backend-from-first-principles/13-caching-the-secret-behind-it-all.md
   - Langages de programmation:
       - Accueil: langages/index.md
       - 1. Synchrone vs Asynchrone selon les langages: langages/sync-async-langages.md

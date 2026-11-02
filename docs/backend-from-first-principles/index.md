@@ -15,3 +15,4 @@ Notes issues de [cette playlist](https://www.youtube.com/playlist?list=PLui3EUku
 9. [Les contrôleurs, services, dépôts, middlewares et contexte de requête](10-controllers-services-repositories-middlewares-request-context.md)
 10. [Conception d'APIs REST (Complete REST API Design)](11-complete-rest-api-design.md)
 11. [Maîtriser les bases de données avec Postgres](12-mastering-databases-with-postgres.md)
+12. [Le Caching (Le secret des systèmes haute performance)](13-caching-the-secret-behind-it-all.md)
