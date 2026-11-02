@@ -16,3 +16,6 @@ Notes issues de [cette playlist](https://www.youtube.com/playlist?list=PLui3EUku
 10. [Conception d'APIs REST (Complete REST API Design)](11-complete-rest-api-design.md)
 11. [Maîtriser les bases de données avec Postgres](12-mastering-databases-with-postgres.md)
 12. [Le Caching (Le secret des systèmes haute performance)](13-caching-the-secret-behind-it-all.md)
+13. [Task Queues & Background Jobs (L'art de l'asynchronisme)](14-task-queues-and-background-jobs.md)
+14. [Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)](15-full-text-search-elasticsearch.md)
+15. [Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)](16-error-handling-and-fault-tolerance.md)

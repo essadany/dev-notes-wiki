@@ -52,6 +52,9 @@ nav:
       - 11. Conception d'APIs REST (Complete REST API Design): backend-from-first-principles/11-complete-rest-api-design.md
       - 12. Maîtriser les bases de données avec Postgres: backend-from-first-principles/12-mastering-databases-with-postgres.md
       - 13. Le Caching (Le secret des systèmes haute performance): backend-from-first-principles/13-caching-the-secret-behind-it-all.md
+      - 14. Task Queues & Background Jobs (L'art de l'asynchronisme): backend-from-first-principles/14-task-queues-and-background-jobs.md
+      - 15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair): backend-from-first-principles/15-full-text-search-elasticsearch.md
+      - 16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance): backend-from-first-principles/16-error-handling-and-fault-tolerance.md
   - Langages de programmation:
       - Accueil: langages/index.md
       - 1. Synchrone vs Asynchrone selon les langages: langages/sync-async-langages.md
