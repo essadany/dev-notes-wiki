@@ -19,3 +19,5 @@ Notes issues de [cette playlist](https://www.youtube.com/playlist?list=PLui3EUku
 13. [Task Queues & Background Jobs (L'art de l'asynchronisme)](14-task-queues-and-background-jobs.md)
 14. [Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)](15-full-text-search-elasticsearch.md)
 15. [Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)](16-error-handling-and-fault-tolerance.md)
+16. [Gestion de la configuration en production (Configuration Management)](17-production-grade-config-management.md)
+18. [Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)](18-logging-monitoring-observability.md)

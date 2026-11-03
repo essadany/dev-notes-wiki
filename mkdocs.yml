@@ -55,6 +55,8 @@ nav:
       - 14. Task Queues & Background Jobs (L'art de l'asynchronisme): backend-from-first-principles/14-task-queues-and-background-jobs.md
       - 15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair): backend-from-first-principles/15-full-text-search-elasticsearch.md
       - 16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance): backend-from-first-principles/16-error-handling-and-fault-tolerance.md
+      - 17. Gestion de la configuration en production (Configuration Management): backend-from-first-principles/17-production-grade-config-management.md
+      - 18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod): backend-from-first-principles/18-logging-monitoring-observability.md
   - Langages de programmation:
       - Accueil: langages/index.md
       - 1. Synchrone vs Asynchrone selon les langages: langages/sync-async-langages.md
