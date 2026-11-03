@@ -1,0 +1,1653 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../17-production-grade-config-management/">
+      
+      
+        <link rel="next" href="../../langages/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#18-logging-monitoring-et-observabilite-le-trio-reseau-prod" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-concept-de-spectre-pourquoi-on-en-a-besoin" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Le Concept de "Spectre" &amp; Pourquoi on en a besoin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Le Concept de "Spectre" & Pourquoi on en a besoin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-est-ce-vital-en-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi est-ce vital en backend ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-3-piliers-de-lobservabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏛️ 2. Les 3 Piliers de l'Observabilité
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-pilier-1-le-logging-le-journal-devenements" class="md-nav__link">
+    <span class="md-ellipsis">
+      📜 3. Pilier 1 : Le Logging (Le Journal d'Événements)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📜 3. Pilier 1 : Le Logging (Le Journal d'Événements)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-les-niveaux-de-log-log-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Les Niveaux de Log (Log Levels)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-logs-structures-vs-non-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Logs Structurés vs Non-Structurés
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pilier-2-le-monitoring-les-metriques" class="md-nav__link">
+    <span class="md-ellipsis">
+      📈 4. Pilier 2 : Le Monitoring &amp; Les Métriques
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📈 4. Pilier 2 : Le Monitoring & Les Métriques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-mesure-t-on-avec-les-metriques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Que mesure-t-on avec les Métriques ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-pilier-3-lobservabilite-les-traces-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 5. Pilier 3 : L'Observabilité &amp; Les Traces (Tracing)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 5. Pilier 3 : L'Observabilité & Les Traces (Tracing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-vs-observabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitoring vs Observabilité
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-quune-trace-distributed-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce qu'une Trace (Distributed Tracing) ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concepts-cles-de-lindustrie" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concepts clés de l'industrie :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-le-workflow-dinvestigation-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 6. Le Workflow d'Investigation en Production
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ecosysteme-des-outils-open-source-vs-saas-proprietaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 7. Écosystème des Outils : Open Source vs SaaS Propriétaire
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-collaboration-dev-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      🤝 8. Collaboration Dev &amp; DevOps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-concept-de-spectre-pourquoi-on-en-a-besoin" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Le Concept de "Spectre" &amp; Pourquoi on en a besoin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Le Concept de "Spectre" & Pourquoi on en a besoin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-est-ce-vital-en-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi est-ce vital en backend ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-3-piliers-de-lobservabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏛️ 2. Les 3 Piliers de l'Observabilité
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-pilier-1-le-logging-le-journal-devenements" class="md-nav__link">
+    <span class="md-ellipsis">
+      📜 3. Pilier 1 : Le Logging (Le Journal d'Événements)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📜 3. Pilier 1 : Le Logging (Le Journal d'Événements)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-les-niveaux-de-log-log-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Les Niveaux de Log (Log Levels)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-logs-structures-vs-non-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Logs Structurés vs Non-Structurés
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pilier-2-le-monitoring-les-metriques" class="md-nav__link">
+    <span class="md-ellipsis">
+      📈 4. Pilier 2 : Le Monitoring &amp; Les Métriques
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📈 4. Pilier 2 : Le Monitoring & Les Métriques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-mesure-t-on-avec-les-metriques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Que mesure-t-on avec les Métriques ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-pilier-3-lobservabilite-les-traces-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 5. Pilier 3 : L'Observabilité &amp; Les Traces (Tracing)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 5. Pilier 3 : L'Observabilité & Les Traces (Tracing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-vs-observabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitoring vs Observabilité
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-quune-trace-distributed-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce qu'une Trace (Distributed Tracing) ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concepts-cles-de-lindustrie" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concepts clés de l'industrie :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-le-workflow-dinvestigation-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 6. Le Workflow d'Investigation en Production
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ecosysteme-des-outils-open-source-vs-saas-proprietaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 7. Écosystème des Outils : Open Source vs SaaS Propriétaire
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-collaboration-dev-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      🤝 8. Collaboration Dev &amp; DevOps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="18-logging-monitoring-et-observabilite-le-trio-reseau-prod">18. Logging, Monitoring et Observabilité (Le Trio Réseau &amp; Prod)<a class="headerlink" href="#18-logging-monitoring-et-observabilite-le-trio-reseau-prod" title="Permanent link">&para;</a></h1>
+<p>Dans le monde moderne des architectures distribuées (microservices, serveurs multirégions, cloud), déployer du code ne suffit pas. Si une erreur survient à 3h du matin pour un utilisateur à l'autre bout du monde, comment savoir <strong>ce qui s'est passé</strong>, <strong>où ça a cassé</strong> et <strong>pourquoi</strong> ? C'est tout le rôle de ce trio indispensable !</p>
+<hr />
+<h2 id="1-le-concept-de-spectre-pourquoi-on-en-a-besoin">🧭 1. Le Concept de "Spectre" &amp; Pourquoi on en a besoin<a class="headerlink" href="#1-le-concept-de-spectre-pourquoi-on-en-a-besoin" title="Permanent link">&para;</a></h2>
+<p>Contrairement à un algo ou une règle de syntaxe, le Logging, le Monitoring et l'Observabilité ne sont pas des règles binarisées (0 ou 1). </p>
+<blockquote>
+<p>💡 <strong>Le Spectre de l'Observabilité</strong> : Aucune entreprise ne suit 100% des meilleures pratiques d'un coup. C'est une démarche progressive (un <em>spectre</em>) mise en place selon la maturité de l'équipe et la complexité des systèmes.</p>
+</blockquote>
+<h3 id="pourquoi-est-ce-vital-en-backend">Pourquoi est-ce vital en backend ?<a class="headerlink" href="#pourquoi-est-ce-vital-en-backend" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Applications distribuées</strong> : Nos serveurs tournent sur plusieurs instances, conteneurs ou régions cloud.</li>
+<li><strong>Complexité des requêtes</strong> : Une seule action utilisateur (ex: créer une commande) traverse plusieurs couches (Controller -&gt; Middleware -&gt; Service -&gt; Repository -&gt; Base de données -&gt; Service d'emailing).</li>
+<li><strong>Débogage impossible à l'aveugle</strong> : Sans traçabilité, débugger un bug intermittent en production relève de la devinette.</li>
+</ul>
+<hr />
+<h2 id="2-les-3-piliers-de-lobservabilite">🏛️ 2. Les 3 Piliers de l'Observabilité<a class="headerlink" href="#2-les-3-piliers-de-lobservabilite" title="Permanent link">&para;</a></h2>
+<p>Une application est dite <strong>observable</strong> si on peut comprendre son état interne uniquement en observant ses sorties externes. L'observabilité repose sur <strong>3 piliers fondamentaux</strong> :</p>
+<div class="highlight"><pre><span></span><code>                        ┌─────────────────────────────────────────┐
+                        │      LES 3 PILIERS DE L&#39;OBSERVABILITÉ   │
+                        └────────────────────┬────────────────────┘
+                                             │
+      ┌──────────────────────────────────────┼──────────────────────────────────────┐
+      ▼                                      ▼                                      ▼
+┌──────────────────────────┐   ┌──────────────────────────┐   ┌──────────────────────────┐
+│        1. LOGS           │   │       2. METRICS         │   │        3. TRACES         │
+│   &quot;Qu&#39;est-ce qui s&#39;est   │   │  &quot;Comment se comporte    │   │   &quot;Où et comment la      │
+│     passé et quand ?&quot;    │   │     le système ?&quot;        │   │  requête a-t-elle voyagé&quot;│
+└──────────────────────────┘   └──────────────────────────┘   └──────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="3-pilier-1-le-logging-le-journal-devenements">📜 3. Pilier 1 : Le Logging (Le Journal d'Événements)<a class="headerlink" href="#3-pilier-1-le-logging-le-journal-devenements" title="Permanent link">&para;</a></h2>
+<p>Le <strong>Logging</strong> consiste à enregistrer tous les événements importants du cycle de vie de l'application avec leurs <strong>métadonnées</strong> (Timestamp, User ID, Request ID, IP, Latence).</p>
+<h3 id="a-les-niveaux-de-log-log-levels">A. Les Niveaux de Log (Log Levels)<a class="headerlink" href="#a-les-niveaux-de-log-log-levels" title="Permanent link">&para;</a></h3>
+<p>Chaque log doit être catégorisé par niveau de sévérité pour pouvoir filtrer le bruit :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Niveau</th>
+<th style="text-align: left;">Usage / Contexte</th>
+<th style="text-align: center;">Environnement</th>
+<th style="text-align: left;">Exemple typique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>DEBUG</code></strong></td>
+<td style="text-align: left;">Informations ultra-détaillées pour le dépannage local.</td>
+<td style="text-align: center;"><strong>Dev uniquement</strong></td>
+<td style="text-align: left;"><code>Connexion BDD établie sur le port 5432</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>INFO</code></strong></td>
+<td style="text-align: left;">Événements business normaux et succès d'opérations.</td>
+<td style="text-align: center;">Dev &amp; Prod</td>
+<td style="text-align: left;"><code>Utilisateur 42 a créé la tâche #108</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>WARN</code></strong></td>
+<td style="text-align: left;">Comportement anormal mais non critique (pas une erreur système).</td>
+<td style="text-align: center;">Dev &amp; Prod</td>
+<td style="text-align: left;"><code>Échec de connexion : mot de passe erroné pour user X</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>ERROR</code></strong></td>
+<td style="text-align: left;">Dysfonctionnement d'une opération (requête SQL échouée, API tierce down).</td>
+<td style="text-align: center;">Dev &amp; Prod</td>
+<td style="text-align: left;"><code>Erreur SQL 500 : violation de contrainte UNIQUE</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>FATAL</code></strong></td>
+<td style="text-align: left;">Erreur critique entraînant l'arrêt/crash immédiat de l'application.</td>
+<td style="text-align: center;">Dev &amp; Prod</td>
+<td style="text-align: left;"><code>Impossible de charger la clé privée JWT : arrêt du serveur</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-logs-structures-vs-non-structures">B. Logs Structurés vs Non-Structurés<a class="headerlink" href="#b-logs-structures-vs-non-structures" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│  EN DÉVELOPPEMENT : Unstructured Logs (Plain Text / Console avec couleurs)              │
+│  [2026-11-03 09:12:00] INFO: User 42 created todo &quot;Acheter du pain&quot; (Latency: 12ms)     │
+│  =&gt; Lisible par un humain en un coup d&#39;œil dans son terminal VS Code.                  │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│  EN PRODUCTION : Structured Logs (JSON)                                                 │
+│  {&quot;timestamp&quot;:&quot;2026-11-03T09:12:00Z&quot;,&quot;level&quot;:&quot;info&quot;,&quot;user_id&quot;:42,&quot;action&quot;:&quot;create_todo&quot;,│
+│   &quot;request_id&quot;:&quot;req-9912&quot;,&quot;latency_ms&quot;:12}                                             │
+│  =&gt; Facilement analysable et indexable par des outils automatisés (ELK, Loki, New Relic) │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="4-pilier-2-le-monitoring-les-metriques">📈 4. Pilier 2 : Le Monitoring &amp; Les Métriques<a class="headerlink" href="#4-pilier-2-le-monitoring-les-metriques" title="Permanent link">&para;</a></h2>
+<p>Le <strong>Monitoring</strong> est le suivi en temps réel (ou quasi réel avec un léger délai de 10 à 15 secondes pour éviter de surcharger les serveurs) de la santé globale de l'infrastructure et de l'application.</p>
+<h3 id="que-mesure-t-on-avec-les-metriques">Que mesure-t-on avec les Métriques ?<a class="headerlink" href="#que-mesure-t-on-avec-les-metriques" title="Permanent link">&para;</a></h3>
+<p>Les métriques sont des <strong>données chiffrées agrégées</strong> dans le temps :
+* <strong>Métriques Système</strong> : Utilisation du CPU, consommation de mémoire RAM (ex: 3 MB), nombre de connexions ouvertes dans le pool Postgres.
+* <strong>Métriques Applicatives / HTTP</strong> : Débit de requêtes (Throughput - req/sec), temps de réponse moyen (Latency), taux d'erreurs HTTP (pourcentage de réponses &gt; 200 ou 5xx).
+* <strong>Métriques Business</strong> : Nombre de to-dos créés par heure, nombre d'abonnements souscrits.</p>
+<hr />
+<h2 id="5-pilier-3-lobservabilite-les-traces-tracing">🔍 5. Pilier 3 : L'Observabilité &amp; Les Traces (Tracing)<a class="headerlink" href="#5-pilier-3-lobservabilite-les-traces-tracing" title="Permanent link">&para;</a></h2>
+<h3 id="monitoring-vs-observabilite">Monitoring vs Observabilité<a class="headerlink" href="#monitoring-vs-observabilite" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Monitoring</strong> : Te dit <strong>qu'il y a un problème</strong> (ex : <em>"Alerte Slack : Le taux d'erreur 500 dépasse 80%"</em>).</li>
+<li><strong>Observabilité</strong> : Te permet de comprendre <strong>exactement pourquoi et où le problème se situe</strong> sans avoir à redéployer de code.</li>
+</ul>
+<h3 id="quest-ce-quune-trace-distributed-tracing">Qu'est-ce qu'une Trace (Distributed Tracing) ?<a class="headerlink" href="#quest-ce-quune-trace-distributed-tracing" title="Permanent link">&para;</a></h3>
+<p>Une <strong>Trace</strong> représente le voyage complet d'une requête à travers toutes les couches et tous les microservices de votre backend.</p>
+<div class="highlight"><pre><span></span><code>[ Client / Router ] ───(Request ID: req-881)───┐
+                                               ▼
+                                 ┌──────────────────────────┐
+                                 │ 1. Middleware Tracing    │ (Span 1 : Init Transaction)
+                                 └─────────────┬────────────┘
+                                               │
+                                               ▼
+                                 ┌──────────────────────────┐
+                                 │ 2. Controller Validation │ (Span 2 : Parsing JSON)
+                                 └─────────────┬────────────┘
+                                               │
+                                               ▼
+                                 ┌──────────────────────────┐
+                                 │ 3. Service Business      │ (Span 3 : Logic &amp; Checks)
+                                 └─────────────┬────────────┘
+                                               │
+                                               ▼
+                                 ┌──────────────────────────┐
+                                 │ 4. Repository / BDD      │ (Span 4 : Exec SQL Query) -&gt; CRASH !
+                                 └──────────────────────────┘
+</code></pre></div>
+<ul>
+<li><strong>Contexte de Requête &amp; Context Propagation</strong> : En injectant le <code>Request-ID</code> et la transaction dans le contexte de l'application (Request Context), chaque couche ajoute ses propres attributs (Span ID, User ID, SQL Query) au fil de l'exécution.</li>
+</ul>
+<h3 id="concepts-cles-de-lindustrie">Concepts clés de l'industrie :<a class="headerlink" href="#concepts-cles-de-lindustrie" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Instrumentation</strong> : L'action de mesurer et d'extraire les attributs des fonctions et routes du code.</li>
+<li><strong>OpenTelemetry (OTel)</strong> : Le standard open-source universel (APIs &amp; SDKs pour Node, Go, Python, Rust) permettant d'instrumenter son code de façon neutre, indépendante des fournisseurs d'outils.</li>
+</ul>
+<hr />
+<h2 id="6-le-workflow-dinvestigation-en-production">🔄 6. Le Workflow d'Investigation en Production<a class="headerlink" href="#6-le-workflow-dinvestigation-en-production" title="Permanent link">&para;</a></h2>
+<p>Voici le déroulé exact d'une résolution d'incident quand le trio est correctement configuré :</p>
+<div class="highlight"><pre><span></span><code> ┌────────────────┐         ┌────────────────┐         ┌────────────────┐         ┌────────────────┐
+ │ 1. ALERTE      │         │ 2. MÉTRIQUES   │         │ 3. LOGS        │         │ 4. TRACES      │
+ │ Notification   │  ────&gt;  │ Graphique      │  ────&gt;  │ Filtrage JSON  │  ────&gt;  │ Span exact de  │
+ │ Slack / Pager  │         │ d&#39;erreur &gt; 80% │         │ sur Status 500 │         │ la panne (BDD) │
+ └────────────────┘         └────────────────┘         └────────────────┘         └────────────────┘
+</code></pre></div>
+<ol>
+<li><strong>Alerte</strong> : Un webhook Slack signale un pic anormal d'erreurs HTTP 500.</li>
+<li><strong>Métriques</strong> : Sur le dashboard (Grafana/New Relic), on confirme que le taux d'erreur a grimpé à 80% sur la route <code>/api/todos</code>.</li>
+<li><strong>Logs</strong> : On filtre les logs structurés associés à cette métrique et on isole le log JSON d'erreur <code>500 Internal Server Error</code>.</li>
+<li><strong>Traces</strong> : On clique sur le <code>Span ID</code> du log pour afficher la trace complète. On voit immédiatement que la requête a traversé le middleware et le service, mais a échoué dans la couche Repository sur la fonction <code>db.Exec()</code>. Le problème est corrigé en quelques minutes !</li>
+</ol>
+<hr />
+<h2 id="7-ecosysteme-des-outils-open-source-vs-saas-proprietaire">🛠️ 7. Écosystème des Outils : Open Source vs SaaS Propriétaire<a class="headerlink" href="#7-ecosysteme-des-outils-open-source-vs-saas-proprietaire" title="Permanent link">&para;</a></h2>
+<p>Le choix des outils dépend de la taille de l'équipe et des ressources d'infrastructure :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Catégorie</th>
+<th style="text-align: left;">Outils Open-Source (Self-Hosted)</th>
+<th style="text-align: left;">Solutions SaaS Propriétaires (All-in-One)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Composants</strong></td>
+<td style="text-align: left;">• <strong>Prometheus</strong> (Métriques)<br>• <strong>Grafana</strong> (Dashboards &amp; Alerts)<br>• <strong>Loki / Promtail</strong> (Logs)<br>• <strong>Jaeger</strong> (Traces)</td>
+<td style="text-align: left;">• <strong>New Relic</strong><br>• <strong>Datadog</strong><br>• <strong>Sentry</strong> (Erreurs &amp; APM)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Avantages</strong></td>
+<td style="text-align: left;">Contrôle total des données, aucun coût de licence logicielle.</td>
+<td style="text-align: left;">Configuration rapide en 5 min, tableau de bord unifié, zéro maintenance infra.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Inconvénients</strong></td>
+<td style="text-align: left;">Nécessite une équipe DevOps dédiée pour maintenir l'infrastructure d'observabilité.</td>
+<td style="text-align: left;">Coût financier pouvant grimper vite selon le volume d'ingestion de données.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-collaboration-dev-devops">🤝 8. Collaboration Dev &amp; DevOps<a class="headerlink" href="#8-collaboration-dev-devops" title="Permanent link">&para;</a></h2>
+<p>L'observabilité est un effort d'équipe :
+* <strong>Le Développeur Backend</strong> : Intègre les logs structurés au niveau du code (<code>log.info()</code>, <code>log.error()</code>), enrichit le contexte de requête (<code>user_id</code>, <code>tenant_id</code>) et instrumente les fonctions clés.
+* <strong>L'Ingénieur DevOps / Infra</strong> : Met en place les collecteurs de logs/traces (Collectors OpenTelemetry), configure les agents de monitoring (Prometheus/Agent Datadog) et définit les alertes d'infrastructures.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../17-production-grade-config-management/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 17. Gestion de la configuration en production (Configuration Management)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                17. Gestion de la configuration en production (Configuration Management)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../langages/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Accueil">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Accueil
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
