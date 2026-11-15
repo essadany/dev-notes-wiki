@@ -57,6 +57,19 @@ nav:
       - 16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance): backend-from-first-principles/16-error-handling-and-fault-tolerance.md
       - 17. Gestion de la configuration en production (Configuration Management): backend-from-first-principles/17-production-grade-config-management.md
       - 18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod): backend-from-first-principles/18-logging-monitoring-observability.md
+      - 19. Graceful Shutdown (L'Art de s'Éteindre Proprement): backend-from-first-principles/19-graceful-shutdown.md
+      - 20. La Sécurité Backend (Everything You Need to Know): backend-from-first-principles/20-backend-security.md
+      - 21.1. Scaling & Performance Engineering - Partie 1: backend-from-first-principles/21.1-backend-scaling-part1.md
+      - 21.2. Scalabilité Backend & Performance Engineering (Partie 2): backend-from-first-principles/21.2-backend-scaling-part2.md
+      - 22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound): backend-from-first-principles/22-concurrency-parallelism.md
+      - 23. Object Storage & Gestion des Fichiers en Backend (Partie 1): backend-from-first-principles/23-object-storage-part1.md
+      - 24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2): backend-from-first-principles/24-object-storage-part2.md
+      - 25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub): backend-from-first-principles/25-realtime-backends.md
+      - 26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture): backend-from-first-principles/26-testing-backend.md
+      - 27. The Twelve-Factor App (12-Factor Methodology): backend-from-first-principles/27-twelve-factor-app.md
+      - 28. OpenAPI (Le contrat universel entre clients et serveurs): backend-from-first-principles/28-openapi.md
+      - 29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs): backend-from-first-principles/29-webhooks.md
+      - 30. DevOps & Infrastructure pour les Ingénieurs Backend: backend-from-first-principles/30-devops.md
   - Langages de programmation:
       - Accueil: langages/index.md
       - 1. Synchrone vs Asynchrone selon les langages: langages/sync-async-langages.md
