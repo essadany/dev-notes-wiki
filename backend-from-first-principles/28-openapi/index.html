@@ -1,0 +1,1889 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../27-twelve-factor-app/">
+      
+      
+        <link rel="next" href="../29-webhooks/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>28. OpenAPI (Le contrat universel entre clients et serveurs) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#28-openapi-le-contrat-universel-entre-clients-et-serveurs" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              28. OpenAPI (Le contrat universel entre clients et serveurs)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.1-backend-scaling-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.2-backend-scaling-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../23-object-storage-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../24-object-storage-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-probleme-la-crise-des-sources-de-verite-multiples" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 1. Le Problème : La Crise des Sources de Vérité Multiples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ 1. Le Problème : La Crise des Sources de Vérité Multiples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-frontiere-reseau-network-boundary-vs-la-frontiere-du-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      La frontière réseau (Network Boundary) vs La frontière du code
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-origine-et-clarification-des-termes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📜 2. Origine et Clarification des Termes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📜 2. Origine et Clarification des Termes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lhistoire-wordnik-2010" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'histoire (Wordnik, 2010)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ne-plus-confondre-les-4-termes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ne plus confondre les 4 termes :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-anatomie-dun-fichier-openapi-openapiyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 3. Anatomie d'un Fichier OpenAPI (openapi.yaml)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ 3. Anatomie d'un Fichier OpenAPI (openapi.yaml)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-structure-minimale-dun-document-openapi-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      La structure minimale d'un document OpenAPI 3.1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detail-dune-operation-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      Détail d'une Opération (paths)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-code-first-vs-design-first-contract-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔀 4. Code-First vs Design-First (Contract-First)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔀 4. Code-First vs Design-First (Contract-First)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-code-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Code-First
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-design-first-contract-first-la-methode-moderne" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Design-First (Contract-First) — La méthode moderne
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-pipeline-de-production-design-first-en-5-etapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 5. Le Pipeline de Production Design-First en 5 Étapes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-openapi-dans-lecosysteme-reel-lere-des-agents-ia" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 6. OpenAPI dans l'Écosystème Réel &amp; L'Ére des Agents IA
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../29-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-probleme-la-crise-des-sources-de-verite-multiples" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 1. Le Problème : La Crise des Sources de Vérité Multiples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ 1. Le Problème : La Crise des Sources de Vérité Multiples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-frontiere-reseau-network-boundary-vs-la-frontiere-du-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      La frontière réseau (Network Boundary) vs La frontière du code
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-origine-et-clarification-des-termes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📜 2. Origine et Clarification des Termes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📜 2. Origine et Clarification des Termes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lhistoire-wordnik-2010" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'histoire (Wordnik, 2010)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ne-plus-confondre-les-4-termes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ne plus confondre les 4 termes :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-anatomie-dun-fichier-openapi-openapiyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 3. Anatomie d'un Fichier OpenAPI (openapi.yaml)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ 3. Anatomie d'un Fichier OpenAPI (openapi.yaml)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-structure-minimale-dun-document-openapi-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      La structure minimale d'un document OpenAPI 3.1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detail-dune-operation-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      Détail d'une Opération (paths)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-code-first-vs-design-first-contract-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔀 4. Code-First vs Design-First (Contract-First)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔀 4. Code-First vs Design-First (Contract-First)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-code-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Code-First
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-design-first-contract-first-la-methode-moderne" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Design-First (Contract-First) — La méthode moderne
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-pipeline-de-production-design-first-en-5-etapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 5. Le Pipeline de Production Design-First en 5 Étapes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-openapi-dans-lecosysteme-reel-lere-des-agents-ia" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 6. OpenAPI dans l'Écosystème Réel &amp; L'Ére des Agents IA
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="28-openapi-le-contrat-universel-entre-clients-et-serveurs">28. OpenAPI (Le contrat universel entre clients et serveurs)<a class="headerlink" href="#28-openapi-le-contrat-universel-entre-clients-et-serveurs" title="Permanent link">&para;</a></h1>
+<p>Lorsqu'on développe une application web ou mobile, l'un des plus grands pièges réside dans la désynchronisation entre ce que le serveur attend et ce que le client envoie. <strong>OpenAPI</strong> est le standard industriel mondial qui résout définitivement ce problème en établissant un contrat universel et exécutable à travers la frontière réseau.</p>
+<hr />
+<h2 id="1-le-probleme-la-crise-des-sources-de-verite-multiples">⚡ 1. Le Problème : La Crise des Sources de Vérité Multiples<a class="headerlink" href="#1-le-probleme-la-crise-des-sources-de-verite-multiples" title="Permanent link">&para;</a></h2>
+<p>Dans une architecture sans contrat formel, la connaissance d'un endpoint HTTP (route, paramètres, corps de requête, codes de retour) est éparpillée à trois endroits distincts :</p>
+<div class="highlight"><pre><span></span><code> ┌───────────────────────────┐      ┌───────────────────────────┐
+ │     1. Backend Handler    │      │    2. Frontend (Fetch)    │
+ │ (Code source qui lit le   │      │ (Appel de l&#39;API dans      │
+ │  body et valide les data) │      │  React, Vue, iOS, etc.)   │
+ └─────────────┬─────────────┘      └─────────────┬─────────────┘
+               │                                  │
+               │      ┌────────────────────┐      │
+               └────► │  3. Documentation  │ ◄────┘
+                      │ (Markdown, Notion, │
+                      │  Swagger obsolète) │
+                      └────────────────────┘
+</code></pre></div>
+<h3 id="la-frontiere-reseau-network-boundary-vs-la-frontiere-du-code">La frontière réseau (Network Boundary) vs La frontière du code<a class="headerlink" href="#la-frontiere-reseau-network-boundary-vs-la-frontiere-du-code" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>À l'intérieur du codebase backend (Codebase Boundary)</strong> : Si un développeur modifie la signature d'une fonction interne (ex: changement du type d'un argument), le compilateur (TypeScript, Go, Java, Rust) lève <strong>immédiatement une erreur à la compilation</strong>.</li>
+<li><strong>À travers le réseau (Network Boundary)</strong> : Le protocole HTTP est par nature dépourvu de signature statique. Si quelqu'un renomme un champ dans le handler backend (ex: <code>two</code> -&gt; <code>column</code>), le frontend continue d'envoyer <code>two</code> et l'erreur n'apparaît qu'en <strong>runtime</strong> (erreur 400 ou 500 en production).</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Le rôle d'OpenAPI</strong> : Donner aux appels réseaux distants la même protection par signature stéréotypée et compilée que celle dont bénéficient nos fonctions locales dans le code.</p>
+</blockquote>
+<hr />
+<h2 id="2-origine-et-clarification-des-termes">📜 2. Origine et Clarification des Termes<a class="headerlink" href="#2-origine-et-clarification-des-termes" title="Permanent link">&para;</a></h2>
+<h3 id="lhistoire-wordnik-2010">L'histoire (Wordnik, 2010)<a class="headerlink" href="#lhistoire-wordnik-2010" title="Permanent link">&para;</a></h3>
+<p>En 2010, <strong>Tony Tam</strong> et l'équipe de la startup Wordnik ont un problème : leurs clients exigent des SDKs et des documentations dans plusieurs langages (Python, PHP, JavaScript). Face à ce constat (<em>"We often code faster than we can document"</em>), ils créent une spécification JSON permettant au serveur de décrire lui-même ses capacités. De là est né <strong>Swagger</strong>.</p>
+<ul>
+<li><strong>2011</strong> : Swagger 1.0 est rendu open-source.</li>
+<li><strong>2015</strong> : La société SmartBear rachete Swagger et fait don de la spécification à la <strong>Linux Foundation</strong> (avec le soutien de Google, Microsoft, IBM, PayPal).</li>
+<li><strong>2016</strong> : La spécification est officiellement renommée <strong>OpenAPI Specification (OAS)</strong>.</li>
+</ul>
+<h3 id="ne-plus-confondre-les-4-termes">Ne plus confondre les 4 termes :<a class="headerlink" href="#ne-plus-confondre-les-4-termes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Terme</th>
+<th style="text-align: left;">Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>OAS (OpenAPI Specification)</strong></td>
+<td style="text-align: left;">L'ensemble des règles standardisées qui définissent le format.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OAD (OpenAPI Description)</strong></td>
+<td style="text-align: left;">Le fichier physique (<code>openapi.json</code> ou <code>openapi.yaml</code>) décrivant votre API.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OAI (OpenAPI Initiative)</strong></td>
+<td style="text-align: left;">L'organisation sous l'égide de la Linux Foundation qui maintient la spec.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Swagger</strong></td>
+<td style="text-align: left;">La marque et les outils historiques (ex: Swagger UI, Swagger Editor).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-anatomie-dun-fichier-openapi-openapiyaml">🏗️ 3. Anatomie d'un Fichier OpenAPI (<code>openapi.yaml</code>)<a class="headerlink" href="#3-anatomie-dun-fichier-openapi-openapiyaml" title="Permanent link">&para;</a></h2>
+<p>Pourquoi utiliser du <strong>YAML</strong> ou du <strong>JSON</strong> plutôt que du Markdown ? Parce qu'un format structuré permet d'être parsé de manière <strong>programmatique</strong> par des ordinateurs tout en restant lisible par les humains.</p>
+<h3 id="la-structure-minimale-dun-document-openapi-31">La structure minimale d'un document OpenAPI 3.1<a class="headerlink" href="#la-structure-minimale-dun-document-openapi-31" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">openapi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.1.0</span><span class="w">          </span><span class="c1"># Version de la spécification OpenAPI</span>
+<span class="nt">info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tasker API</span><span class="w">     </span><span class="c1"># Nom de votre API</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span><span class="w">        </span><span class="c1"># Version sémantique de VOTRE backend</span>
+<span class="nt">servers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:8080</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Serveur de Développement Local</span>
+<span class="nt">paths</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">               </span><span class="c1"># Liste des endpoints HTTP</span>
+</code></pre></div>
+<h3 id="detail-dune-operation-paths">Détail d'une Opération (<code>paths</code>)<a class="headerlink" href="#detail-dune-operation-paths" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">paths</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">/api/tasks/{taskId}/move</span><span class="p p-Indicator">:</span>
+<span class="w">    </span><span class="nt">post</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Déplacer une tâche vers une autre colonne</span>
+<span class="w">      </span><span class="nt">operationId</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">moveTask</span><span class="w">    </span><span class="c1"># IMPORTANT : deviendra le nom de la fonction générée</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tasks</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">taskId</span>
+<span class="w">          </span><span class="nt">in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path</span><span class="w">             </span><span class="c1"># path, query, header, ou cookie</span>
+<span class="w">          </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">requestBody</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">application/json</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">              </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">targetColumnId</span>
+<span class="w">              </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">targetColumnId</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">                </span><span class="nt">actor</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">                  </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guest</span>
+<span class="w">      </span><span class="nt">responses</span><span class="p">:</span>
+<span class="w">        </span><span class="s">&#39;200&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tâche déplacée avec succès</span>
+<span class="w">        </span><span class="s">&#39;400&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Erreur de validation des entrées</span>
+<span class="w">        </span><span class="s">&#39;404&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tâche introuvable</span>
+</code></pre></div>
+<hr />
+<h2 id="4-code-first-vs-design-first-contract-first">🔀 4. Code-First vs Design-First (Contract-First)<a class="headerlink" href="#4-code-first-vs-design-first-contract-first" title="Permanent link">&para;</a></h2>
+<p>Il existe deux approches pour intégrer OpenAPI dans une équipe de développement :</p>
+<div class="highlight"><pre><span></span><code>                      ┌──────────────────────────────────────┐
+                      │    L&#39;APPROCHE CODE-FIRST (Legacy)    │
+                      │  On code les handlers -&gt; On génère   │
+                      │  la spec via des annotations/code    │
+                      └──────────────────┬───────────────────┘
+                                         │
+                                         ▼
+                      ┌──────────────────────────────────────┐
+                      │   L&#39;APPROCHE DESIGN-FIRST (Recommandée)│
+                      │  On écrit le contrat OpenAPI D&#39;ABORD │
+                      │  -&gt; On génère serveurs &amp; clients !   │
+                      └──────────────────────────────────────┘
+</code></pre></div>
+<h3 id="1-code-first">1. Code-First<a class="headerlink" href="#1-code-first" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Principe</strong> : On écrit le code des controllers/handlers backend d'abord. La spec OpenAPI est générée automatiquement à l'aide d'annotations dans le code (ex: FastAPI en Python, annotations Swagger en Java, ou schémas Zod/ts-rest en TypeScript).</li>
+<li><strong>Inconvénient</strong> : Le frontend doit attendre que le backend ait terminé l'implémentation avant de pouvoir commencer le travail d'intégration.</li>
+</ul>
+<h3 id="2-design-first-contract-first-la-methode-moderne">2. Design-First (Contract-First) — La méthode moderne<a class="headerlink" href="#2-design-first-contract-first-la-methode-moderne" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Principe</strong> : On rédige le contrat OpenAPI (<code>openapi.yaml</code>) <strong>avant</strong> toute ligne de code.</li>
+<li><strong>Avantages majeurs</strong> :</li>
+<li><strong>Développement Parallèle</strong> : Le frontend et le backend travaillent simultanément dès le jour 1.</li>
+<li><strong>Intégration d'Agents IA</strong> : Permet de donner le contrat à des agents IA autonomes (un agent côté serveur, un agent côté client) sans blocage.</li>
+<li><strong>Vérité Unique</strong> : Aucune dérive entre la doc et le code réel.</li>
+</ul>
+<hr />
+<h2 id="5-le-pipeline-de-production-design-first-en-5-etapes">🛠️ 5. Le Pipeline de Production Design-First en 5 Étapes<a class="headerlink" href="#5-le-pipeline-de-production-design-first-en-5-etapes" title="Permanent link">&para;</a></h2>
+<p>Une fois le contrat <code>openapi.yaml</code> écrit, voici la chaîne d'outils automatisée à mettre en place :</p>
+<div class="highlight"><pre><span></span><code>  ┌─────────────────┐
+  │  openapi.yaml   │
+  └────────┬────────┘
+           │
+           ├────────► 1. LINTER (Spectral)
+           │          └─► Vérifie la syntaxe et la complétude
+           │
+           ├────────► 2. MOCK SERVER (Prism)
+           │          └─► Fournit une API factice immédiate au Frontend
+           │
+           ├────────► 3. CLIENT GEN (openapi-typescript / openapi-fetch)
+           │          └─► Génère le SDK et les types pour le Frontend
+           │
+           ├────────► 4. SERVER GEN (oapi-codegen pour Go)
+           │          └─► Génère les interfaces strictes pour le Backend
+           │
+           ├────────► 5. INTERACTIVE DOCS (Scalar / Swagger UI / ReDoc)
+           │          └─► Génère une interface web de test d&#39;API
+           │
+           └────────► 6. CONTRACT TESTING (Schemathesis)
+                      └─► Valide que le serveur réel respecte à 100% la spec
+</code></pre></div>
+<ol>
+<li><strong>Étape 1 - Linter (<code>Spectral</code>)</strong> : Analyse le fichier YAML et remonte les avertissements (ex: opération sans <code>operationId</code> ou réponse 200 sans schéma).</li>
+<li><strong>Étape 2 - Mock Server (<code>Prism</code>)</strong> : Lance un serveur HTTP factice basé sur le fichier OpenAPI. Le frontend peut effectuer des requêtes réelles et recevoir les données d'exemple documentées avant même que le backend n'existe.</li>
+<li><strong>Étape 3 - Génération de Code Client (<code>openapi-typescript</code>)</strong> : Génère les types TypeScript et les fonctions d'appel API. Toute erreur de frappe sur un champ provoque une erreur à la compilation frontend.</li>
+<li><strong>Étape 4 - Génération d'Interfaces Serveur (<code>oapi-codegen</code>)</strong> : Génère des interfaces dans le langage du serveur (ex: Go). Si le handler backend ne respecte pas l'interface, le projet <strong>refuse de compiler</strong>.</li>
+<li><strong>Étape 5 - Documentation Interactive (<code>Scalar</code> / <code>Swagger UI</code>)</strong> : Offre une interface Web moderne pour consulter et tester les endpoints avec un bouton <em>"Try it out"</em>.</li>
+<li><strong>Étape Bonus - Contract Testing (<code>Schemathesis</code>)</strong> : Outil qui lit la spec, génère des requêtes de test pour vérifier que le serveur réel ne dévie jamais du contrat.</li>
+</ol>
+<hr />
+<h2 id="6-openapi-dans-lecosysteme-reel-lere-des-agents-ia">🌐 6. OpenAPI dans l'Écosystème Réel &amp; L'Ére des Agents IA<a class="headerlink" href="#6-openapi-dans-lecosysteme-reel-lere-des-agents-ia" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Specs Géantes en Production</strong> : Les géants du Web publient leurs spécifications OpenAPI complètes. Celle de <strong>GitHub</strong> dépasse les 344 000 lignes YAML, et celle de <strong>Stripe</strong> fait plus de 171 000 lignes.</li>
+<li><strong>Le Standard pour les Agents IA</strong> : Pour qu'un agent d'IA (LLM) puisse interagir avec vos systèmes backend (Tool Use / Function Calling), il suffit de lui fournir la spécification OpenAPI de vos services. L'IA comprend instantanément les routes, les paramètres et les formats d'entrées/sorties sans aucun code de colle supplémentaire.</li>
+</ul>
+<hr />
+<blockquote>
+<p>💡 <strong>Le conseil de l'ingénieur backend junior</strong> : OpenAPI n'est pas juste de la documentation passive, c'est le <strong>noyau exécutable</strong> de l'architecture API. En adoptant l'approche <em>Design-First</em>, on élimine 90% des bugs d'intégration réseau avant même le premier déploiement !</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../27-twelve-factor-app/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 27. The Twelve-Factor App (12-Factor Methodology)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                27. The Twelve-Factor App (12-Factor Methodology)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../29-webhooks/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

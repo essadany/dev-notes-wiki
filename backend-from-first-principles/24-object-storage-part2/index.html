@@ -1,0 +1,2209 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../23-object-storage-part1/">
+      
+      
+        <link rel="next" href="../25-realtime-backends/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#24-object-storage-tout-ce-quil-faut-savoir-partie-2" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.1-backend-scaling-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.2-backend-scaling-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../23-object-storage-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-les-uploadeurs-put-simples-echouent-sur-les-gros-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      💥 1. Pourquoi les Uploadeurs PUT Simples Échouent sur les Gros Fichiers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-protocole-multipart-upload-le-standard-industriel" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 2. Le Protocole Multipart Upload (Le Standard Industriel)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 2. Le Protocole Multipart Upload (Le Standard Industriel)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-createmultipartupload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 1 : CreateMultipartUpload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-uploadpart-repete-n-fois" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 2 : UploadPart (Répété N fois)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-completemultipartupload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 3 : CompleteMultipartUpload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-abortmultipartupload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 4 : AbortMultipartUpload
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-calcul-dynamique-de-la-taille-des-parts-la-limite-des-10-000-parts" class="md-nav__link">
+    <span class="md-ellipsis">
+      📏 3. Calcul Dynamique de la Taille des Parts (La Limite des 10 000 Parts)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📏 3. Calcul Dynamique de la Taille des Parts (La Limite des 10 000 Parts)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-formule-pour-une-taille-de-part-dynamique" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Formule pour une Taille de Part Dynamique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-16-mo-a-32-mo-est-le-sweet-spot" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi 16 Mo à 32 Mo est le "Sweet Spot" ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-le-piege-des-etags-lintegrite-des-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏷️ 4. Le Piège des ETags &amp; L'Intégrité des Données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏷️ 4. Le Piège des ETags & L'Intégrité des Données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comment-assurer-une-vraie-verification-dintegrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comment assurer une vraie vérification d'intégrité ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-la-fuite-financiere-masquee-abortincompletemultipartuploads" class="md-nav__link">
+    <span class="md-ellipsis">
+      💸 5. La Fuite Financière Masquée : AbortIncompleteMultipartUploads
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💸 5. La Fuite Financière Masquée : AbortIncompleteMultipartUploads">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-regle-dor-obligatoire-jour-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ La Règle d'Or Obligatoire (Jour 1)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-architecture-de-production-complete-pre-signed-post-multipart" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 6. Architecture de Production Complète (Pre-signed POST + Multipart)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ 6. Architecture de Production Complète (Pre-signed POST + Multipart)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommandations-cles-dimplementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommandations clés d'implémentation :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-architecture-de-telechargement-strategies-cdn" class="md-nav__link">
+    <span class="md-ellipsis">
+      📥 7. Architecture de Téléchargement &amp; Stratégies CDN
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📥 7. Architecture de Téléchargement & Stratégies CDN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-3-patrons-de-telechargement-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 3 Patrons de Téléchargement en Production
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-range-requests-http-206-partial-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 8. Range Requests (HTTP 206 Partial Content)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 8. Range Requests (HTTP 206 Partial Content)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-cas-dusage-incontournables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les Cas d'Usage Incontournables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-streaming-video-adaptatif-hls-dash" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎬 9. Streaming Vidéo Adaptatif (HLS / DASH)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎬 9. Streaming Vidéo Adaptatif (HLS / DASH)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-fonctionnement-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Fonctionnement Technique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-modele-financier-optimisation-des-couts-egress" class="md-nav__link">
+    <span class="md-ellipsis">
+      💰 10. Modèle Financier &amp; Optimisation des Coûts (Egress)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-de-synthese-pour-lingenieur-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Checklist de Synthèse pour l'Ingénieur Backend
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../28-openapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../29-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-les-uploadeurs-put-simples-echouent-sur-les-gros-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      💥 1. Pourquoi les Uploadeurs PUT Simples Échouent sur les Gros Fichiers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-protocole-multipart-upload-le-standard-industriel" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 2. Le Protocole Multipart Upload (Le Standard Industriel)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 2. Le Protocole Multipart Upload (Le Standard Industriel)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-createmultipartupload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 1 : CreateMultipartUpload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-uploadpart-repete-n-fois" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 2 : UploadPart (Répété N fois)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-completemultipartupload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 3 : CompleteMultipartUpload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-abortmultipartupload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape 4 : AbortMultipartUpload
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-calcul-dynamique-de-la-taille-des-parts-la-limite-des-10-000-parts" class="md-nav__link">
+    <span class="md-ellipsis">
+      📏 3. Calcul Dynamique de la Taille des Parts (La Limite des 10 000 Parts)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📏 3. Calcul Dynamique de la Taille des Parts (La Limite des 10 000 Parts)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-formule-pour-une-taille-de-part-dynamique" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Formule pour une Taille de Part Dynamique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-16-mo-a-32-mo-est-le-sweet-spot" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi 16 Mo à 32 Mo est le "Sweet Spot" ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-le-piege-des-etags-lintegrite-des-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏷️ 4. Le Piège des ETags &amp; L'Intégrité des Données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏷️ 4. Le Piège des ETags & L'Intégrité des Données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comment-assurer-une-vraie-verification-dintegrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comment assurer une vraie vérification d'intégrité ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-la-fuite-financiere-masquee-abortincompletemultipartuploads" class="md-nav__link">
+    <span class="md-ellipsis">
+      💸 5. La Fuite Financière Masquée : AbortIncompleteMultipartUploads
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💸 5. La Fuite Financière Masquée : AbortIncompleteMultipartUploads">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-regle-dor-obligatoire-jour-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ La Règle d'Or Obligatoire (Jour 1)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-architecture-de-production-complete-pre-signed-post-multipart" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 6. Architecture de Production Complète (Pre-signed POST + Multipart)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ 6. Architecture de Production Complète (Pre-signed POST + Multipart)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommandations-cles-dimplementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommandations clés d'implémentation :
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-architecture-de-telechargement-strategies-cdn" class="md-nav__link">
+    <span class="md-ellipsis">
+      📥 7. Architecture de Téléchargement &amp; Stratégies CDN
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📥 7. Architecture de Téléchargement & Stratégies CDN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-3-patrons-de-telechargement-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 3 Patrons de Téléchargement en Production
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-range-requests-http-206-partial-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 8. Range Requests (HTTP 206 Partial Content)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 8. Range Requests (HTTP 206 Partial Content)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-cas-dusage-incontournables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les Cas d'Usage Incontournables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-streaming-video-adaptatif-hls-dash" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎬 9. Streaming Vidéo Adaptatif (HLS / DASH)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎬 9. Streaming Vidéo Adaptatif (HLS / DASH)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-fonctionnement-technique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Fonctionnement Technique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-modele-financier-optimisation-des-couts-egress" class="md-nav__link">
+    <span class="md-ellipsis">
+      💰 10. Modèle Financier &amp; Optimisation des Coûts (Egress)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-de-synthese-pour-lingenieur-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Checklist de Synthèse pour l'Ingénieur Backend
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="24-object-storage-tout-ce-quil-faut-savoir-partie-2">24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)<a class="headerlink" href="#24-object-storage-tout-ce-quil-faut-savoir-partie-2" title="Permanent link">&para;</a></h1>
+<p>Après avoir vu les fondamentaux (immuabilité, buckets, clés, metadata, pre-signed URLs basiques), cette fiche s'attaque aux problèmes réels de <strong>production à grande échelle</strong> : l'upload de fichiers géants (plusieurs Go), la gestion du réseau, l'invalidation de cache sur CDN, les Range Requests HTTP, le streaming vidéo adaptatif et l'optimisation des coûts (Egress).</p>
+<hr />
+<h2 id="1-pourquoi-les-uploadeurs-put-simples-echouent-sur-les-gros-fichiers">💥 1. Pourquoi les Uploadeurs PUT Simples Échouent sur les Gros Fichiers<a class="headerlink" href="#1-pourquoi-les-uploadeurs-put-simples-echouent-sur-les-gros-fichiers" title="Permanent link">&para;</a></h2>
+<p>Lorsqu'on essaie de pousser un fichier de plusieurs gigaoctets (vidéos HD, captures drone, dumps de bases de données, fichiers CAD) avec un unique <code>PUT</code> HTTP, on se heurte à <strong>4 limites architecturales majeures</strong> :</p>
+<div class="highlight"><pre><span></span><code>   ┌────────────────────────────────────────────────────────────────────────┐
+   │                  LES 4 LIMITES D&#39;UN PUT UNIQUE SIMPLISTE                │
+   ├────────────────────────────────────────────────────────────────────────┤
+   │ 1. HARD LIMIT S3     : Impossible de dépasser 5 Go en un seul PUT.      │
+   │ 2. TOUT OU RIEN      : Une micro-coupure Wi-Fi/4G à 4.9 Go annule TOUT.│
+   │ 3. BRIDE DE DÉBIT    : Une seule connexion TCP ne peut pas saturer le   │
+   │                        lien réseau (limitation window/RTT &amp; perte).    │
+   │ 4. EXPÉRIENCE USER   : Pas de pause/reprise, progression imprécise.     │
+   └────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<ol>
+<li><strong>La limite stricte des 5 Go</strong> : Imposée par l'API S3 elle-même pour tout <code>PUT</code> monolithique.</li>
+<li><strong>Le principe du Tout-ou-Rien (All-or-Nothing)</strong> : Si un utilisateur en 4G upload un fichier de 5 Go et que son réseau saute à 4.8 Go, la requête est annulée. Il n'y a aucun bouton <em>Resume</em>, il faut repartir de zéro (0 Go).</li>
+<li><strong>La sous-utilisation de la bande passante (TCP Bottleneck)</strong> : Une seule connexion TCP est bridée par la formule <code>Window Size / RTT</code> et très sensible aux pertes de paquets (effondrement de la fenêtre de congestion). Résultat : sur une connexion 500 Mbps, un transfert monopasse plafonne souvent à 30 Mbps.</li>
+<li><strong>Une UX déplorable</strong> : Impossible d'offrir une pause/reprise ni un calcul stable de vitesse.</li>
+</ol>
+<hr />
+<h2 id="2-le-protocole-multipart-upload-le-standard-industriel">🧩 2. Le Protocole Multipart Upload (Le Standard Industriel)<a class="headerlink" href="#2-le-protocole-multipart-upload-le-standard-industriel" title="Permanent link">&para;</a></h2>
+<p>Pour résoudre ces 4 problèmes, AWS S3 et les providers d'object storage utilisent le <strong>Multipart Upload</strong>. Le principe est de découper le fichier en petits morceaux (<em>chunks</em> ou <em>parts</em>), d'uploader ces morceaux indépendamment et en parallèle, puis de demander au service d'assembler le tout.</p>
+<p>Le protocole repose sur <strong>3 APIs principales + 1 API d'annulation</strong> :</p>
+<div class="highlight"><pre><span></span><code>   BROWSER / CLIENT                    BACKEND API                        AWS S3 / R2
+          │                                 │                                 │
+          │ ─── 1. POST /uploads/init ────► │                                 │
+          │                                 │ ─── CreateMultipartUpload ────► │
+          │                                 │ ◄── Return UploadID (Staging) ─ │
+          │ ◄── Return UploadID + URLs ──── │                                 │
+          │                                 │                                 │
+          │ ─── 2. PUT Part 1 (Parallel) ───────────────────────────────────► │ (Store in Staging)
+          │ ─── 2. PUT Part 2 (Parallel) ───────────────────────────────────► │ (Returns ETag 1)
+          │ ─── 2. PUT Part N (Parallel) ───────────────────────────────────► │ (Returns ETag 2)
+          │                                 │                                 │
+          │ ─── 3. POST /uploads/complete ─► │                                 │
+          │       (UploadID + Parts/ETags)  │ ─── CompleteMultipartUpload ──► │ (Metadata Commit!)
+          │                                 │ ◄── Object Created (200 OK) ─── │
+          │ ◄── 200 OK (Upload Finished) ── │                                 │
+</code></pre></div>
+<h3 id="etape-1-createmultipartupload">Étape 1 : <code>CreateMultipartUpload</code><a class="headerlink" href="#etape-1-createmultipartupload" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Le backend signale au bucket l'intention d'uploader un fichier (Key, Content-Type, Bucket).</li>
+<li>S3 retourne un <strong><code>Upload ID</code></strong>.</li>
+<li><strong>Attention</strong> : À cette étape, une zone de <em>Staging</em> (zone d'attente éphémère) est créée. L'objet n'existe pas encore ! Un <code>GET</code> sur la clé renverra toujours une <code>404 Not Found</code>.</li>
+</ul>
+<h3 id="etape-2-uploadpart-repete-n-fois">Étape 2 : <code>UploadPart</code> (Répété N fois)<a class="headerlink" href="#etape-2-uploadpart-repete-n-fois" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Le client envoie chaque morceau séparément avec l'Upload ID et un <code>PartNumber</code> (ex: part 1 à 125).</li>
+<li><strong>Propriété clé</strong> : Les requêtes HTTP sont 100% indépendantes. Elles peuvent arriver <strong>en parallèle</strong> et <strong>dans n'importe quel ordre</strong> (la part 7 peut arriver avant la part 2).</li>
+<li>Si une part échoue à cause du réseau, <strong>seule cette part est réessayée</strong> !</li>
+<li>Chaque part envoyée avec succès renvoie un <strong>ETag</strong> spécifique.</li>
+</ul>
+<h3 id="etape-3-completemultipartupload">Étape 3 : <code>CompleteMultipartUpload</code><a class="headerlink" href="#etape-3-completemultipartupload" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Le client ou le backend envoie l'Upload ID et le manifeste ordonné de toutes les parts.</li>
+<li><strong>Performances magiques</strong> : Que l'objet final fasse 500 Mo ou 50 Go, cette requête de finalisation prend seulement quelques millisecondes !</li>
+<li><strong>Pourquoi ?</strong> C'est une pure opération du <strong>Metadata Plane</strong>. S3 ne recopie pas physiquement 50 Go de données, il met juste à jour son index de métadonnées pour faire pointer la clé vers la liste des blocs enregistrés.</li>
+</ul>
+<h3 id="etape-4-abortmultipartupload">Étape 4 : <code>AbortMultipartUpload</code><a class="headerlink" href="#etape-4-abortmultipartupload" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Permet d'annuler l'upload et de vider la zone de staging.</li>
+</ul>
+<hr />
+<h2 id="3-calcul-dynamique-de-la-taille-des-parts-la-limite-des-10-000-parts">📏 3. Calcul Dynamique de la Taille des Parts (La Limite des 10 000 Parts)<a class="headerlink" href="#3-calcul-dynamique-de-la-taille-des-parts-la-limite-des-10-000-parts" title="Permanent link">&para;</a></h2>
+<p>Il existe une contrainte matérielle absolue sur S3 : <strong>Un Multipart Upload ne peut pas dépasser 10 000 parts</strong>.</p>
+<div class="highlight"><pre><span></span><code>                      ⚠️ LE PIÈGE DE LA TAILLE FIXE ⚠️
+   Si vous fixez la taille d&#39;une part à 5 Mo par défaut :
+   Max File Size = 5 Mo × 10 000 parts = 50 Go.
+   --&gt; Si l&#39;utilisateur tente d&#39;uploader un fichier de 60 Go, l&#39;upload CRASHERA
+       à la part 10 001 après avoir déjà consommé 50 Go de transfert !
+</code></pre></div>
+<h3 id="la-formule-pour-une-taille-de-part-dynamique">La Formule pour une Taille de Part Dynamique<a class="headerlink" href="#la-formule-pour-une-taille-de-part-dynamique" title="Permanent link">&para;</a></h3>
+<p>Pour éviter ce crash dramatique en cours de route, le backend doit calculer la taille des parts dynamiquement en fonction de la taille totale du fichier reçu :</p>
+<p><code>Part Size = Max(Default Floor (ex: 16 Mo), Total File Size / 10000)</code></p>
+<h3 id="pourquoi-16-mo-a-32-mo-est-le-sweet-spot">Pourquoi 16 Mo à 32 Mo est le "Sweet Spot" ?<a class="headerlink" href="#pourquoi-16-mo-a-32-mo-est-le-sweet-spot" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Taille de Part trop petite (ex: 5 Mo)</strong> : Risque de dépasser la limite des 10 000 parts sur les très gros fichiers + surcharge de requêtes HTTP.</li>
+<li><strong>Taille de Part trop grande (ex: 500 Mo)</strong> : Si un réseau mobile saute, la granularité de retry est de 500 Mo, ce qui rend les réessais très coûteux.</li>
+<li><strong>Sweet Spot (16 - 32 Mo)</strong> : Permet de gérer des fichiers jusqu'à 160 Go - 320 Go sans calculs complexes tout en gardant un coût de réessai très faible en cas de micro-coupure.</li>
+</ul>
+<hr />
+<h2 id="4-le-piege-des-etags-lintegrite-des-donnees">🏷️ 4. Le Piège des ETags &amp; L'Intégrité des Données<a class="headerlink" href="#4-le-piege-des-etags-lintegrite-des-donnees" title="Permanent link">&para;</a></h2>
+<p>Sur un <code>PUT</code> simple monolithique, l'<strong>ETag</strong> renvoyé par S3 est le hash <strong>MD5</strong> brut du fichier. On peut comparer le MD5 local avec l'ETag pour vérifier l'intégrité.</p>
+<div class="highlight"><pre><span></span><code>   ┌────────────────────────────────────────────────────────────────────────┐
+   │                       ATTENTION AUX ETAGS MULTIPART !                  │
+   ├────────────────────────────────────────────────────────────────────────┤
+   │ En Multipart Upload, l&#39;ETag NE CORRESPOND PLUS AU HASH MD5 DU FICHIER ! │
+   │ Format de l&#39;ETag Multipart : [MD5 des hashes MD5 concaténés] - [N Parts]│
+   │ Exemple : &quot;c68709db1f201e523f260471b69f6880-42&quot;                         │
+   └────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="comment-assurer-une-vraie-verification-dintegrite">Comment assurer une vraie vérification d'intégrité ?<a class="headerlink" href="#comment-assurer-une-vraie-verification-dintegrite" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Checksums S3 natifs modernes</strong> : Utiliser les nouveaux SDK S3 qui supportent <code>CRC32C</code> ou <code>SHA-256</code> par part et effectuent une vérification globale.</li>
+<li><strong>User Metadata SHA-256 (Recommandé)</strong> : Calculer le hash <code>SHA-256</code> complet du fichier côté client avant l'upload, le passer dans les métadonnées utilisateur (<code>x-amz-meta-sha256</code>), et le vérifier via un background job une fois l'upload terminé.</li>
+</ol>
+<hr />
+<h2 id="5-la-fuite-financiere-masquee-abortincompletemultipartuploads">💸 5. La Fuite Financière Masquée : AbortIncompleteMultipartUploads<a class="headerlink" href="#5-la-fuite-financiere-masquee-abortincompletemultipartuploads" title="Permanent link">&para;</a></h2>
+<p>Voici l'un des pièges les plus coûteux et méconnus du cloud :</p>
+<blockquote>
+<p><strong>Le Problème</strong> : Si un utilisateur lance un multipart upload, envoie 10 Go de données dans la zone de staging, puis ferme son navigateur sans que la requête <code>Complete</code> ou <code>Abort</code> ne soit appelée, <strong>ces 10 Go restent stockés dans S3 indéfiniment</strong>.</p>
+</blockquote>
+<ul>
+<li>Ces fichiers en staging <strong>n'apparaissent pas dans la console S3</strong> ni dans les requêtes <code>ListObjects</code>.</li>
+<li>Pourtant, AWS vous <strong>facture ces gigaoctets chaque mois</strong> !</li>
+</ul>
+<h3 id="la-regle-dor-obligatoire-jour-1">🛡️ La Règle d'Or Obligatoire (Jour 1)<a class="headerlink" href="#la-regle-dor-obligatoire-jour-1" title="Permanent link">&para;</a></h3>
+<p>Sur <strong>TOUS</strong> vos buckets S3 en production, configurez immédiatement une règle de Lifecycle pour annuler automatiquement les multipart uploads incomplets au bout de 7 jours (<code>AbortIncompleteMultipartUpload</code>).</p>
+<hr />
+<h2 id="6-architecture-de-production-complete-pre-signed-post-multipart">🏗️ 6. Architecture de Production Complète (Pre-signed POST + Multipart)<a class="headerlink" href="#6-architecture-de-production-complete-pre-signed-post-multipart" title="Permanent link">&para;</a></h2>
+<p>Voici le schéma architectural de référence utilisé par les grandes plateformes web pour gérer les uploads de gros fichiers directement depuis le navigateur :</p>
+<div class="highlight"><pre><span></span><code>┌─────────┐                ┌─────────┐                 ┌─────────┐              ┌───────────────┐
+│ Browser │                │ API Dev │                 │ DB SQL  │              │ AWS S3 Bucket │
+└────┬────┘                └────┬────┘                 └────┬────┘              └───────┬───────┘
+     │                          │                           │                           │
+     │ 1. POST /upload/init     │                           │                           │
+     │   (name, size, type)     │                           │                           │
+     ├─────────────────────────►│                           │                           │
+     │                          │ 2. Compute Part Size      │                           │
+     │                          │ 3. CreateMultipartUpload  │                           │
+     │                          ├───────────────────────────┼──────────────────────────►│
+     │                          │◄──────────────────────────┼───────────────────────────┤ (Upload ID)
+     │                          │ 4. INSERT Row (pending)   │                           │
+     │                          ├──────────────────────────►│                           │
+     │                          │ 5. Generate Presigned     │                           │
+     │                          │    URLs (Batch de 100)    │                           │
+     │ 6. Return UploadID +     │                           │                           │
+     │    Part URLs             │                           │                           │
+     │◄─────────────────────────┤                           │                           │
+     │                          │                           │                           │
+     │ 7. PUT Part 1..N (Direct Parallel Upload - 4 à 6 streams)                        │
+     ├─────────────────────────────────────────────────────────────────────────────────►│
+     │◄─────────────────────────────────────────────────────────────────────────────────┤ (Returns ETags)
+     │                          │                           │                           │
+     │ 8. POST /upload/complete │                           │                           │
+     │    (UploadID + ETags)    │                           │                           │
+     ├─────────────────────────►│ 9. CompleteMultipartUpload│                           │
+     │                          ├───────────────────────────┼──────────────────────────►│
+     │                          │◄──────────────────────────┼───────────────────────────┤ (200 OK)
+     │                          │ 10. HEAD Object Check     │                           │
+     │                          ├───────────────────────────┼──────────────────────────►│
+     │                          │ 11. UPDATE DB (ready)     │                           │
+     │                          ├──────────────────────────►│                           │
+     │ 12. 200 OK (Success!)    │ 12. Emit file.uploaded    │                           │
+     │◄─────────────────────────┤     to Event Queue        │                           │
+</code></pre></div>
+<h3 id="recommandations-cles-dimplementation">Recommandations clés d'implémentation :<a class="headerlink" href="#recommandations-cles-dimplementation" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Pre-sign par batches (pas 10 000 URLs d'un coup)</strong> : Si le fichier nécessite 1000 parts, ne générez pas 1000 URLs dans la réponse JSON initiale (cela ferait un JSON de plusieurs Mo). Générez les URLs par lots de 100 au fur et à mesure de la progression du navigateur.</li>
+<li><strong>Limiter la concurrence navigateur (4 à 6 streams)</strong> : Uploader 4 à 6 parts en parallèle est le compromis idéal. Au-delà, les requêtes se battent pour la même bande passante et risquent de provoquer des timeouts.</li>
+<li>
+<p><strong>Exposer l'en-tête ETag dans la config CORS S3</strong> : Configurer <code>ExposeHeader: ETag</code>.
+   <em>Sans cette directive CORS, le JavaScript du navigateur ne pourra pas lire l'ETag dans la réponse de S3 et ne pourra jamais compléter l'upload !</em></p>
+</li>
+<li>
+<p><strong>Reprise sur panne (Resumable Uploads)</strong> : Si l'utilisateur rafraîchit la page à 80% d'upload, le navigateur demande au backend : <em>"Ai-je un upload en cours pour ce fichier ?"</em>. Le backend interroge S3 via <code>ListParts(UploadID)</code>, identifie les parts déjà reçues en staging, et ne renvoie des URLs pré-signées que pour les parts manquantes !</p>
+</li>
+</ol>
+<hr />
+<h2 id="7-architecture-de-telechargement-strategies-cdn">📥 7. Architecture de Téléchargement &amp; Stratégies CDN<a class="headerlink" href="#7-architecture-de-telechargement-strategies-cdn" title="Permanent link">&para;</a></h2>
+<p>Sur le web, les téléchargements et affichages de fichiers représentent <strong>90% à 99% du trafic d'un object storage</strong>.</p>
+<div class="highlight"><pre><span></span><code>   ❌ RÈGLE D&#39;OR : NE JAMAIS PROXYFIER LES TÉLÉCHARGEMENTS PAR LE BACKEND !
+   Faire `GET Object` sur S3 puis copier les octets vers la réponse client HTTP :
+   - Bloque un worker/thread backend pendant tout le téléchargement.
+   - Fait exploser les coûts d&#39;Egress réseau de votre infrastructure cloud.
+   - Plafonne la vitesse de téléchargement pour les utilisateurs éloignés.
+</code></pre></div>
+<h3 id="les-3-patrons-de-telechargement-en-production">Les 3 Patrons de Téléchargement en Production<a class="headerlink" href="#les-3-patrons-de-telechargement-en-production" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>┌───────────────────────────────────────────────────────────────────────────────┐
+│                             LES 3 PATRONS DE DOWNLOAD                         │
+├───────────────────────────────────────────────────────────────────────────────┤
+│ PATRON 1 : BUCKET PRIVÉ + CDN PUBLIC (Assets Publics)                         │
+│ - Le bucket est privé, seul le CDN (Cloudflare/CloudFront) y a accès.          │
+│ - Utilisation de clés basées sur le hash (Content-Addressed Keys).            │
+│ - `Cache-Control: max-age=31536000, immutable`. Gratuit en Egress + Ultra-rapide│
+├───────────────────────────────────────────────────────────────────────────────┤
+│ PATRON 2 : PRE-SIGNED GET URLS (Fichiers Privés Ponctuels)                    │
+│ - L&#39;API vérifie les droits, puis génère un Pre-signed GET (valide 5-15 min).   │
+│ - Astuce Cache CDN : Arrondir l&#39;expiration à l&#39;heure suivante (`top-of-hour`)│
+│   pour que tous les users d&#39;une même heure reçoivent la MÊME URL (Cache Hit!). │
+├───────────────────────────────────────────────────────────────────────────────┤
+│ PATRON 3 : CDN SIGNED COOKIES / EDGE AUTH (Streaming &amp; Fichiers Multiples)   │
+│ - L&#39;autorisation se fait directement à l&#39;Edge (Cloudflare Workers / Lambda). │
+│ - Idéal pour le streaming vidéo (évite de signer 10 000 segments HLS).        │
+└───────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="8-range-requests-http-206-partial-content">🔍 8. Range Requests (HTTP 206 Partial Content)<a class="headerlink" href="#8-range-requests-http-206-partial-content" title="Permanent link">&para;</a></h2>
+<p>Les <strong>Range Requests</strong> permettent à un client de demander seulement une portion d'un fichier (ex: <em>"donne-moi les octets du 1 millionième au 3 millionième"</em>).</p>
+<ul>
+<li>Entête Client : <code>Range: bytes=1000000-3000000</code></li>
+<li>Réponse Serveur : <code>HTTP/1.1 206 Partial Content</code> avec <code>Content-Range: bytes 1000000-3000000/50000000</code></li>
+</ul>
+<h3 id="les-cas-dusage-incontournables">Les Cas d'Usage Incontournables<a class="headerlink" href="#les-cas-dusage-incontournables" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Video Seeking (Saut dans une vidéo)</strong> : Quand l'utilisateur déplace le curseur à la 30ème minute d'une vidéo, le lecteur calcule l'offset d'octets correspondant et lance un <code>Range Request</code>. Le navigateur ne télécharge pas les 30 premières minutes !</li>
+<li><strong>Reprise de Téléchargement (Download Managers)</strong> : Si un téléchargement s'interrompt à 400 Mo, la reprise demande la suite à partir de 400 Mo.</li>
+<li><strong>Lecture d'en-têtes sans charger le fichier (Magic Numbers)</strong> :</li>
+<li>Exemple : Télécharger uniquement les 8 premiers octets d'un fichier pour valider le header PNG sans télécharger l'image complète.</li>
+</ol>
+<hr />
+<h2 id="9-streaming-video-adaptatif-hls-dash">🎬 9. Streaming Vidéo Adaptatif (HLS / DASH)<a class="headerlink" href="#9-streaming-video-adaptatif-hls-dash" title="Permanent link">&para;</a></h2>
+<p>Pour les plateformes de vidéo (Netflix, YouTube), on ne sert pas un unique gros fichier <code>.mp4</code> via Range Requests. On utilise le <strong>Streaming Adaptatif</strong> :</p>
+<div class="highlight"><pre><span></span><code>                  ┌───────────────────────────────────────────┐
+                  │          FICHIER SOURCE (4K .MP4)         │
+                  └─────────────────────┬─────────────────────┘
+                                        │ (Pipeline de Transcodage)
+                                        ▼
+      ┌─────────────────────────────────┼─────────────────────────────────┐
+      ▼                                 ▼                                 ▼
+┌──────────────┐                 ┌──────────────┐                 ┌──────────────┐
+│  1080p HLS   │                 │   720p HLS   │                 │   480p HLS   │
+│ (Segments .ts)                 │ (Segments .ts)                 │ (Segments .ts)
+└──────┬───────┘                 └──────┬───────┘                 └──────┬───────┘
+       │                                │                                │
+       └────────────────────────────────┼────────────────────────────────┘
+                                        │
+                                        ▼
+                         ┌─────────────────────────────┐
+                         │   MANIFEST (.m3u8 / .mpd)   │
+                         └─────────────────────────────┘
+</code></pre></div>
+<h3 id="le-fonctionnement-technique">Le Fonctionnement Technique<a class="headerlink" href="#le-fonctionnement-technique" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Transcodage</strong> : Le fichier source est converti en plusieurs résolutions (1080p, 720p, 480p).</li>
+<li><strong>Segmentation</strong> : Chaque version est découpée en petits fichiers de 2 à 6 secondes (segments <code>.ts</code> ou <code>.m4s</code>).</li>
+<li><strong>Manifest (<code>.m3u8</code>)</strong> : Un fichier texte dresse l'index complet des segments et des résolutions disponibles.</li>
+<li><strong>Adaptive Bitrate (ABR)</strong> : Le lecteur vidéo du navigateur télécharge le manifeste, mesure la vitesse réseau en continu, et passe de 1080p à 480p de façon transparente en cas de baisse de connexion !</li>
+</ol>
+<blockquote>
+<p>💡 <strong>Le rôle de l'Object Storage</strong> : S3 sert simplement de stockage statique ultra-performant pour les millions de petits segments et les manifestes. La complexité réside dans les workers de transcodage (FFmpeg / AWS Elemental MediaConvert).</p>
+</blockquote>
+<hr />
+<h2 id="10-modele-financier-optimisation-des-couts-egress">💰 10. Modèle Financier &amp; Optimisation des Coûts (Egress)<a class="headerlink" href="#10-modele-financier-optimisation-des-couts-egress" title="Permanent link">&para;</a></h2>
+<p>Il existe <strong>3 axes de facturation</strong> en Object Storage :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Axe de Coût</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Astuce d'Optimisation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1. Stockage</strong></td>
+<td style="text-align: left;">Facturé au Go / Mois (~0.023$/Go sur S3 Standard).</td>
+<td style="text-align: left;">Utiliser les règles S3 Lifecycle pour basculer vers <em>Infrequent Access</em> ou <em>Glacier</em>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2. Opérations</strong></td>
+<td style="text-align: left;">Facturé par paquet de 1 000 requêtes. <strong>Les écritures (<code>PUT</code>) coûtent 10x plus cher que les lectures (<code>GET</code>)</strong>.</td>
+<td style="text-align: left;">Éviter les petites requêtes d'écriture répétitives. Batcher ou grouper.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3. Egress (Sortie)</strong></td>
+<td style="text-align: left;">Facturé au Go transféré du Cloud vers Internet (~0.09$/Go). <strong>C'est le poste de dépense le plus élevé !</strong></td>
+<td style="text-align: left;">Placer un CDN devant ou utiliser <strong>Cloudflare R2</strong> (0$ de frais d'Egress).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="checklist-de-synthese-pour-lingenieur-backend">📋 Checklist de Synthèse pour l'Ingénieur Backend<a class="headerlink" href="#checklist-de-synthese-pour-lingenieur-backend" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[x] <strong>Toujours utiliser le Multipart Upload</strong> pour tout fichier supérieur à 100 Mo.</li>
+<li>[x] <strong>Calculer la taille des parts dynamiquement</strong> (<code>Total Size / 10000</code>) avec un plancher à 16-32 Mo.</li>
+<li>[x] <strong>Configurer la règle Lifecycle <code>AbortIncompleteMultipartUploads</code></strong> à 7 jours dès le premier jour sur tous les buckets.</li>
+<li>[x] <strong>Ne jamais proxyfier les téléchargements via le serveur backend</strong> ; utiliser des Pre-signed GET URLs ou un CDN.</li>
+<li>[x] <strong>Exposer l'en-tête CORS <code>ETag</code></strong> sur le bucket S3 pour débloquer les uploads JavaScript.</li>
+<li>[x] <strong>Valider les fichiers post-upload avec <code>HEAD</code></strong> et utiliser des Pre-signed POST URLs restreintes.</li>
+</ul>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../23-object-storage-part1/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 23. Object Storage &amp; Gestion des Fichiers en Backend (Partie 1)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../25-realtime-backends/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 25. Real-Time Backends (Short Polling, SSE, WebSockets &amp; Pub/Sub)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

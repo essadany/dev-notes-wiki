@@ -1,0 +1,2161 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../22-concurrency-parallelism/">
+      
+      
+        <link rel="next" href="../24-object-storage-part2/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>23. Object Storage & Gestion des Fichiers en Backend (Partie 1) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#23-object-storage-gestion-des-fichiers-en-backend-partie-1" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.1-backend-scaling-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.2-backend-scaling-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-lapproche-naive-du-developpeur-junior-ses-6-catastrophes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚫 1. L'Approche Naïve du Développeur Junior &amp; Ses 6 Catastrophes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚫 1. L'Approche Naïve du Développeur Junior & Ses 6 Catastrophes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#probleme-1-lepuisement-memoire-out-of-memory-oom" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 1 : L'Épuisement Mémoire (Out of Memory - OOM)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-2-lephemerite-du-systeme-de-fichiers-ephemeral-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 2 : L'Éphémérité du Système de Fichiers (Ephemeral Storage)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-3-lechec-du-scaling-horizontal-statelessness-brisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 3 : L'Échec du Scaling Horizontal (Statelessness brisée)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-4-capacite-fixe-du-disque-risque-de-durabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 4 : Capacité Fixe du Disque &amp; Risque de Durabilité
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-5-serveur-backend-bloque-par-lio-pas-un-cdn" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 5 : Serveur Backend Bloqué par l'I/O (Pas un CDN !)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-6-absence-de-transactions-entre-fichiers-et-base-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 6 : Absence de Transactions entre Fichiers et Base SQL
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-3-types-de-stockage-leurs-compromis" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ 2. Les 3 Types de Stockage &amp; Leurs Compromis
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-anatomie-dun-objet-la-grande-illusion-des-dossiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 3. Anatomie d'un Objet &amp; La Grande Illusion des Dossiers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 3. Anatomie d'un Objet & La Grande Illusion des Dossiers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-quun-objet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce qu'un Objet ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lillusion-des-dossiers-folders-are-a-lie" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚨 L'Illusion des Dossiers (Folders are a Lie !)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-3-regles-dor-pour-le-design-des-cles-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔑 4. Les 3 Règles d'Or pour le Design des Clés (Keys)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔑 4. Les 3 Règles d'Or pour le Design des Clés (Keys)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ne-jamais-utiliser-le-nom-de-fichier-dorigine-fourni-par-lutilisateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      1️⃣ Ne JAMAIS utiliser le nom de fichier d'origine fourni par l'utilisateur
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-placer-laleatoire-haute-entropie-en-debut-de-cle" class="md-nav__link">
+    <span class="md-ellipsis">
+      2️⃣ Placer l'aléatoire (Haute Entropie) en début de Clé
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-porter-la-propriete-ownership-dans-la-cle" class="md-nav__link">
+    <span class="md-ellipsis">
+      3️⃣ Porter la propriété (Ownership) dans la Clé
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-sous-le-capot-les-2-planes-de-larchitecture-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ 5. Sous le Capot : Les 2 Planes de l'Architecture S3
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ 5. Sous le Capot : Les 2 Planes de l'Architecture S3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erasure-coding-11-nines-de-durabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erasure Coding &amp; 11 Nines de Durabilité
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-nouveaute-critique-ecritures-conditionnelles-conditional-writes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔒 6. Nouveauté Critique : Écritures Conditionnelles (Conditional Writes)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-larchitecture-dupload-production-grade-pre-signed-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 7. L'Architecture d'Upload Production-Grade : Pre-signed URLs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 7. L'Architecture d'Upload Production-Grade : Pre-signed URLs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-lupload-via-serveur-relay-est-une-mauvaise-idee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi l'Upload via Serveur Relay est une mauvaise idée ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-solution-elegante-pre-signed-post-avec-policy-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Solution Élégante : Pre-signed POST avec Policy JSON
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="La Solution Élégante : Pre-signed POST avec Policy JSON">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#securiser-avec-une-policy-json-taille-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sécuriser avec une Policy JSON (Taille &amp; Type)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-le-workflow-a-2-phases-pour-la-synchronisation-bdd-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 8. Le Workflow à 2 Phases pour la Synchronisation BDD / S3
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 8. Le Workflow à 2 Phases pour la Synchronisation BDD / S3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nettoyage-automatique-des-uploads-abandonnes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nettoyage Automatique des Uploads Abandonnés
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../24-object-storage-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../28-openapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../29-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-lapproche-naive-du-developpeur-junior-ses-6-catastrophes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚫 1. L'Approche Naïve du Développeur Junior &amp; Ses 6 Catastrophes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚫 1. L'Approche Naïve du Développeur Junior & Ses 6 Catastrophes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#probleme-1-lepuisement-memoire-out-of-memory-oom" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 1 : L'Épuisement Mémoire (Out of Memory - OOM)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-2-lephemerite-du-systeme-de-fichiers-ephemeral-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 2 : L'Éphémérité du Système de Fichiers (Ephemeral Storage)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-3-lechec-du-scaling-horizontal-statelessness-brisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 3 : L'Échec du Scaling Horizontal (Statelessness brisée)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-4-capacite-fixe-du-disque-risque-de-durabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 4 : Capacité Fixe du Disque &amp; Risque de Durabilité
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-5-serveur-backend-bloque-par-lio-pas-un-cdn" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 5 : Serveur Backend Bloqué par l'I/O (Pas un CDN !)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-6-absence-de-transactions-entre-fichiers-et-base-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Problème 6 : Absence de Transactions entre Fichiers et Base SQL
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-3-types-de-stockage-leurs-compromis" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ 2. Les 3 Types de Stockage &amp; Leurs Compromis
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-anatomie-dun-objet-la-grande-illusion-des-dossiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 3. Anatomie d'un Objet &amp; La Grande Illusion des Dossiers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 3. Anatomie d'un Objet & La Grande Illusion des Dossiers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quest-ce-quun-objet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qu'est-ce qu'un Objet ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lillusion-des-dossiers-folders-are-a-lie" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚨 L'Illusion des Dossiers (Folders are a Lie !)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-3-regles-dor-pour-le-design-des-cles-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔑 4. Les 3 Règles d'Or pour le Design des Clés (Keys)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔑 4. Les 3 Règles d'Or pour le Design des Clés (Keys)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ne-jamais-utiliser-le-nom-de-fichier-dorigine-fourni-par-lutilisateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      1️⃣ Ne JAMAIS utiliser le nom de fichier d'origine fourni par l'utilisateur
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-placer-laleatoire-haute-entropie-en-debut-de-cle" class="md-nav__link">
+    <span class="md-ellipsis">
+      2️⃣ Placer l'aléatoire (Haute Entropie) en début de Clé
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-porter-la-propriete-ownership-dans-la-cle" class="md-nav__link">
+    <span class="md-ellipsis">
+      3️⃣ Porter la propriété (Ownership) dans la Clé
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-sous-le-capot-les-2-planes-de-larchitecture-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ 5. Sous le Capot : Les 2 Planes de l'Architecture S3
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ 5. Sous le Capot : Les 2 Planes de l'Architecture S3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erasure-coding-11-nines-de-durabilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erasure Coding &amp; 11 Nines de Durabilité
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-nouveaute-critique-ecritures-conditionnelles-conditional-writes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔒 6. Nouveauté Critique : Écritures Conditionnelles (Conditional Writes)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-larchitecture-dupload-production-grade-pre-signed-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 7. L'Architecture d'Upload Production-Grade : Pre-signed URLs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 7. L'Architecture d'Upload Production-Grade : Pre-signed URLs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-lupload-via-serveur-relay-est-une-mauvaise-idee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi l'Upload via Serveur Relay est une mauvaise idée ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-solution-elegante-pre-signed-post-avec-policy-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Solution Élégante : Pre-signed POST avec Policy JSON
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="La Solution Élégante : Pre-signed POST avec Policy JSON">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#securiser-avec-une-policy-json-taille-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sécuriser avec une Policy JSON (Taille &amp; Type)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-le-workflow-a-2-phases-pour-la-synchronisation-bdd-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 8. Le Workflow à 2 Phases pour la Synchronisation BDD / S3
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 8. Le Workflow à 2 Phases pour la Synchronisation BDD / S3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nettoyage-automatique-des-uploads-abandonnes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nettoyage Automatique des Uploads Abandonnés
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="23-object-storage-gestion-des-fichiers-en-backend-partie-1">23. Object Storage &amp; Gestion des Fichiers en Backend (Partie 1)<a class="headerlink" href="#23-object-storage-gestion-des-fichiers-en-backend-partie-1" title="Permanent link">&para;</a></h1>
+<p>Quand on construit un système backend, on finit toujours par tomber sur une fonctionnalité incontournable : <strong>permettre aux utilisateurs d'uploader des fichiers</strong> (photos de profil, pièces jointes, documents PDF, vidéos HD). Mais la manière dont on gère ces fichiers en production est à des années-lumière de ce qu'on imagine au début.</p>
+<hr />
+<h2 id="1-lapproche-naive-du-developpeur-junior-ses-6-catastrophes">🚫 1. L'Approche Naïve du Développeur Junior &amp; Ses 6 Catastrophes<a class="headerlink" href="#1-lapproche-naive-du-developpeur-junior-ses-6-catastrophes" title="Permanent link">&para;</a></h2>
+<p>Au premier abord, quand un besoin d'upload arrive (ex: mettre à jour sa photo de profil), l'intuition naïve d'un développeur junior ressemble à ceci :</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────┐       1. POST Form-Data (File)      ┌───────────────────────────┐
+│                 ├────────────────────────────────────►│                           │
+│ Browser Client  │                                     │  Serveur Backend (Node/Go)│
+│                 │◄────────────────────────────────────┤                           │
+└─────────────────┘        6. GET /file (Render)        └─────────────┬─────────────┘
+                                                                      │
+                                                   2. Save file       │ 3. Save path
+                                                      to disk         │    in DB
+                                                                      ▼    ▼
+                                                       ┌──────────────────┐ ┌───────────────┐
+                                                       │  Système de      │ │ Base Postgres │
+                                                       │  Fichiers Local  │ │ (chemins FS)  │
+                                                       │  (ext4 / Linux)  │ └───────────────┘
+                                                       └──────────────────┘
+</code></pre></div>
+<p>Cette approche fonctionne sur notre machine locale en développement avec un fichier de 50 Ko. Mais en production, elle <strong>explose instantanément</strong> pour 6 raisons fondamentales :</p>
+<h3 id="probleme-1-lepuisement-memoire-out-of-memory-oom">❌ Problème 1 : L'Épuisement Mémoire (Out of Memory - OOM)<a class="headerlink" href="#probleme-1-lepuisement-memoire-out-of-memory-oom" title="Permanent link">&para;</a></h3>
+<p>Si un utilisateur uploade une vidéo de 4 Go et que notre framework web (Express, Go, Fastify) lit tout le fichier en RAM avant de nous le donner, un serveur avec 2 Go ou 4 Go de mémoire <strong>crash sur le coup</strong>. Le conteneur se fait tuer par l'OS (<code>OOMKilled</code>).</p>
+<h3 id="probleme-2-lephemerite-du-systeme-de-fichiers-ephemeral-storage">❌ Problème 2 : L'Éphémérité du Système de Fichiers (Ephemeral Storage)<a class="headerlink" href="#probleme-2-lephemerite-du-systeme-de-fichiers-ephemeral-storage" title="Permanent link">&para;</a></h3>
+<p>En production moderne (Docker, Kubernetes, AWS ECS, Railway, Render, Vercel), les conteneurs sont <strong>éphémères</strong>. À chaque redéploiement de code ou crash d'instance, le conteneur est détruit et remplacé par un nouveau. <strong>Tous les fichiers stockés sur le disque local sont définitivement effacés !</strong></p>
+<h3 id="probleme-3-lechec-du-scaling-horizontal-statelessness-brisee">❌ Problème 3 : L'Échec du Scaling Horizontal (Statelessness brisée)<a class="headerlink" href="#probleme-3-lechec-du-scaling-horizontal-statelessness-brisee" title="Permanent link">&para;</a></h3>
+<p>Si nous avons 3 instances de serveurs derrière un Load Balancer (Round-Robin) :
+* L'utilisateur uploade sa photo sur l'<strong>Instance 1</strong>.
+* 2 minutes plus tard, il rafraîchit la page. Le Load Balancer l'envoie sur l'<strong>Instance 3</strong>.
+* L'Instance 3 n'a pas le fichier sur son disque local $
+ightarrow$ <strong>Erreur 404 Not Found</strong>. La probabilité de servir la photo tombe à $1/N$ (33% d'réussite pour 3 serveurs).</p>
+<div class="highlight"><pre><span></span><code>                        ┌──────────────────┐
+                        │  Load Balancer   │
+                        └────────┬─────────┘
+                                 │
+           ┌─────────────────────┼─────────────────────┐
+           │ (Req 1: Upload)     │ (Req 2: Fetch)      │
+           ▼                     ▼                     ▼
+  ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+  │   Instance 1    │   │   Instance 2    │   │   Instance 3    │
+  │ 📁 photo.jpg    │   │ ❌ Pas de fichier│   │ ❌ 404 Not Found│
+  └─────────────────┘   └─────────────────┘   └─────────────────┘
+</code></pre></div>
+<h3 id="probleme-4-capacite-fixe-du-disque-risque-de-durabilite">❌ Problème 4 : Capacité Fixe du Disque &amp; Risque de Durabilité<a class="headerlink" href="#probleme-4-capacite-fixe-du-disque-risque-de-durabilite" title="Permanent link">&para;</a></h3>
+<p>Grandir un disque dur est une opération <strong>verticale</strong> lourde (downtime, limites de taille du cloud provider). De plus, si l'unique disque dur physique de la machine flanche, <strong>toutes les données clients sont perdues à jamais</strong>.
+* <strong>Disponibilité (Availability)</strong> : Capacité à joindre la donnée tout de suite (on peut attendre que le serveur redémarre).
+* <strong>Durabilité (Durability)</strong> : La donnée existe-t-elle encore dans le monde ? Si le disque meurt sans réplication, la durabilité tombe à zéro.</p>
+<h3 id="probleme-5-serveur-backend-bloque-par-lio-pas-un-cdn">❌ Problème 5 : Serveur Backend Bloqué par l'I/O (Pas un CDN !)<a class="headerlink" href="#probleme-5-serveur-backend-bloque-par-lio-pas-un-cdn" title="Permanent link">&para;</a></h3>
+<p>Si un client mobile avec un réseau 3G lent (2 Mbps) télécharge un fichier de 50 Mo, la connexion va durer <strong>3,5 minutes</strong>. Pendant 3,5 minutes, un worker backend (Goroutine ou boucle d'événements) est <strong>bloqué à copier des octets</strong>, au lieu d'exécuter de la logique métier. Notre serveur devient un très mauvais CDN très cher.</p>
+<h3 id="probleme-6-absence-de-transactions-entre-fichiers-et-base-sql">❌ Problème 6 : Absence de Transactions entre Fichiers et Base SQL<a class="headerlink" href="#probleme-6-absence-de-transactions-entre-fichiers-et-base-sql" title="Permanent link">&para;</a></h3>
+<p>Il n'existe aucune transaction atomique entre le système de fichiers local et Postgres :
+* Si on enregistre sur le disque d'abord et que l'insertion SQL échoue $
+ightarrow$ <strong>Fichier orphelin</strong> qui coûte de l'argent.
+* Si on insère en BDD d'abord et que l'écriture disque échoue $
+ightarrow$ <strong>Ligne BDD pointant vers un fichier inexistant</strong> (Crash 500 / 404).</p>
+<hr />
+<h2 id="2-les-3-types-de-stockage-leurs-compromis">🗄️ 2. Les 3 Types de Stockage &amp; Leurs Compromis<a class="headerlink" href="#2-les-3-types-de-stockage-leurs-compromis" title="Permanent link">&para;</a></h2>
+<p>Pour comprendre où se situe l'Object Storage, comparons les trois grandes familles de stockage informatique :</p>
+<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 COMPARAISON DES STOCKAGES                              │
+├──────────────────────┬──────────────────────────┬──────────────────────────────────────┤
+│ Type de Stockage     │ Interface &amp; Abstraction  │ Latence &amp; Cas d&#39;usage idéal          │
+├──────────────────────┼──────────────────────────┼──────────────────────────────────────┤
+│ 1. Block Storage     │ Tableau brut de blocs    │ ⚡ Microsecondes (µs)                │
+│    (ex: AWS EBS, SSD)│ fixes (512 B - 4 KB).    │ 🎯 Bases de données (Postgres, MySQL).│
+│                      │ Pas de fichiers/dossiers.│ ⚠️ 1 seule machine attachée à la fois.│
+├──────────────────────┼──────────────────────────┼──────────────────────────────────────┤
+│ 2. File Storage      │ Hiérarchie POSIX riche   │ 🚀 Microsecondes à Millisecondes (ms)│
+│    (ex: ext4, NFS)   │ (dossiers, atomicité,    │ 🎯 OS local, fichiers d&#39;édition.      │
+│                      │ verrous de fichiers).    │ ⚠️ Coordination réseau très lourde.  │
+├──────────────────────┼──────────────────────────┼──────────────────────────────────────┤
+│ 3. Object Storage    │ Interface minimale (4 ops│ 🌐 Millisecondes (ms) via HTTP        │
+│    (ex: AWS S3, R2)  │ PUT, GET, DELETE, LIST). │ 🎯 Fichiers utilisateurs, assets,    │
+│                      │ Immuable &amp; Clé-Valeur.   │    Scalabilité à l&#39;échelle de la terre│
+└──────────────────────┴──────────────────────────┴──────────────────────────────────────┘
+</code></pre></div>
+<blockquote>
+<p>💡 <strong>Le Compromis Fondamental du Distributed System</strong> :
+Pour atteindre une <strong>scalabilité infinie (Électronique / Pétabytes)</strong> sans goulot d'étranglement de coordination, l'Object Storage supprime <strong>l'immuabilité</strong>. On ne peut pas modifier 1 octet au milieu d'un objet de 1 Go : il faut tout re-télécharger et tout re-uploader !</p>
+</blockquote>
+<hr />
+<h2 id="3-anatomie-dun-objet-la-grande-illusion-des-dossiers">🔍 3. Anatomie d'un Objet &amp; La Grande Illusion des Dossiers<a class="headerlink" href="#3-anatomie-dun-objet-la-grande-illusion-des-dossiers" title="Permanent link">&para;</a></h2>
+<h3 id="quest-ce-quun-objet">Qu'est-ce qu'un Objet ?<a class="headerlink" href="#quest-ce-quun-objet" title="Permanent link">&para;</a></h3>
+<p>Un objet stocké dans l'Object Storage se compose de 4 éléments :
+1. <strong>Key (Clé)</strong> : Chaîne de caractères unique servant d'identité complète.
+2. <strong>Value (Valeur)</strong> : Le blob binaire d'octets de données.
+3. <strong>System Metadata</strong> : Taille, date de modification, <code>Content-Type</code>, <code>ETag</code> (hash du contenu).
+4. <strong>User Metadata</strong> : Clés/Valeurs personnalisées (ex: <code>uploaded_by: "user_123"</code>).</p>
+<p>Tous les objets résident dans un <strong>Bucket</strong> (un conteneur globalement unique au niveau du Cloud Provider).</p>
+<h3 id="lillusion-des-dossiers-folders-are-a-lie">🚨 L'Illusion des Dossiers (Folders are a Lie !)<a class="headerlink" href="#lillusion-des-dossiers-folders-are-a-lie" title="Permanent link">&para;</a></h3>
+<p>Dans AWS S3 ou Cloudflare R2, <strong>les répertoires/dossiers n'existent pas</strong> !</p>
+<p>Quand on voit dans la console Web : <code>uploads/2026/cat.png</code>, il n'y a pas de sous-dossier <code>uploads</code> ni <code>2026</code>. Il y a juste <strong>une seule chaîne de caractères plate</strong> contenant des caractères <code>/</code>.</p>
+<div class="highlight"><pre><span></span><code>              ┌─────────────────────────────────────────────────────────┐
+              │                LA VÉRITÉ SUR L&#39;INDEX S3                 │
+              ├─────────────────────────────────────────────────────────┤
+              │ Clé (Key Flat String)           │ Blob Data             │
+              ├─────────────────────────────────┼───────────────────────┤
+              │ &quot;uploads/2026/cat.png&quot;          │ [Bytes binary...]     │
+              │ &quot;uploads/2026/dog.png&quot;          │ [Bytes binary...]     │
+              │ &quot;avatar_user_99.png&quot;            │ [Bytes binary...]     │
+              └─────────────────────────────────┴───────────────────────┘
+</code></pre></div>
+<p>La console Web invente les "dossiers" grâce à un <strong>algorithme de groupement par préfixe</strong> (<code>delimiter='/'</code>).</p>
+<ul>
+<li><strong>Conséquence 1</strong> : Déplacer un dossier contenant 50 000 images ne prend pas 1 ms. Cela déclenche <strong>50 000 opérations de copie de clés + 50 000 suppressions</strong> (très long et très cher !).</li>
+<li><strong>Conséquence 2</strong> : Un dossier vide ne peut pas exister naturellement (sauf si un outil crée un objet factice de 0 octet finissant par <code>/</code>).</li>
+</ul>
+<hr />
+<h2 id="4-les-3-regles-dor-pour-le-design-des-cles-keys">🔑 4. Les 3 Règles d'Or pour le Design des Clés (Keys)<a class="headerlink" href="#4-les-3-regles-dor-pour-le-design-des-cles-keys" title="Permanent link">&para;</a></h2>
+<p>Puisque la <strong>Clé (Key)</strong> détermine tout, sa conception est stratégique :</p>
+<h3 id="1-ne-jamais-utiliser-le-nom-de-fichier-dorigine-fourni-par-lutilisateur">1️⃣ Ne JAMAIS utiliser le nom de fichier d'origine fourni par l'utilisateur<a class="headerlink" href="#1-ne-jamais-utiliser-le-nom-de-fichier-dorigine-fourni-par-lutilisateur" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Collisions</strong> : Deux utilisateurs uploadent <code>CV.pdf</code> $
+ightarrow$ Le second écrase silencieusement le premier (car l'opération S3 est un <code>PUT</code> !).</li>
+<li><strong>Path Traversal</strong> : Risques d'injections avec des <code>../</code> dans le nom.</li>
+<li><strong>Caractères spéciaux</strong> : Emojis, null bytes ou caractères RTL qui cassent les scripts backend.</li>
+<li><strong>Solution</strong> : Générer un UUID unique (ex: <code>550e8400-e29b...png</code>) et stocker le vrai nom d'origine dans Postgres ou en User Metadata.</li>
+</ul>
+<h3 id="2-placer-laleatoire-haute-entropie-en-debut-de-cle">2️⃣ Placer l'aléatoire (Haute Entropie) en début de Clé<a class="headerlink" href="#2-placer-laleatoire-haute-entropie-en-debut-de-cle" title="Permanent link">&para;</a></h3>
+<p>Si toutes vos clés commencent par la date <code>2026-11-15/10:00/file1</code>, tous les uploads de la même heure frappent la <strong>même partition de l'index S3</strong> (Hot Partitioning $
+ightarrow$ Erreurs <code>503 Slow Down</code>).
+* En mettant un préfixe aléatoire ou l'ID utilisateur au début (<code>user_883/tenant_12/uuid</code>), les clés sont dispersées uniformément sur les partitions d'index.</p>
+<h3 id="3-porter-la-propriete-ownership-dans-la-cle">3️⃣ Porter la propriété (Ownership) dans la Clé<a class="headerlink" href="#3-porter-la-propriete-ownership-dans-la-cle" title="Permanent link">&para;</a></h3>
+<p>Si la clé est structurée sous la forme <code>tenant_id/user_id/object_id</code>, votre middleware d'autorisation peut vérifier les droits avec une simple comparaison de chaînes de caractères, <strong>sans interroger la BDD Postgres à chaque lecture !</strong></p>
+<hr />
+<h2 id="5-sous-le-capot-les-2-planes-de-larchitecture-s3">⚙️ 5. Sous le Capot : Les 2 Planes de l'Architecture S3<a class="headerlink" href="#5-sous-le-capot-les-2-planes-de-larchitecture-s3" title="Permanent link">&para;</a></h2>
+<p>L'architecture S3 sépare deux mondes complètement distincts :</p>
+<div class="highlight"><pre><span></span><code>                                  ┌──────────────────────────┐
+                                  │   Requête HTTP Upload    │
+                                  └─────────────┬────────────┘
+                                                │
+                                                ▼
+                                  ┌──────────────────────────┐
+                                  │   Front-end Stateless    │
+                                  └─────────────┬────────────┘
+                                                │
+              ┌─────────────────────────────────┴─────────────────────────────────┐
+              ▼                                                                   ▼
+┌───────────────────────────┐                                       ┌───────────────────────────┐
+│       DATA PLANE          │                                       │      METADATA PLANE       │
+├───────────────────────────┤                                       ├───────────────────────────┤
+│ • Gère les volumes d&#39;octets│                                       │ • Index B-Tree distribué. │
+│ • Erasure Coding (Reed-   │                                       │ • Associe Clé ➔ Shards.   │
+│   Solomon : 14 data + 6   │                                       │ • Strong Consistency      │
+│   parity = 20 shards).    │                                       │   (Read-After-Write).     │
+│ • Surcoût: 1.43x (vs 3x). │                                       │ • Règle : Ne JAMAIS faire │
+│ • Durabilité : 11 Nines.  │                                       │   de LIST dans l&#39;API !    │
+└───────────────────────────┘                                       └───────────────────────────┘
+</code></pre></div>
+<h3 id="erasure-coding-11-nines-de-durabilite">Erasure Coding &amp; 11 Nines de Durabilité<a class="headerlink" href="#erasure-coding-11-nines-de-durabilite" title="Permanent link">&para;</a></h3>
+<p>Au lieu de tripler les fichiers (3 copies = 200% de surcoût), S3 utilise l'<strong>Erasure Coding</strong> (Algorithme Reed-Solomon) :
+* Un objet est découpé en 14 shards de données + 6 shards de parité (total 20 shards répartis dans 20 racks/bâtiments différents).
+* <strong>N'importe quelles 14 parties sur 20</strong> permettent de reconstruire l'objet intégralement !
+* <strong>Surcoût de stockage</strong> : Seulement <strong>1.43x</strong> (gain financier massif tout en résistant à 6 pannes simultanées de disques).
+* <strong>99.999999999% (11 Nines)</strong> : Statistiquement, perdre 1 objet sur 10 millions arrive 1 fois tous les 10 000 ans.</p>
+<blockquote>
+<p>⚠️ <strong>Durabilité $
+eq$ Sauvegarde (Backup)</strong> :
+Si votre code exécute un <code>DELETE</code> accidentel sur un préfixe, S3 va supprimer très durablement et très fidèlement vos fichiers ! Activez le <strong>Versioning</strong> et la <strong>réplication inter-buckets</strong> sur des comptes isolés pour parer aux erreurs humaines.</p>
+</blockquote>
+<hr />
+<h2 id="6-nouveaute-critique-ecritures-conditionnelles-conditional-writes">🔒 6. Nouveauté Critique : Écritures Conditionnelles (Conditional Writes)<a class="headerlink" href="#6-nouveaute-critique-ecritures-conditionnelles-conditional-writes" title="Permanent link">&para;</a></h2>
+<p>Ajouté fin 2024 dans AWS S3, le support des écritures conditionnelles change la donne pour les systèmes distribués :
+* <code>If-None-Match: *</code> : L'upload n'aboutit que si la clé <strong>n'existe pas déjà</strong>. Si elle existe, S3 renvoie une erreur <code>412 Precondition Failed</code>. Cela empêche les écrasements silencieux d'objets.
+* <code>If-Match: "ETag"</code> : Remplacer l'objet uniquement si son ETag correspond à celui lu (implémentation d'un verrou <strong>Compare-And-Swap</strong> distribué).</p>
+<hr />
+<h2 id="7-larchitecture-dupload-production-grade-pre-signed-urls">🚀 7. L'Architecture d'Upload Production-Grade : Pre-signed URLs<a class="headerlink" href="#7-larchitecture-dupload-production-grade-pre-signed-urls" title="Permanent link">&para;</a></h2>
+<h3 id="pourquoi-lupload-via-serveur-relay-est-une-mauvaise-idee">Pourquoi l'Upload via Serveur Relay est une mauvaise idée ?<a class="headerlink" href="#pourquoi-lupload-via-serveur-relay-est-une-mauvaise-idee" title="Permanent link">&para;</a></h3>
+<p>Faire passer le fichier par notre serveur Node/Go (même en streaming) gâche la bande passante du serveur, risque des timeouts de proxy (Nginx <code>413 Request Entity Too Large</code>, ALB 60s timeout) et bloque le CPU.</p>
+<h3 id="la-solution-elegante-pre-signed-post-avec-policy-json">La Solution Élégante : Pre-signed POST avec Policy JSON<a class="headerlink" href="#la-solution-elegante-pre-signed-post-avec-policy-json" title="Permanent link">&para;</a></h3>
+<p>Au lieu de faire relai, notre serveur génère une <strong>URL pré-signée</strong> (avec HMAC temporaire validé par la clé secrète). Le navigateur uploade <strong>DIRECTEMENT vers AWS S3</strong> sans jamais toucher la mémoire de notre serveur backend !</p>
+<div class="highlight"><pre><span></span><code>┌──────────┐    1. POST /api/upload-intent (filename, size)   ┌──────────────┐
+│          ├─────────────────────────────────────────────────►│              │
+│          │    2. Retourne Pre-signed POST URL + Policy JSON │  Backend API │
+│          │◄─────────────────────────────────────────────────┤  (Node / Go) │
+│  Client  │                                                  └──────────────┘
+│ Browser  │
+│          │    3. PUT / POST Direct File Bytes                ┌──────────────┐
+│          ├─────────────────────────────────────────────────►│   AWS S3     │
+│          │◄─────────────────────────────────────────────────┤   Bucket     │
+└──────────┘    4. HTTP 200 OK (Upload terminé)               └──────────────┘
+</code></pre></div>
+<h4 id="securiser-avec-une-policy-json-taille-type">Sécuriser avec une Policy JSON (Taille &amp; Type)<a class="headerlink" href="#securiser-avec-une-policy-json-taille-type" title="Permanent link">&para;</a></h4>
+<p>Pour éviter qu'un utilisateur n'uploade un fichier de 10 Go via un lien prévu pour une photo de profil, on signe une <strong>Policy JSON</strong> imposant des contraintes strictes vérifiées directement par S3 :</p>
+<p><div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;expiration&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-11-15T12:00:00Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;content-length-range&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">5242880</span><span class="p">],</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;starts-with&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;$Content-Type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;image/&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;starts-with&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;$key&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;tenants/t1/users/u42/&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+Si le navigateur tente d'uploader 1 Go ou un fichier <code>.exe</code>, <strong>AWS S3 rejette la requête immédiatement avec une erreur 400 Bad Request !</strong></p>
+<hr />
+<h2 id="8-le-workflow-a-2-phases-pour-la-synchronisation-bdd-s3">🔄 8. Le Workflow à 2 Phases pour la Synchronisation BDD / S3<a class="headerlink" href="#8-le-workflow-a-2-phases-pour-la-synchronisation-bdd-s3" title="Permanent link">&para;</a></h2>
+<p>Pour garantir que la BDD Postgres et S3 restent synchronisés sans état incohérent :</p>
+<div class="highlight"><pre><span></span><code>                  PHASE 1 : INTENTION D&#39;UPLOAD
+┌────────┐  1. Demande upload  ┌─────────┐  2. Insert status=&#39;pending&#39;  ┌──────────┐
+│ Client ├────────────────────►│ Backend ├─────────────────────────────►│ Postgres │
+│        │◄────────────────────┤         │                              └──────────┘
+└────────┘  3. Pre-signed POST └─────────┘
+
+                  PHASE 2 : UPLOAD DIRECT &amp; CONFIRMATION
+┌────────┐  4. Upload direct octets  ┌────────┐
+│ Client ├──────────────────────────►│ AWS S3 │
+│        │                           └───┬────┘
+│        │  5. POST /complete (id)   ┌───┴─────┐  6. HEAD Object (check) ┌────────┐
+│        ├──────────────────────────►│ Backend ├────────────────────────►│ AWS S3 │
+│        │                           │         │                         └────────┘
+│        │                           │         │  7. Update status=&#39;ready&#39;┌──────────┐
+│        │◄──────────────────────────┤         ├────────────────────────►│ Postgres │
+└────────┘  8. 200 OK (Profil à jour)└─────────┘                          └──────────┘
+</code></pre></div>
+<h3 id="nettoyage-automatique-des-uploads-abandonnes">Nettoyage Automatique des Uploads Abandonnés<a class="headerlink" href="#nettoyage-automatique-des-uploads-abandonnes" title="Permanent link">&para;</a></h3>
+<p>Si l'utilisateur ferme l'onglet pendant l'upload :
+1. <strong>Règle de Lifecycle S3</strong> : Supprime automatiquement tout objet resté sous le préfixe <code>pending/</code> après 24 heures.
+2. <strong>Background Job (Cron)</strong> : Passe toutes les lignes BDD restées à <code>pending</code> depuis plus de 24h au statut <code>expired</code>.</p>
+<hr />
+<p>🎓 <strong>En résumé</strong> : L'Object Storage est un pilier de l'ingénierie backend moderne. En déléguant le stockage à S3/R2 et en utilisant les <strong>Pre-signed POST URLs avec Policy</strong>, notre backend reste <strong>100% Stateless, ultra-rapide, léger en RAM</strong> et immunisé contre les crashs de stockage !</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../22-concurrency-parallelism/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 22. Concurrence &amp; Parallélisme (IO-Bound vs CPU-Bound)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../24-object-storage-part2/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 24. Object Storage - Tout Ce Qu&#39;il Faut Savoir (Partie 2)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

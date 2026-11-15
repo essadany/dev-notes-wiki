@@ -1,0 +1,2170 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../28-openapi/">
+      
+      
+        <link rel="next" href="../30-devops/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#29-webhooks-comment-le-serveur-vous-appelle-reverse-apis" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.1-backend-scaling-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.2-backend-scaling-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../23-object-storage-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../24-object-storage-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../28-openapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-avons-nous-besoin-des-webhooks-le-cas-dusage-stripe" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Pourquoi avons-nous besoin des Webhooks ? (Le Cas d'Usage Stripe)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Pourquoi avons-nous besoin des Webhooks ? (Le Cas d'Usage Stripe)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ne-pas-compter-sur-le-navigateur-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ne pas compter sur le navigateur client ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-solution-naive-polling-backend-stripe-et-ses-3-defauts" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Solution Naïve (Polling Backend ──► Stripe) et ses 3 défauts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-quest-ce-quun-webhook-inversion-de-communication-vocabulaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      🪝 2. Qu'est-ce qu'un Webhook ? (Inversion de Communication &amp; Vocabulaire)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🪝 2. Qu'est-ce qu'un Webhook ? (Inversion de Communication & Vocabulaire)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#un-peu-dhistoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      Un peu d'histoire
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-vocabulaire-essentiel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Vocabulaire Essentiel
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-enregistrement-handshakes-developpement-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 3. Enregistrement, Handshakes &amp; Développement Local
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ 3. Enregistrement, Handshakes & Développement Local">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-separation-stricte-des-endpoints-par-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Séparation stricte des Endpoints par Provider
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-le-registration-handshake-securite-du-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Le Registration Handshake (Sécurité du Provider)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-le-defi-du-developpement-local-tunnels" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Le Défi du Développement Local (Tunnels)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-securite-authentification-des-webhooks-hmac-prevention-des-attaques" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔐 4. Sécurité &amp; Authentification des Webhooks (HMAC &amp; Prévention des Attaques)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔐 4. Sécurité & Authentification des Webhooks (HMAC & Prévention des Attaques)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-5-methodes-de-securisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 5 Méthodes de Sécurisation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-fonctionnement-de-lhmac-sha-256" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Fonctionnement de l'HMAC SHA-256
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attaques-par-replay-constant-time-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Attaques par Replay &amp; Constant-Time Comparison
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-idempotence-gestion-des-retries-at-least-once-delivery" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 5. Idempotence &amp; Gestion des Retries (At-Least-Once Delivery)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 5. Idempotence & Gestion des Retries (At-Least-Once Delivery)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-garantie-at-least-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Garantie "At-Least-Once"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delivery-id-transaction-sql-atomique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delivery ID &amp; Transaction SQL Atomique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-probleme-de-lordre-des-evenements-out-of-order-delivery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Problème de l'Ordre des Événements (Out-of-Order Delivery)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-architecture-haute-performance-handler-fin-background-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 6. Architecture Haute Performance : Handler Fin &amp; Background Workers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cote-provider-le-pattern-transactional-outbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 7. Côté Provider : Le Pattern "Transactional Outbox"
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📦 7. Côté Provider : Le Pattern "Transactional Outbox"">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-pattern-transactional-outbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Pattern Transactional Outbox
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-quand-utiliser-les-webhooks-et-lanti-pattern-a-eviter" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 8. Quand utiliser les Webhooks (et l'Anti-Pattern à éviter)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 8. Quand utiliser les Webhooks (et l'Anti-Pattern à éviter)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bons-cas-dusage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Bons cas d'usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lanti-pattern-recurrent-la-synchronisation-de-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ L'Anti-Pattern Récurrent : La Synchronisation de Base de Données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-bonne-solution-de-synchronisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 La Bonne Solution de Synchronisation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-avons-nous-besoin-des-webhooks-le-cas-dusage-stripe" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Pourquoi avons-nous besoin des Webhooks ? (Le Cas d'Usage Stripe)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 1. Pourquoi avons-nous besoin des Webhooks ? (Le Cas d'Usage Stripe)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-ne-pas-compter-sur-le-navigateur-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pourquoi ne pas compter sur le navigateur client ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-solution-naive-polling-backend-stripe-et-ses-3-defauts" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Solution Naïve (Polling Backend ──► Stripe) et ses 3 défauts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-quest-ce-quun-webhook-inversion-de-communication-vocabulaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      🪝 2. Qu'est-ce qu'un Webhook ? (Inversion de Communication &amp; Vocabulaire)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🪝 2. Qu'est-ce qu'un Webhook ? (Inversion de Communication & Vocabulaire)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#un-peu-dhistoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      Un peu d'histoire
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-vocabulaire-essentiel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Vocabulaire Essentiel
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-enregistrement-handshakes-developpement-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ 3. Enregistrement, Handshakes &amp; Développement Local
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ 3. Enregistrement, Handshakes & Développement Local">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-separation-stricte-des-endpoints-par-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Séparation stricte des Endpoints par Provider
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-le-registration-handshake-securite-du-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Le Registration Handshake (Sécurité du Provider)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-le-defi-du-developpement-local-tunnels" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Le Défi du Développement Local (Tunnels)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-securite-authentification-des-webhooks-hmac-prevention-des-attaques" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔐 4. Sécurité &amp; Authentification des Webhooks (HMAC &amp; Prévention des Attaques)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔐 4. Sécurité & Authentification des Webhooks (HMAC & Prévention des Attaques)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#les-5-methodes-de-securisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 5 Méthodes de Sécurisation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-fonctionnement-de-lhmac-sha-256" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Fonctionnement de l'HMAC SHA-256
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attaques-par-replay-constant-time-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Attaques par Replay &amp; Constant-Time Comparison
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-idempotence-gestion-des-retries-at-least-once-delivery" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 5. Idempotence &amp; Gestion des Retries (At-Least-Once Delivery)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 5. Idempotence & Gestion des Retries (At-Least-Once Delivery)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-garantie-at-least-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Garantie "At-Least-Once"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delivery-id-transaction-sql-atomique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delivery ID &amp; Transaction SQL Atomique
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-probleme-de-lordre-des-evenements-out-of-order-delivery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Problème de l'Ordre des Événements (Out-of-Order Delivery)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-architecture-haute-performance-handler-fin-background-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 6. Architecture Haute Performance : Handler Fin &amp; Background Workers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cote-provider-le-pattern-transactional-outbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 7. Côté Provider : Le Pattern "Transactional Outbox"
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📦 7. Côté Provider : Le Pattern "Transactional Outbox"">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-pattern-transactional-outbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Pattern Transactional Outbox
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-quand-utiliser-les-webhooks-et-lanti-pattern-a-eviter" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 8. Quand utiliser les Webhooks (et l'Anti-Pattern à éviter)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 8. Quand utiliser les Webhooks (et l'Anti-Pattern à éviter)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bons-cas-dusage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Bons cas d'usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lanti-pattern-recurrent-la-synchronisation-de-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ L'Anti-Pattern Récurrent : La Synchronisation de Base de Données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-bonne-solution-de-synchronisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 La Bonne Solution de Synchronisation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="29-webhooks-comment-le-serveur-vous-appelle-reverse-apis">29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)<a class="headerlink" href="#29-webhooks-comment-le-serveur-vous-appelle-reverse-apis" title="Permanent link">&para;</a></h1>
+<p>Jusqu'à présent dans ce cours, tout notre paradigme reposait sur une règle absolue : <strong>c'est toujours le client qui initie la communication avec le serveur</strong>. Même dans les systèmes temps réel (WebSockets, SSE), la connexion devait obligatoirement être démarrée par le client. </p>
+<p>Dans ce chapitre, on renverse complètement cette logique en étudiant la communication <strong>Serveur à Serveur (Server-to-Server / Backend-to-Backend)</strong> où un service externe prend l'initiative d'appeler notre propre backend.</p>
+<hr />
+<h2 id="1-pourquoi-avons-nous-besoin-des-webhooks-le-cas-dusage-stripe">🧭 1. Pourquoi avons-nous besoin des Webhooks ? (Le Cas d'Usage Stripe)<a class="headerlink" href="#1-pourquoi-avons-nous-besoin-des-webhooks-le-cas-dusage-stripe" title="Permanent link">&para;</a></h2>
+<p>Imaginons notre application Taskboard avec une page de tarifs. Un utilisateur achète un abonnement Premium. Le paiement n'est pas géré sur nos serveurs, mais par un prestataire spécialisé comme <strong>Stripe</strong>.</p>
+<div class="highlight"><pre><span></span><code>   ┌──────────────┐         1. Inscription        ┌────────────────────┐
+   │ Application  │──────────────────────────────►│    Stripe / SaaS   │
+   │   Backend    │                               │ (Payment Provider) │
+   └──────────────┘                               └─────────┬──────────┘
+          ▲                                                 │
+          │         2. Événement produit dans Stripe        │
+          │         (&quot;payment_intent.succeeded&quot;)            │
+          │                                                 │
+          └─────────────────────────────────────────────────┘
+                3. Webhook HTTP POST &quot;Push&quot; (Reverse API)
+                   /hooks/stripe  ──►  Action Backend
+</code></pre></div>
+<h3 id="pourquoi-ne-pas-compter-sur-le-navigateur-client">Pourquoi ne pas compter sur le navigateur client ?<a class="headerlink" href="#pourquoi-ne-pas-compter-sur-le-navigateur-client" title="Permanent link">&para;</a></h3>
+<p>On pourrait penser qu'il suffit au navigateur du client de recevoir la confirmation de Stripe puis d'en informer notre backend. C'est une <strong>erreur majeure en architecture backend</strong> pour deux raisons :
+1. <strong>Fiabilité Réseau</strong> : Le réseau du client est instable (fermeture d'onglet, perte de réseau 4G/Wifi, crash du navigateur). Le signal de paiement serait perdu.
+2. <strong>Sécurité</strong> : Il est impensable de faire confiance au client pour valider une transaction financière. Notre serveur backend doit être la <strong>seule source de vérité</strong>.</p>
+<h3 id="la-solution-naive-polling-backend-stripe-et-ses-3-defauts">La Solution Naïve (Polling Backend ──► Stripe) et ses 3 défauts<a class="headerlink" href="#la-solution-naive-polling-backend-stripe-et-ses-3-defauts" title="Permanent link">&para;</a></h3>
+<p>Si notre serveur demande en boucle à Stripe toutes les secondes <code>GET /payments/123/status</code> :
+* <strong>Latence moyenne</strong> : $\text{Intervalle} / 2 = 0,5 \text{ seconde}$ de retard.
+* <strong>Requêtes gâchées</strong> : 99% des appels renvoient <code>"pending"</code> inutilement.
+* <strong>Explosion de la charge &amp; Rate Limiting</strong> : Si 10 000 marchands font du polling chaque seconde, Stripe subit 10 000 req/s. Stripe va donc appliquer un <em>Rate Limiting</em> très agressif, forçant notre polling à s'espacer (ex: 1 appel par minute), faisant chuter la latence moyenne à 30 secondes !</p>
+<hr />
+<h2 id="2-quest-ce-quun-webhook-inversion-de-communication-vocabulaire">🪝 2. Qu'est-ce qu'un Webhook ? (Inversion de Communication &amp; Vocabulaire)<a class="headerlink" href="#2-quest-ce-quun-webhook-inversion-de-communication-vocabulaire" title="Permanent link">&para;</a></h2>
+<p>Un <strong>Webhook</strong> est simplement une <strong>requête HTTP POST classique</strong> envoyée par un service tiers vers une URL spécifique que nous avons exposée sur notre serveur.</p>
+<p>C'est une <strong>"Reverse API"</strong> : au lieu d'appeler l'API d'un service, c'est le service qui appelle notre propre API dès qu'un événement survient.</p>
+<h3 id="un-peu-dhistoire">Un peu d'histoire<a class="headerlink" href="#un-peu-dhistoire" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>2007</strong> : Jeff Lindsay propose le concept pour transposer l'idée du <em>tuyau Unix (Unix Pipe)</em> au Web ("user-defined HTTP callbacks").</li>
+<li><strong>2009</strong> : Des ingénieurs de Google développent le protocole <em>PubSubHubbub</em> (devenu WebSub) sur le même principe.</li>
+</ul>
+<h3 id="le-vocabulaire-essentiel">Le Vocabulaire Essentiel<a class="headerlink" href="#le-vocabulaire-essentiel" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Terme</th>
+<th style="text-align: left;">Définition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Provider / Sender</strong></td>
+<td style="text-align: left;">Le système où l'événement se produit (Stripe, GitHub, Clerk).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Consumer / Receiver</strong></td>
+<td style="text-align: left;">Notre serveur backend qui écoute et traite l'événement.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Endpoint / URL</strong></td>
+<td style="text-align: left;">L'adresse HTTPS publique exposée par notre serveur.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Event</strong></td>
+<td style="text-align: left;">Le fait générateur (<code>payment_intent.succeeded</code>, <code>push</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Delivery</strong></td>
+<td style="text-align: left;">Une tentative d'envoi de l'événement vers l'endpoint (<em>1 événement peut subir plusieurs deliveries en cas de retry !</em>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subscription</strong></td>
+<td style="text-align: left;">Notre inscription auprès du provider associant notre URL aux événements désirés.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-enregistrement-handshakes-developpement-local">🛠️ 3. Enregistrement, Handshakes &amp; Développement Local<a class="headerlink" href="#3-enregistrement-handshakes-developpement-local" title="Permanent link">&para;</a></h2>
+<h3 id="1-separation-stricte-des-endpoints-par-provider">1. Séparation stricte des Endpoints par Provider<a class="headerlink" href="#1-separation-stricte-des-endpoints-par-provider" title="Permanent link">&para;</a></h3>
+<p>Si notre backend s'interface avec GitHub et Stripe, il faut <strong>toujours séparer les URLs</strong> :
+* ❌ <code>/hooks/callback</code> (Trop générique, à proscrire)
+* ✅ <code>/hooks/github</code> et <code>/hooks/stripe</code></p>
+<p>Chaque provider possède ses propres en-têtes HTTP, son format de signature HMAC et ses règles de réessai.</p>
+<h3 id="2-le-registration-handshake-securite-du-provider">2. Le Registration Handshake (Sécurité du Provider)<a class="headerlink" href="#2-le-registration-handshake-securite-du-provider" title="Permanent link">&para;</a></h3>
+<p>Certains services (Microsoft Graph, Discord, Amazon SNS) imposent une validation d'URL à l'inscription avant d'envoyer le moindre événement réel.
+* <strong>Pourquoi ?</strong> Pour empêcher un attaquant d'inscrire l'URL d'une victime et d'utiliser le provider pour mener une attaque DoS par amplification.
+* <strong>Exemples</strong> : Microsoft Graph exige le renvoi du token en texte brut ; Discord attend un message <code>PONG</code> en réponse à un <code>PING</code> ; Amazon SNS demande de visiter une URL de confirmation.</p>
+<h3 id="3-le-defi-du-developpement-local-tunnels">3. Le Défi du Développement Local (Tunnels)<a class="headerlink" href="#3-le-defi-du-developpement-local-tunnels" title="Permanent link">&para;</a></h3>
+<p>Pendant le développement local, notre ordinateur portable est derrière un routeur familial sans IP publique et <code>localhost</code> n'a aucun sens pour Stripe ou GitHub.
+* <strong>Solution</strong> : Utiliser un outil de tunneling (<strong>ngrok</strong>, <strong>Cloudflare Tunnel</strong>) qui génère une URL HTTPS publique temporaire redirigeant le trafic vers notre port local (ex: <code>8081</code>).</p>
+<hr />
+<h2 id="4-securite-authentification-des-webhooks-hmac-prevention-des-attaques">🔐 4. Sécurité &amp; Authentification des Webhooks (HMAC &amp; Prévention des Attaques)<a class="headerlink" href="#4-securite-authentification-des-webhooks-hmac-prevention-des-attaques" title="Permanent link">&para;</a></h2>
+<p>Notre endpoint Webhook étant public, n'importe quel pirate peut deviner l'URL et envoyer un faux payload <code>{"payment": "success"}</code>.</p>
+<h3 id="les-5-methodes-de-securisation">Les 5 Méthodes de Sécurisation<a class="headerlink" href="#les-5-methodes-de-securisation" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Secret Token dans l'URL</strong> (Faible : le token fuite dans les logs d'accès serveur).</li>
+<li><strong>IP Allowlist</strong> (Filtrage des IPs du provider au niveau du pare-feu - bon mais insuffisant seul).</li>
+<li><strong>Mutual TLS (mTLS)</strong> (Échange de certificats clients).</li>
+<li><strong>Signature HMAC avec Clé Secrète Partagée</strong> (La norme universelle utilisée par 80%+ des providers).</li>
+<li><strong>Signature par Clé Publique / Privée</strong> (Discord).</li>
+</ol>
+<h3 id="le-fonctionnement-de-lhmac-sha-256">Le Fonctionnement de l'HMAC SHA-256<a class="headerlink" href="#le-fonctionnement-de-lhmac-sha-256" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code> Provider (ex: Stripe)                      Consumer (Notre Backend)
+ ┌──────────────────────┐                  ┌──────────────────────┐
+ │ Secret = &quot;sec_123&quot;   │                  │ Secret = &quot;sec_123&quot;   │
+ │ Body = &#39;{&quot;id&quot;: 42}&#39;  │                  │ Body = &#39;{&quot;id&quot;: 42}&#39;  │
+ └──────────┬───────────┘                  └──────────┬───────────┘
+            │                                         │
+  HMAC_SHA256(Secret, Body)                 HMAC_SHA256(Secret, Body)
+            │                                         │
+            ▼                                         ▼
+ Header: X-Signature ──────────────────────► Compare avec Constant-Time
+                                                &quot;Signature Matches!&quot;
+</code></pre></div>
+<blockquote>
+<p>⚠️ <strong>LA RÈGLE D'OR EN CODE</strong> : Il faut <strong>toujours vérifier la signature HMAC sur les OCTETS BRUTS (<code>Raw Bytes</code>)</strong> de la requête HTTP avant tout parsing JSON !
+Si vous exécutez <code>express.json()</code> en premier puis ré-encodez l'objet en JSON string, la moindre modification d'espace ou de format d'encodage modifiera l'empreinte binaire et fera échouer la vérification !</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="c1">// ❌ MAUVAIS : Parser le JSON puis vérifier</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/hooks/stripe&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">express</span><span class="p">.</span><span class="nx">json</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">rawString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span><span class="w"> </span><span class="c1">// Les espaces ont changé !</span>
+<span class="w">    </span><span class="nx">verifyHmac</span><span class="p">(</span><span class="nx">rawString</span><span class="p">);</span><span class="w"> </span><span class="c1">// FAUX !</span>
+<span class="p">});</span>
+
+<span class="c1">// ✅ BON : Vérifier sur les octets bruts d&#39;abord !</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/hooks/stripe&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">express</span><span class="p">.</span><span class="nx">raw</span><span class="p">({</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="w"> </span><span class="p">}),</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">verifyHmac</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span><span class="w"> </span><span class="c1">// Octets d&#39;origine exacts</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">isValid</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">401</span><span class="p">).</span><span class="nx">send</span><span class="p">(</span><span class="s2">&quot;Unauthorized&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">payload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="attaques-par-replay-constant-time-comparison">Attaques par Replay &amp; Constant-Time Comparison<a class="headerlink" href="#attaques-par-replay-constant-time-comparison" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Replay Attack</strong> : Un pirate intercepte une vraie requête signée et la rejoue 1 000 fois.</li>
+<li><em>Solution</em> : Inclure un timestamp Unix dans la chaîne signée (ex: header Stripe <code>t=...</code>) et rejeter tout message vieux de plus de 5 minutes.</li>
+<li><strong>Timing Attack</strong> : Utiliser la comparaison de chaînes à temps constant (<code>crypto.timingSafeEqual</code> en Node.js, <code>hmac.Equal</code> en Go) pour empêcher l'extraction de la signature octet par octet en mesurant les nanosecondes de réponse.</li>
+<li><strong>SSRF (Server-Side Request Forgery)</strong> : Pour le provider qui émet le Webhook, il faut obligatoirement résoudre l'URL et bloquer les plages d'IP privées (<code>127.0.0.1</code>, AWS Metadata <code>169.254.169.254</code>) pour éviter que des utilisateurs malveillants n'utilisent le Webhook pour scanner le réseau interne du provider.</li>
+</ul>
+<hr />
+<h2 id="5-idempotence-gestion-des-retries-at-least-once-delivery">🔄 5. Idempotence &amp; Gestion des Retries (At-Least-Once Delivery)<a class="headerlink" href="#5-idempotence-gestion-des-retries-at-least-once-delivery" title="Permanent link">&para;</a></h2>
+<p>Si notre serveur traite le Webhook (insère en BDD) mais que la réponse HTTP <code>200 OK</code> est perdue à cause d'une micro-coupure réseau, le provider considère la livraison comme un échec et retente l'envoi.</p>
+<h3 id="la-garantie-at-least-once">La Garantie "At-Least-Once"<a class="headerlink" href="#la-garantie-at-least-once" title="Permanent link">&para;</a></h3>
+<p>Un Webhook est garanti d'arriver <strong>au moins une fois</strong>, mais il peut arriver <strong>plusieurs fois</strong>.</p>
+<h3 id="delivery-id-transaction-sql-atomique">Delivery ID &amp; Transaction SQL Atomique<a class="headerlink" href="#delivery-id-transaction-sql-atomique" title="Permanent link">&para;</a></h3>
+<p>Chaque événement possède un identifiant de livraison unique (<code>X-GitHub-Delivery</code>, <code>event.id</code>).</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Transaction SQL Atomique pour garantir l&#39;Idempotence</span>
+<span class="k">BEGIN</span><span class="p">;</span>
+
+<span class="c1">-- 1. Insérer l&#39;ID de livraison dans la table d&#39;idempotence</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">processed_webhooks</span><span class="w"> </span><span class="p">(</span><span class="n">delivery_id</span><span class="p">,</span><span class="w"> </span><span class="n">processed_at</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;del_abc123&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">());</span>
+
+<span class="c1">-- 2. Effectuer l&#39;action métier (ex: Activer l&#39;abonnement)</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">plan</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;premium&#39;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;usr_456&#39;</span><span class="p">;</span>
+
+<span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></div>
+<blockquote>
+<p>💡 <strong>Pourquoi la transaction unique est vitale ?</strong>
+Si l'on effectue l'action métier d'abord puis que le serveur crashe avant d'enregistrer l'ID de livraison, le retry du provider exécutera l'action une deuxième fois. Si l'on enregistre l'ID d'abord mais que l'action échoue, le retry sera ignoré à tort. Les deux opérations doivent <strong>réussir ou échouer ensemble</strong>.</p>
+</blockquote>
+<h3 id="le-probleme-de-lordre-des-evenements-out-of-order-delivery">Le Problème de l'Ordre des Événements (Out-of-Order Delivery)<a class="headerlink" href="#le-probleme-de-lordre-des-evenements-out-of-order-delivery" title="Permanent link">&para;</a></h3>
+<p>Si un utilisateur crée puis supprime un objet instantanément, le Webhook <code>created</code> peut subir du réseau et arriver <em>après</em> le Webhook <code>deleted</code>.
+* <strong>Solutions</strong> :
+  1. Utiliser le Webhook comme un simple signal et refetch l'état courant via l'API du provider.
+  2. Vérifier le champ <code>updated_at</code> / <code>version</code> et ignorer tout événement antérieur à l'état actuel en BDD.</p>
+<hr />
+<h2 id="6-architecture-haute-performance-handler-fin-background-workers">⚡ 6. Architecture Haute Performance : Handler Fin &amp; Background Workers<a class="headerlink" href="#6-architecture-haute-performance-handler-fin-background-workers" title="Permanent link">&para;</a></h2>
+<p>La plupart des providers imposent des timeouts stricts pour répondre au Webhook :
+* <strong>Slack</strong> : 3 secondes max.
+* <strong>Shopify</strong> : 5 secondes max.
+* <strong>GitHub</strong> : 10 secondes max.</p>
+<p>Si votre handler effectue des traitements lourds (envoi d'emails, appels d'APIs tierces, traitements d'images), il va dépasser le délai et déclencher des retries inutiles.</p>
+<div class="highlight"><pre><span></span><code>  Provider Webhook ──► [ Thin HTTP Handler ] ──► 1. Vérifie HMAC (Raw Bytes)
+                              │                  2. Écrit dans la Queue (BullMQ/Redis)
+                              │                  3. Répond HTTP 202 Accepted (&lt; 50ms)
+                              ▼
+                     [ Task Queue (Redis) ]
+                              │
+                              ▼
+                    [ Background Worker ] ──► Traitement Métier Lourd (Emails, PDF...)
+</code></pre></div>
+<hr />
+<h2 id="7-cote-provider-le-pattern-transactional-outbox">📦 7. Côté Provider : Le Pattern "Transactional Outbox"<a class="headerlink" href="#7-cote-provider-le-pattern-transactional-outbox" title="Permanent link">&para;</a></h2>
+<p>Si vous devez vous-même émettre des Webhooks vers vos clients, ne faites <strong>jamais</strong> l'appel HTTP directement dans votre controller métier !</p>
+<h3 id="le-pattern-transactional-outbox">Le Pattern Transactional Outbox<a class="headerlink" href="#le-pattern-transactional-outbox" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code> Controller HTTP (ex: Move Task)
+   │
+   ├──► BEGIN TRANSACTION
+   │      ├── UPDATE tasks SET status = &#39;done&#39;;
+   │      └── INSERT INTO outbox_events (event_name, payload, status) 
+   │          VALUES (&#39;task.moved&#39;, &#39;{...}&#39;, &#39;pending&#39;);
+   └──► COMMIT
+          │
+          ▼ (Asynchrone)
+ [ Background Worker (Dispatcher) ] ──► Envoie HTTP POST vers l&#39;URL du client
+                                    ──► Gère Exponential Backoff + Jitter
+</code></pre></div>
+<ul>
+<li><strong>Exponential Backoff &amp; Jitter</strong> : Espacer les tentatives (5s, 5m, 30m, 2h) et ajouter un délai aléatoire (Jitter) pour éviter que 1 000 retries ne frappent le client au même instant précis.</li>
+<li><strong>Circuit Breaker</strong> : Après 10 échecs consécutifs, désactiver l'endpoint du client et envoyer un email d'avertissement.</li>
+</ul>
+<hr />
+<h2 id="8-quand-utiliser-les-webhooks-et-lanti-pattern-a-eviter">🎯 8. Quand utiliser les Webhooks (et l'Anti-Pattern à éviter)<a class="headerlink" href="#8-quand-utiliser-les-webhooks-et-lanti-pattern-a-eviter" title="Permanent link">&para;</a></h2>
+<h3 id="bons-cas-dusage">✅ Bons cas d'usage<a class="headerlink" href="#bons-cas-dusage" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Notifications événementielles légères : <em>"Cet événement s'est produit, déclenche un pipeline CI/CD, poste un message Slack, ou débloque un accès"</em>.</li>
+</ul>
+<h3 id="lanti-pattern-recurrent-la-synchronisation-de-base-de-donnees">❌ L'Anti-Pattern Récurrent : La Synchronisation de Base de Données<a class="headerlink" href="#lanti-pattern-recurrent-la-synchronisation-de-base-de-donnees" title="Permanent link">&para;</a></h3>
+<p>Essayer de dupliquer l'intégralité de la BDD d'un service SaaS (ex: Clerk, Stripe) dans sa propre BDD uniquement via des Webhooks est une source d'erreurs permanente (perte d'ordre, retards, bugs de synchronisation).</p>
+<h3 id="la-bonne-solution-de-synchronisation">💡 La Bonne Solution de Synchronisation<a class="headerlink" href="#la-bonne-solution-de-synchronisation" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Faire un polling régulier sur le journal d'événements ordonné du provider (<code>GET /v1/events?since=last_id</code>).</li>
+<li>Utiliser le Webhook comme un simple <strong>signal déclencheur</strong> pour aller dépiler l'API <code>/events</code> du provider.</li>
+</ol>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../28-openapi/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 28. OpenAPI (Le contrat universel entre clients et serveurs)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                28. OpenAPI (Le contrat universel entre clients et serveurs)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../30-devops/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 30. DevOps &amp; Infrastructure pour les Ingénieurs Backend">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                30. DevOps & Infrastructure pour les Ingénieurs Backend
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2080 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../20-backend-security/">
+      
+      
+        <link rel="next" href="../21.2-backend-scaling-part2/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>21.1. Scaling & Performance Engineering - Partie 1 - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#211-scaling-performance-engineering-partie-1" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              21.1. Scaling & Performance Engineering - Partie 1
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-quest-ce-que-la-performance-en-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 1. Qu'est-ce que la Performance en Backend ?
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧠 1. Qu'est-ce que la Performance en Backend ?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-piege-de-limprevisibilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le piège de l'imprévisibilité
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-piege-mortel-des-moyennes-la-puissance-des-percentiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 2. Le Piège Mortel des Moyennes &amp; La Puissance des Percentiles
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 2. Le Piège Mortel des Moyennes & La Puissance des Percentiles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-vocabulaire-des-percentiles-a-maitriser" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Vocabulaire des Percentiles à Maîtriser
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-throughput-utilisation-la-theorie-des-files-dattente" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 3. Throughput, Utilisation &amp; La Théorie des Files d'Attente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ 3. Throughput, Utilisation & La Théorie des Files d'Attente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lanalogie-du-glacier-et-de-lautoroute" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'Analogie du Glacier et de l'Autoroute
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-detecter-les-bottlenecks-mesurer-avant-de-deviner" class="md-nav__link">
+    <span class="md-ellipsis">
+      🕵️‍♂️ 4. Détecter les Bottlenecks : Mesurer avant de Deviner
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-outils-de-mesure-profiling-vs-tracing-distribue" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔬 5. Outils de Mesure : Profiling vs Tracing Distribué
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-optimisation-des-bases-de-donnees-postgres-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ 6. Optimisation des Bases de Données (Postgres &amp; SQL)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ 6. Optimisation des Bases de Données (Postgres & SQL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-le-probleme-des-requetes-n1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Le Problème des Requêtes N+1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-strategies-dindexation-b-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Stratégies d'Indexation (B-Tree)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-connexions-bdd-connection-pooling-pgbouncer" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Connexions BDD &amp; Connection Pooling (PgBouncer)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-strategies-et-patrons-de-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 7. Stratégies et Patrons de Caching
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 7. Stratégies et Patrons de Caching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-defi-de-linvalidation-de-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Défi de l'Invalidation de Cache
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-3-grands-patrons-de-caching-caching-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 3 Grands Patrons de Caching (Caching Patterns)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-scaling-vertical-vs-horizontal" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 8. Scaling : Vertical vs Horizontal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ 8. Scaling : Vertical vs Horizontal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tableau-comparatif-synthetique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tableau Comparatif Synthétique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synthese-des-bonnes-pratiques-pour-le-dev-backend-junior" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Synthèse des Bonnes Pratiques pour le Dev Backend Junior
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.2-backend-scaling-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../23-object-storage-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../24-object-storage-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../28-openapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../29-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-quest-ce-que-la-performance-en-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 1. Qu'est-ce que la Performance en Backend ?
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧠 1. Qu'est-ce que la Performance en Backend ?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-piege-de-limprevisibilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le piège de l'imprévisibilité
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-piege-mortel-des-moyennes-la-puissance-des-percentiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 2. Le Piège Mortel des Moyennes &amp; La Puissance des Percentiles
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 2. Le Piège Mortel des Moyennes & La Puissance des Percentiles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-vocabulaire-des-percentiles-a-maitriser" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Vocabulaire des Percentiles à Maîtriser
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-throughput-utilisation-la-theorie-des-files-dattente" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 3. Throughput, Utilisation &amp; La Théorie des Files d'Attente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ 3. Throughput, Utilisation & La Théorie des Files d'Attente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lanalogie-du-glacier-et-de-lautoroute" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'Analogie du Glacier et de l'Autoroute
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-detecter-les-bottlenecks-mesurer-avant-de-deviner" class="md-nav__link">
+    <span class="md-ellipsis">
+      🕵️‍♂️ 4. Détecter les Bottlenecks : Mesurer avant de Deviner
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-outils-de-mesure-profiling-vs-tracing-distribue" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔬 5. Outils de Mesure : Profiling vs Tracing Distribué
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-optimisation-des-bases-de-donnees-postgres-sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ 6. Optimisation des Bases de Données (Postgres &amp; SQL)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ 6. Optimisation des Bases de Données (Postgres & SQL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-le-probleme-des-requetes-n1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Le Problème des Requêtes N+1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-strategies-dindexation-b-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Stratégies d'Indexation (B-Tree)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-connexions-bdd-connection-pooling-pgbouncer" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Connexions BDD &amp; Connection Pooling (PgBouncer)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-strategies-et-patrons-de-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 7. Stratégies et Patrons de Caching
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 7. Stratégies et Patrons de Caching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-defi-de-linvalidation-de-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Défi de l'Invalidation de Cache
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-3-grands-patrons-de-caching-caching-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 3 Grands Patrons de Caching (Caching Patterns)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-scaling-vertical-vs-horizontal" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 8. Scaling : Vertical vs Horizontal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ 8. Scaling : Vertical vs Horizontal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tableau-comparatif-synthetique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tableau Comparatif Synthétique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synthese-des-bonnes-pratiques-pour-le-dev-backend-junior" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Synthèse des Bonnes Pratiques pour le Dev Backend Junior
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="211-scaling-performance-engineering-partie-1">21.1. Scaling &amp; Performance Engineering - Partie 1<a class="headerlink" href="#211-scaling-performance-engineering-partie-1" title="Permanent link">&para;</a></h1>
+<p>Le scaling et la performance ne sont pas de simples "buzzwords" d'architecture : ce sont des disciplines d'ingénierie rigoureuses. Quand tout s'effondre sous la charge en production, il ne faut pas deviner ou appliquer aveuglément des recettes de cuisine, mais <strong>comprendre scientifiquement comment les systèmes réagissent sous pression</strong>.</p>
+<hr />
+<h2 id="1-quest-ce-que-la-performance-en-backend">🧠 1. Qu'est-ce que la Performance en Backend ?<a class="headerlink" href="#1-quest-ce-que-la-performance-en-backend" title="Permanent link">&para;</a></h2>
+<p>Quand un utilisateur dit <em>"votre application est lente"</em>, il parle en réalité d'un concept très précis : <strong>la latence</strong>.</p>
+<div class="highlight"><pre><span></span><code>┌──────────────────────────────┐              ┌──────────────────────────────┐
+│      NAVIGATEUR (CLIENT)     │              │    SERVEUR BACKEND &amp; BDD     │
+├──────────────────────────────┤              ├──────────────────────────────┤
+│ 1. Clic sur un bouton        │ ──(Internet)─&gt; 2. Réception &amp; Traitement    │
+│                              │              │ 3. Requête Base de Données   │
+│ 6. Rendu visuel des cartes   │ &lt;─(Internet)── 4. Appel API Tiers (ex: Mail) │
+│    sur l&#39;écran de l&#39;utilisateur              │ 5. Génération JSON Réponse   │
+└──────────────────────────────┘              └──────────────────────────────┘
+│&lt;───────────────────────────── LATENCE TOTALE ─────────────────────────────&gt;│
+</code></pre></div>
+<blockquote>
+<p>📌 <strong>Définition de la Latence</strong> : C'est le temps total écoulé entre l'action initiale de l'utilisateur (ex: clic sur un bouton) et le rendu final du résultat sur son écran.</p>
+</blockquote>
+<h3 id="le-piege-de-limprevisibilite">Le piège de l'imprévisibilité<a class="headerlink" href="#le-piege-de-limprevisibilite" title="Permanent link">&para;</a></h3>
+<p>La latence n'est <strong>jamais une valeur fixe unique</strong> (comme "100 ms"). Deux requêtes identiques peuvent avoir des latences totalement différentes :
+* <strong>Requête A (50 ms)</strong> : Elle a touché un cache Redis en mémoire ou est arrivée sur un serveur totalement inactif.
+* <strong>Requête B (350 ms)</strong> : Elle a dû interroger une base de données sur disque tout en s'exécutant simultanément avec 100 autres requêtes concurrentes.</p>
+<hr />
+<h2 id="2-le-piege-mortel-des-moyennes-la-puissance-des-percentiles">📊 2. Le Piège Mortel des Moyennes &amp; La Puissance des Percentiles<a class="headerlink" href="#2-le-piege-mortel-des-moyennes-la-puissance-des-percentiles" title="Permanent link">&para;</a></h2>
+<p>En ingénierie de performance, <strong>la moyenne (Mean Latency) est une métrique trompeuse et totalement inutile</strong>.</p>
+<p>Imaginez un système mesuré sur 1 000 requêtes :
+* <strong>99% des requêtes</strong> s'exécutent en <strong>50 ms</strong> (ultra rapide).
+* <strong>1% des requêtes</strong> prennent <strong>5 000 ms (5 secondes)</strong> (catastrophique).
+* <strong>Moyenne calculée</strong> : ~100 ms.</p>
+<p>Si vous ne regardez que la moyenne, vous pensez que votre serveur tourne à merveille. Mais à l'échelle de <strong>1 000 000 de requêtes par jour</strong>, cela signifie que <strong>10 000 utilisateurs par jour</strong> subissent un écran de chargement de 5 secondes !</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                       POURQUOI LE P99 EST CRUCIAL ?                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Les 1% d&#39;utilisateurs qui subissent la latence P99 ne sont pas des cas      │
+│ isolés à ignorer : ce sont très souvent VOS CLIENTS LES PLUS PRÉCIEUX !    │
+│                                                                             │
+│ • Un simple visiteur qui parcourt le site = Requête GET simple (Cache / P50)│
+│ • Un client VIP qui valide un panier = Transactions complexes BDD, calculs, │
+│   appels Stripe, envoi d&#39;emails (Opérations lourdes / P99)                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="le-vocabulaire-des-percentiles-a-maitriser">Le Vocabulaire des Percentiles à Maîtriser<a class="headerlink" href="#le-vocabulaire-des-percentiles-a-maitriser" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>P50 (Médiane)</strong> : 50% des utilisateurs ont une latence inférieure à cette valeur.</li>
+<li><strong>P90</strong> : 90% des requêtes sont plus rapides (10% des utilisateurs subissent cette latence).</li>
+<li><strong>P95 &amp; P99</strong> : 95% et 99% des requêtes sont plus rapides. <strong>C'est sur le P99 et P95 que les ingénieurs backend concentrent toute leur attention</strong> car c'est là que se trouvent les opérations métier les plus complexes et critiques.</li>
+</ul>
+<hr />
+<h2 id="3-throughput-utilisation-la-theorie-des-files-dattente">⚡ 3. Throughput, Utilisation &amp; La Théorie des Files d'Attente<a class="headerlink" href="#3-throughput-utilisation-la-theorie-des-files-dattente" title="Permanent link">&para;</a></h2>
+<p>Le <strong>Throughput (Débit)</strong> mesure la capacité de charge globale du système, exprimée en <strong>Requêtes Par Seconde (RPS)</strong> ou par minute (RPM).</p>
+<p>Latence et Throughput sont intimement liés : un serveur peut afficher une latence exemplaire de 50 ms à 10 RPS, mais voir sa latence exploser à 3 000 ms dès que le trafic grimpe à 1 000 RPS (ex: Black Friday, campagne d'emails, effet d'annonce).</p>
+<h3 id="lanalogie-du-glacier-et-de-lautoroute">L'Analogie du Glacier et de l'Autoroute<a class="headerlink" href="#lanalogie-du-glacier-et-de-lautoroute" title="Permanent link">&para;</a></h3>
+<p>Imaginez un glacier qui met exactement 2 minutes pour préparer une glace :
+1. <strong>Faible utilisation (Glacier vide)</strong> : Vous arrivez, vous êtes servi en 2 minutes. Latence faible.
+2. <strong>Forte utilisation (File de 20 personnes)</strong> : Le glacier travaille <strong>exactement à la même vitesse</strong> (2 min/glace), mais vous devez attendre 40 minutes dans la file ! Votre latence ressentie a explosé en raison de la <strong>queue d'attente</strong>.</p>
+<div class="highlight"><pre><span></span><code> Latence
+    ▲                                           💥 COLLAPSUS DU SYSTÈME
+    │                                              /
+    │                                             /  (Croissance exponentielle)
+    │                                            /
+    │                                           /
+    │                                          /
+    │                                 ───────┘
+    │                     ────────────
+    └─────────────────────┴──────────────────┴───────────────► Utilisation
+    0%                   50%                80%           100%
+</code></pre></div>
+<blockquote>
+<p>⚠️ <strong>Règle d'or de l'infrastructure</strong> : <strong>Ne faites JAMAIS tourner vos serveurs à 100% d'utilisation.</strong> La courbe entre utilisation et latence est exponentielle. Au-delà de 80-85%, la moindre rafale de trafic (<em>traffic burst</em>) fait exploser la file d'attente et crasher le serveur.</p>
+<p>En production, on maintient une <strong>marge de sécurité (Headroom / Buffer) de 20% à 40%</strong> (utilisation cible entre 60% et 80%).</p>
+</blockquote>
+<hr />
+<h2 id="4-detecter-les-bottlenecks-mesurer-avant-de-deviner">🕵️‍♂️ 4. Détecter les Bottlenecks : Mesurer avant de Deviner<a class="headerlink" href="#4-detecter-les-bottlenecks-mesurer-avant-de-deviner" title="Permanent link">&para;</a></h2>
+<p>Le piège classique du développeur est de sauter directement sur des "solutions du manuel" dès qu'une API ralentit (ajouter du cache Redis, mettre à jour la version de Postgres, ajouter des serveurs).</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                    LE PIÈGE DE LA FAUSSE HYPOTHÈSE                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Scénario : Une API GET /products/:id prend 550 ms.                          │
+│                                                                             │
+│ ❌ Mauvais réflexe : On suppose que la BDD SQL rame -&gt; On passe 1 semaine   │
+│    à implémenter un cache Redis -&gt; L&#39;API prend toujours 505 ms !            │
+│                                                                             │
+│ ✅ Bon réflexe (Mesure) : On ajoute des logs de chronométrage précis.      │
+│    • Requête SQL : 10 ms                                                    │
+│    • Cache Redis : 5 ms                                                     │
+│    • Logger synchrone vers Elasticsearch distant : 500 ms ! 💥              │
+│                                                                             │
+│ Le coupable était un logger bloquant synchrone, pas la base de données !    │
+└─────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="5-outils-de-mesure-profiling-vs-tracing-distribue">🔬 5. Outils de Mesure : Profiling vs Tracing Distribué<a class="headerlink" href="#5-outils-de-mesure-profiling-vs-tracing-distribue" title="Permanent link">&para;</a></h2>
+<p>Pour trouver le vrai bottleneck, il faut utiliser le bon outil de mesure :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Outil</th>
+<th style="text-align: left;">Type de Tâches Cibles</th>
+<th style="text-align: left;">Description &amp; Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Profilers &amp; Flame Graphs</strong></td>
+<td style="text-align: left;"><strong>CPU-Bound</strong> <em>(Calculs lourds, manipulation de matrices, crypto)</em></td>
+<td style="text-align: left;">Analyse le temps d'exécution CPU fonction par fonction. Les <strong>Flame Graphs</strong> empilent la pile d'appels (plus le bloc est large, plus la fonction consomme du CPU).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Distributed Tracing</strong> <em>(OpenTelemetry, Jaeger, Tempo)</em></td>
+<td style="text-align: left;"><strong>IO-Bound</strong> <em>(Base de données, appels réseau, fichiers, serialization)</em></td>
+<td style="text-align: left;"><strong>L'outil n°1 du dev backend.</strong> Suit une requête à travers toutes les couches système et affiche un diagramme temporel (ex: 2 ms dans le code métier, 800 ms dans la requête BDD).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Constat réel</strong> : 95% des applications Web/SaaS sont limitées par des tâches <strong>IO-Bound</strong> (temps d'attente réseau, BDD et disques) et non par des calculs CPU.</p>
+</blockquote>
+<hr />
+<h2 id="6-optimisation-des-bases-de-donnees-postgres-sql">🗄️ 6. Optimisation des Bases de Données (Postgres &amp; SQL)<a class="headerlink" href="#6-optimisation-des-bases-de-donnees-postgres-sql" title="Permanent link">&para;</a></h2>
+<p>La base de données est historiquement le premier goulot d'étranglement des applications backend. Voici les 3 problèmes majeurs et leurs solutions :</p>
+<h3 id="1-le-probleme-des-requetes-n1">1. Le Problème des Requêtes N+1<a class="headerlink" href="#1-le-probleme-des-requetes-n1" title="Permanent link">&para;</a></h3>
+<p>Le problème N+1 survient quand on récupère une liste de N éléments, puis qu'on fait N requêtes individuelles dans une boucle pour récupérer les détails de chaque élément.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// ❌ MAUVAIS CODE (N+1 Requêtes BDD) : 1 requête posts + 20 requêtes d&#39;auteurs !</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">posts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">().</span><span class="kr">from</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">).</span><span class="nx">limit</span><span class="p">(</span><span class="mf">20</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">post</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">posts</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">post</span><span class="p">.</span><span class="nx">author</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">().</span><span class="kr">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">).</span><span class="nx">where</span><span class="p">({</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">post.authorId</span><span class="w"> </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">// ✅ BON CODE (Bulk Fetch / JOIN) : 1 ou 2 requêtes globales !</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">postsWithAuthors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">()</span>
+<span class="w">  </span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">leftJoin</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;posts.authorId&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;users.id&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">limit</span><span class="p">(</span><span class="mf">20</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="2-strategies-dindexation-b-tree">2. Stratégies d'Indexation (B-Tree)<a class="headerlink" href="#2-strategies-dindexation-b-tree" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Full Table Scan (Sequential Scan)</strong> : La BDD lit chaque ligne du disque une par une (comme chercher un livre sans catalogue dans une bibliothèque de 1 million d'ouvrages). Très lent (plusieurs secondes).</li>
+<li><strong>Index Scan (B-Tree)</strong> : La BDD utilise un arbre B-Tree trié contenant des pointeurs vers les lignes. Recherche instantanée (~5-20 ms).</li>
+</ul>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                          LE COÛT CACHÉ DES INDEX                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ ⚠️ Les index ne sont pas gratuits !                                        │
+│ 1. Espace disque : Chaque index prend de la mémoire et du stockage.         │
+│ 2. Impact en écriture : À chaque INSERT, UPDATE ou DELETE, TOUS les index   │
+│    associés à la table doivent être réorganisés et remis à jour !           │
+│                                                                             │
+│ 👉 Règle : N&#39;indexez pas toutes les colonnes par précaution.                │
+│    Utilisez &#39;EXPLAIN ANALYZE&#39; pour vérifier si la BDD utilise l&#39;index.       │
+└─────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<ul>
+<li><strong>Index Composites</strong> : Couvrent plusieurs colonnes <code>(user_id, created_at)</code>. <strong>L'ordre compte</strong> : fonctionne pour <code>WHERE user_id = X AND created_at = Y</code> ou <code>WHERE user_id = X</code>, mais <strong>inutile</strong> si la requête filtre uniquement sur <code>created_at</code>.</li>
+<li><strong>Covering Index</strong> : Inclut directement les valeurs demandées dans l'index pour éviter tout accès à la table principale.</li>
+</ul>
+<h3 id="3-connexions-bdd-connection-pooling-pgbouncer">3. Connexions BDD &amp; Connection Pooling (PgBouncer)<a class="headerlink" href="#3-connexions-bdd-connection-pooling-pgbouncer" title="Permanent link">&para;</a></h3>
+<p>Créer une connexion TCP avec une BDD est très coûteux (Handshake TCP, TLS, Auth, allocation mémoire). De plus, Postgres limite le nombre maximal de connexions simultanées (ex: 500 connexions max).</p>
+<div class="highlight"><pre><span></span><code>              SANS POOL EXTERNE (Risque de Crash)
+┌─────────────────┐       ┌─────────────────┐
+│ 3 instances App │ ──►   │ 450 connexions  │  💥 Dépasse la limite de 300 
+│ (150 pool/inst) │       │ (BDD Plante !)  │     connexions de Postgres !
+└─────────────────┘       └─────────────────┘
+
+              AVEC PGBOUNCER (Pool Externe Sécurisé)
+┌─────────────────┐       ┌──────────────┐       ┌─────────────────┐
+│ 3 instances App │ ──►   │  PGBOUNCER   │ ──►   │ Max 200 conns   │
+│ (Horizontal)    │       │ (Pooler Ext) │       │ (BDD Stable !)  │
+└─────────────────┘       └──────────────┘       └─────────────────┘
+</code></pre></div>
+<ul>
+<li><strong>Internal Pooling</strong> : Géré par le driver dans chaque instance de l'application. Dangereux en cas d'autoscaling horizontal.</li>
+<li><strong>External Pooling (ex: PgBouncer)</strong> : Serveur intermédiaire dédié qui maintient un nombre fixe de connexions stables vers Postgres et répartit les requêtes de toutes les instances d'application.</li>
+</ul>
+<hr />
+<h2 id="7-strategies-et-patrons-de-caching">🚀 7. Stratégies et Patrons de Caching<a class="headerlink" href="#7-strategies-et-patrons-de-caching" title="Permanent link">&para;</a></h2>
+<p>Le caching consiste à stocker le résultat d'une opération coûteuse dans une mémoire ultra-rapide (ex: Redis).</p>
+<h3 id="le-defi-de-linvalidation-de-cache">Le Défi de l'Invalidation de Cache<a class="headerlink" href="#le-defi-de-linvalidation-de-cache" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><em>"Il n'y a que deux choses difficiles en informatique : l'invalidation du cache et nommer les variables."</em></p>
+</blockquote>
+<ol>
+<li><strong>Time-To-Live (TTL / Expiration Temporelle)</strong> : Le cache expire automatiquement après N minutes. Simple mais risque de servir des données périmées (<em>stale data</em>) pendant la fenêtre TTL.</li>
+<li><strong>Invalidation par Événement</strong> : Le cache est explicitement supprimé/mis à jour lors de chaque écriture (ex: <code>UPDATE user</code>). Très précis mais exige une discipline absolue dans le code pour ne rater aucun endroit où la donnée est modifiée.</li>
+</ol>
+<h3 id="les-3-grands-patrons-de-caching-caching-patterns">Les 3 Grands Patrons de Caching (Caching Patterns)<a class="headerlink" href="#les-3-grands-patrons-de-caching-caching-patterns" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>1. CACHE-ASIDE (Lazy Loading) - Le plus courant
+   App ──► Read Cache ──(Miss)──► Read BDD ──► Write Cache ──► Return
+   App ──► Write BDD ──► Delete/Invalidate Cache
+
+2. WRITE-THROUGH - Écriture synchrone
+   App ──► Write BDD + Write Cache en même temps (Pas de cache miss, mais écriture plus lente)
+
+3. WRITE-BEHIND (Write-Back) - Écriture asynchrone
+   App ──► Write Cache immédiatement (Réponse ultra rapide) ──► Sync BDD en tâche de fond
+   (Ultra rapide, mais risque de perte de données si le cache plante avant la sync BDD)
+</code></pre></div>
+<hr />
+<h2 id="8-scaling-vertical-vs-horizontal">🏗️ 8. Scaling : Vertical vs Horizontal<a class="headerlink" href="#8-scaling-vertical-vs-horizontal" title="Permanent link">&para;</a></h2>
+<p>Quand le serveur ne suffit plus à absorber la charge, deux philosophies d'architecture s'opposent :</p>
+<div class="highlight"><pre><span></span><code>       VERTICAL SCALING (Scaling Up)              HORIZONTAL SCALING (Scaling Out)
+           ┌───────────────┐                  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐
+           │ BIG SERVER    │                  │ Inst │  │ Inst │  │ Inst │  │ Inst │
+           │ 32 Cores      │                  │  1   │  │  2   │  │  3   │  │  4   │
+           │ 128 GB RAM    │                  └──────┘  └──────┘  └──────┘  └──────┘
+           └───────────────┘                     ▲         ▲         ▲         ▲
+                                                 └─────────┴────┬────┴─────────┘
+                                                          LOAD BALANCER
+</code></pre></div>
+<h3 id="tableau-comparatif-synthetique">Tableau Comparatif Synthétique<a class="headerlink" href="#tableau-comparatif-synthetique" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Caractéristique</th>
+<th style="text-align: left;">Vertical Scaling (Scaling Up)</th>
+<th style="text-align: left;">Horizontal Scaling (Scaling Out)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Principe</strong></td>
+<td style="text-align: left;">Remplacer le serveur par une machine plus puissante (CPU, RAM, SSD).</td>
+<td style="text-align: left;">Ajouter plusieurs instances de serveurs identiques derrière un Load Balancer.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Modifications de Code</strong></td>
+<td style="text-align: left;"><strong>Aucune</strong>. Code et architecture strictly identiques.</td>
+<td style="text-align: left;"><strong>Requises</strong>. Le serveur doit être <strong>Stateless</strong> (pas de session locale).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Limite Maximale</strong></td>
+<td style="text-align: left;"><strong>Plafond matériel dur</strong>. On atteint vite la plus grosse machine du cloud.</td>
+<td style="text-align: left;"><strong>Quasi-infinie</strong>. On peut ajouter des dizaines ou centaines d'instances.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Résilience (SPOF)</strong></td>
+<td style="text-align: left;">❌ <strong>Single Point of Failure</strong>. Si la grosse machine plante, tout s'arrête.</td>
+<td style="text-align: left;">✅ <strong>Haute Disponibilité</strong>. Si une instance tombe, le Load Balancer redirige le trafic.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Distribution Géographique</strong></td>
+<td style="text-align: left;">❌ Impossible (Le serveur reste dans un seul datacenter).</td>
+<td style="text-align: left;">✅ Excellente (Des serveurs proches des utilisateurs en Europe, Asie, US).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Complexité Opérationnelle</strong></td>
+<td style="text-align: left;">🟢 Ultra simple.</td>
+<td style="text-align: left;">🔴 Élevée (Load Balancers, synchronisation de l'état, partitions réseau).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="synthese-des-bonnes-pratiques-pour-le-dev-backend-junior">🎯 Synthèse des Bonnes Pratiques pour le Dev Backend Junior<a class="headerlink" href="#synthese-des-bonnes-pratiques-pour-le-dev-backend-junior" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Ne faites jamais confiance aux moyennes de latence</strong> : Suivez toujours vos métriques <strong>P95 et P99</strong>.</li>
+<li><strong>Ne laissez jamais vos serveurs tourner à 100% de CPU/RAM</strong> : Gardez un buffer de 20-40% pour absorber les pics de trafic.</li>
+<li><strong>Ne devinez jamais l'origine d'un ralentissement</strong> : Instrumentez votre code avec du <strong>Distributed Tracing</strong> avant d'ajouter du cache ou d'optimiser la BDD.</li>
+<li><strong>Fuyez le problème N+1</strong> : Utilisez systématiquement des <code>JOIN</code> ou du chargement en masse (<em>bulk fetching</em>).</li>
+<li><strong>Utilisez un pooler de connexions externe (ex: PgBouncer)</strong> dès que vous passez à un déploiement horizontal.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../20-backend-security/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 20. La Sécurité Backend (Everything You Need to Know)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                20. La Sécurité Backend (Everything You Need to Know)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../21.2-backend-scaling-part2/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 21.2. Scalabilité Backend &amp; Performance Engineering (Partie 2)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2176 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../21.1-backend-scaling-part1/">
+      
+      
+        <link rel="next" href="../22-concurrency-parallelism/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>21.2. Scalabilité Backend & Performance Engineering (Partie 2) - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#212-scalabilite-backend-performance-engineering-partie-2" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21.1-backend-scaling-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-prerequis-absolu-du-horizontal-scaling-le-statelessness-sans-etat" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 1. Le Prérequis Absolu du Horizontal Scaling : Le Statelessness (Sans État)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 1. Le Prérequis Absolu du Horizontal Scaling : Le Statelessness (Sans État)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-piege-du-serveur-stateful-en-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Piège du Serveur Stateful en Cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-regle-dor-externaliser-tout-letat" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Règle d'Or : Externaliser Tout l'État
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-load-balancers-leurs-algorithmes-de-routage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚖️ 2. Les Load Balancers &amp; leurs Algorithmes de Routage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚖️ 2. Les Load Balancers & leurs Algorithmes de Routage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#panorama-des-algorithmes-de-load-balancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Panorama des Algorithmes de Load Balancing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-checks-la-detection-automatique-de-pannes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Health Checks : La Détection Automatique de Pannes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-la-scalabilite-des-bases-de-donnees-la-partie-stateful" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ 3. La Scalabilité des Bases de Données (La partie Stateful)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ 3. La Scalabilité des Bases de Données (La partie Stateful)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-les-read-replicas-repliques-en-lecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Les Read Replicas (Répliques en Lecture)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-sharding-partitionnement-horizontal" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Le Sharding (Partitionnement Horizontal)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-bases-de-donnees-distribuees-modernes" class="md-nav__link">
+    <span class="md-ellipsis">
+      C. Bases de Données Distribuées Modernes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cdn-content-delivery-networks-edge-computing" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 4. CDN (Content Delivery Networks) &amp; Edge Computing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 4. CDN (Content Delivery Networks) & Edge Computing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vaincre-la-vitesse-de-la-lumiere" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vaincre la Vitesse de la Lumière
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-role-des-cdn-points-of-presence-pops" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Rôle des CDN &amp; Points of Presence (PoPs)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lere-du-edge-computing" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'Ère du Edge Computing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-traitements-asynchrones-file-dattente-task-queues" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⏳ 5. Traitements Asynchrones &amp; File d'Attente (Task Queues)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⏳ 5. Traitements Asynchrones & File d'Attente (Task Queues)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-concret-linvitation-dun-membre-dequipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Concret : L'Invitation d'un Membre d'Équipe
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-4-cas-dusage-ideaux-de-lasynchronisme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 4 Cas d'Usage Idéaux de l'Asynchronisme
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-microservices-vs-monolithe-la-realite-du-terrain" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 6. Microservices vs Monolithe : La Réalité du Terrain
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 6. Microservices vs Monolithe : La Réalité du Terrain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tableau-comparatif-monolithe-vs-microservices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tableau Comparatif : Monolithe vs Microservices
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-serverless-computing-faas" class="md-nav__link">
+    <span class="md-ellipsis">
+      ☁️ 7. Serverless Computing (FaaS)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="☁️ 7. Serverless Computing (FaaS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-changement-de-modele" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Changement de Modèle
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-defi-majeur-le-cold-start-demarrage-a-froid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Défi Majeur : Le Cold Start (Démarrage à Froid)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-les-5-regles-dor-de-lingenieur-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 8. Les 5 Règles d'Or de l'Ingénieur Backend
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../23-object-storage-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../24-object-storage-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../28-openapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../29-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-le-prerequis-absolu-du-horizontal-scaling-le-statelessness-sans-etat" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 1. Le Prérequis Absolu du Horizontal Scaling : Le Statelessness (Sans État)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 1. Le Prérequis Absolu du Horizontal Scaling : Le Statelessness (Sans État)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-piege-du-serveur-stateful-en-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Piège du Serveur Stateful en Cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-regle-dor-externaliser-tout-letat" class="md-nav__link">
+    <span class="md-ellipsis">
+      La Règle d'Or : Externaliser Tout l'État
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-load-balancers-leurs-algorithmes-de-routage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚖️ 2. Les Load Balancers &amp; leurs Algorithmes de Routage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚖️ 2. Les Load Balancers & leurs Algorithmes de Routage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#panorama-des-algorithmes-de-load-balancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Panorama des Algorithmes de Load Balancing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-checks-la-detection-automatique-de-pannes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Health Checks : La Détection Automatique de Pannes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-la-scalabilite-des-bases-de-donnees-la-partie-stateful" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ 3. La Scalabilité des Bases de Données (La partie Stateful)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ 3. La Scalabilité des Bases de Données (La partie Stateful)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-les-read-replicas-repliques-en-lecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. Les Read Replicas (Répliques en Lecture)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-le-sharding-partitionnement-horizontal" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. Le Sharding (Partitionnement Horizontal)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-bases-de-donnees-distribuees-modernes" class="md-nav__link">
+    <span class="md-ellipsis">
+      C. Bases de Données Distribuées Modernes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cdn-content-delivery-networks-edge-computing" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 4. CDN (Content Delivery Networks) &amp; Edge Computing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 4. CDN (Content Delivery Networks) & Edge Computing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vaincre-la-vitesse-de-la-lumiere" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vaincre la Vitesse de la Lumière
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-role-des-cdn-points-of-presence-pops" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Rôle des CDN &amp; Points of Presence (PoPs)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lere-du-edge-computing" class="md-nav__link">
+    <span class="md-ellipsis">
+      L'Ère du Edge Computing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-traitements-asynchrones-file-dattente-task-queues" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⏳ 5. Traitements Asynchrones &amp; File d'Attente (Task Queues)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⏳ 5. Traitements Asynchrones & File d'Attente (Task Queues)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-concret-linvitation-dun-membre-dequipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple Concret : L'Invitation d'un Membre d'Équipe
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-4-cas-dusage-ideaux-de-lasynchronisme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Les 4 Cas d'Usage Idéaux de l'Asynchronisme
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-microservices-vs-monolithe-la-realite-du-terrain" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 6. Microservices vs Monolithe : La Réalité du Terrain
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 6. Microservices vs Monolithe : La Réalité du Terrain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tableau-comparatif-monolithe-vs-microservices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tableau Comparatif : Monolithe vs Microservices
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-serverless-computing-faas" class="md-nav__link">
+    <span class="md-ellipsis">
+      ☁️ 7. Serverless Computing (FaaS)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="☁️ 7. Serverless Computing (FaaS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#le-changement-de-modele" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Changement de Modèle
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-defi-majeur-le-cold-start-demarrage-a-froid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Le Défi Majeur : Le Cold Start (Démarrage à Froid)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-les-5-regles-dor-de-lingenieur-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 8. Les 5 Règles d'Or de l'Ingénieur Backend
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="212-scalabilite-backend-performance-engineering-partie-2">21.2. Scalabilité Backend &amp; Performance Engineering (Partie 2)<a class="headerlink" href="#212-scalabilite-backend-performance-engineering-partie-2" title="Permanent link">&para;</a></h1>
+<p>Après avoir vu dans la Partie 1 les métriques de base (P99, latence, headroom) et la différence entre vertical et horizontal scaling, on plonge ici dans les briques d'architecture concrètes : <strong>Statelessness, Load Balancers, Scalabilité BDD, CDNs, Edge Computing, Traitements Asynchrones, Microservices et Serverless</strong> !</p>
+<hr />
+<h2 id="1-le-prerequis-absolu-du-horizontal-scaling-le-statelessness-sans-etat">🔄 1. Le Prérequis Absolu du Horizontal Scaling : Le Statelessness (Sans État)<a class="headerlink" href="#1-le-prerequis-absolu-du-horizontal-scaling-le-statelessness-sans-etat" title="Permanent link">&para;</a></h2>
+<p>La scalabilité horizontale consiste à multiplier les instances de notre serveur (Serveur A, B, C) exécutant le même code. Mais pour que cela fonctionne sans bugs imprévisibles, l'architecture doit impérativement respecter la propriété de <strong>Statelessness</strong>.</p>
+<blockquote>
+<p>💡 <strong>Définition</strong> : Un serveur est <strong>stateless</strong> (sans état) si aucune instance ne conserve de donnée exclusive en mémoire vive ou sur son disque local. N'importe quel serveur doit pouvoir traiter n'importe quelle requête avec exactement le même résultat.</p>
+</blockquote>
+<h3 id="le-piege-du-serveur-stateful-en-cluster">Le Piège du Serveur Stateful en Cluster<a class="headerlink" href="#le-piege-du-serveur-stateful-en-cluster" title="Permanent link">&para;</a></h3>
+<p>Si le serveur A stocke une session d'authentification dans un tableau JS en RAM :</p>
+<div class="highlight"><pre><span></span><code>                               ┌────────────────────────────────┐
+                               │     LOAD BALANCER              │
+                               └──────────────┬─────────────────┘
+                                              │
+                    ┌─────────────────────────┼─────────────────────────┐
+                    │ Requête 1 (Login)       │ Requête 2 (Profil)      │
+                    ▼                         ▼                         ▼
+      ┌──────────────────────────┐ ┌──────────────────────────┐ ┌──────────────────────────┐
+      │        SERVEUR A         │ │        SERVEUR B         │ │        SERVEUR C         │
+      ├──────────────────────────┤ ├──────────────────────────┤ ├──────────────────────────┤
+      │ • Reçoit Login           │ │ • Reçoit Requête Profil  │ │ • Aucune donnée en RAM   │
+      │ • Stocke session en RAM  │ │ • Vérifie sa RAM local   │ │                          │
+      │   [User123 -&gt; Authent]   │ │   -&gt; Session introuvable!│ │                          │
+      │ • Renvoie Cookie         │ │ • ERREUR 401 UNAUTHORIZED│ │                          │
+      └──────────────────────────┘ └──────────────────────────┘ └──────────────────────────┘
+</code></pre></div>
+<p>❌ <strong>Résultat</strong> : L'utilisateur se connecte sur A, mais dès que sa requête suivante atterrit sur B, il se fait rejeter avec une erreur 401 frustrante !</p>
+<h3 id="la-regle-dor-externaliser-tout-letat">La Règle d'Or : Externaliser Tout l'État<a class="headerlink" href="#la-regle-dor-externaliser-tout-letat" title="Permanent link">&para;</a></h3>
+<p>Pour garantir le statelessness, on applique une règle stricte : <strong>aucun état local</strong>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type de donnée</th>
+<th style="text-align: left;">Mauvaise pratique (Stateful)</th>
+<th style="text-align: left;">Bon réflexe (Stateless)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Sessions Auth</strong></td>
+<td style="text-align: left;">Stockées en mémoire RAM du serveur</td>
+<td style="text-align: left;"><strong>Redis</strong> (Base in-memory centralisée accessible par A, B, C)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fichiers / Uploads</strong></td>
+<td style="text-align: left;">Sauvegardés sur le SSD local (<code>/uploads</code>)</td>
+<td style="text-align: left;"><strong>Object Storage</strong> (Amazon S3, Cloudflare R2, MinIO)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Bases de Données</strong></td>
+<td style="text-align: left;">Fichier SQLite local sur l'instance</td>
+<td style="text-align: left;"><strong>BDD Centralisée</strong> (PostgreSQL / RDS externe)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-les-load-balancers-leurs-algorithmes-de-routage">⚖️ 2. Les Load Balancers &amp; leurs Algorithmes de Routage<a class="headerlink" href="#2-les-load-balancers-leurs-algorithmes-de-routage" title="Permanent link">&para;</a></h2>
+<p>Sans Load Balancer (LB), la scalabilité horizontale est impossible. Le Load Balancer est le "chef d'orchestre" situé entre Internet et nos instances de serveurs d'application.</p>
+<div class="highlight"><pre><span></span><code> [ Utilisateurs / Internet ]
+              │
+              ▼
+    ┌──────────────────┐
+    │  LOAD BALANCER   │ ── (Choisit l&#39;instance optimale via un algorithme)
+    └─────────┬────────┘
+              ├───────────────────────┬───────────────────────┐
+              ▼                       ▼                       ▼
+      ┌──────────────┐        ┌──────────────┐        ┌──────────────┐
+      │  Instance A  │        │  Instance B  │        │  Instance C  │
+      └──────────────┘        └──────────────┘        └──────────────┘
+</code></pre></div>
+<h3 id="panorama-des-algorithmes-de-load-balancing">Panorama des Algorithmes de Load Balancing<a class="headerlink" href="#panorama-des-algorithmes-de-load-balancing" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Round Robin (Tournant simple)</strong> :</li>
+<li><em>Principe</em> : Distribue les requêtes en boucle (A $
+ightarrow$ B $
+ightarrow$ C $
+ightarrow$ A...).</li>
+<li><em>Ideal pour</em> : Des requêtes homogènes (ex: simples <code>SELECT</code>) sur des serveurs de capacité identique.</li>
+<li>
+<p><em>Limite</em> : Si une requête lourde (ex: 2s d'écriture BDD + appel API tiers) atterrit sur A et que d'autres requêtes s'y accumulent, A risque le crash.</p>
+</li>
+<li>
+<p><strong>Weighted Round Robin (Pondéré)</strong> :</p>
+</li>
+<li>
+<p><em>Principe</em> : Assigne un poids selon la puissance matérielle (ex: Serveur A avec 8 Go RAM / 4 vCPU reçoit 2x plus de requêtes que B et C avec 4 Go RAM / 2 vCPU).</p>
+</li>
+<li>
+<p><strong>Least Connections (Moins de connexions actives)</strong> :</p>
+</li>
+<li><em>Principe</em> : Oriente la requête vers le serveur qui maintient le moins de connexions HTTP/TCP actives à l'instant T.</li>
+<li>
+<p><em>Ideal pour</em> : Des API avec des temps de traitement très variables (requêtes légères vs traitements lourds).</p>
+</li>
+<li>
+<p><strong>Weighted Least Connections / Least Response Time / Resource-Based</strong> :</p>
+</li>
+<li>Variantes avancées prenant en compte la latence de réponse moyenne ou l'utilisation courante CPU/RAM.</li>
+</ol>
+<h3 id="health-checks-la-detection-automatique-de-pannes">Health Checks : La Détection Automatique de Pannes<a class="headerlink" href="#health-checks-la-detection-automatique-de-pannes" title="Permanent link">&para;</a></h3>
+<p>Pour éviter de router du trafic vers une instance plantée :
+* Le Load Balancer envoie un test discret (ex: <code>GET /health</code>) chaque seconde à chaque serveur.
+* Si le serveur A ne répond pas avec un <code>200 OK</code> (ex: renvoie <code>502 Bad Gateway</code> ou timeout), il est <strong>blacklisté</strong> instantanément.
+* Les utilisateurs sont redirigés vers B et C. Dès que A s'en remet et renvoie à nouveau <code>200 OK</code>, il réintègre le cluster automatiquement.</p>
+<hr />
+<h2 id="3-la-scalabilite-des-bases-de-donnees-la-partie-stateful">🗄️ 3. La Scalabilité des Bases de Données (La partie Stateful)<a class="headerlink" href="#3-la-scalabilite-des-bases-de-donnees-la-partie-stateful" title="Permanent link">&para;</a></h2>
+<p>Alors que nos serveurs d'application se multiplient facilement grâce au statelessness, la base de données reste le composant stateful le plus difficile à scaler, car les données doivent rester <strong>strictement cohérentes</strong>.</p>
+<h3 id="a-les-read-replicas-repliques-en-lecture">A. Les Read Replicas (Répliques en Lecture)<a class="headerlink" href="#a-les-read-replicas-repliques-en-lecture" title="Permanent link">&para;</a></h3>
+<p>Dans la plupart des applications SaaS, <strong>70% à 90% du trafic consiste en des requêtes de lecture</strong> (<code>SELECT</code>).</p>
+<div class="highlight"><pre><span></span><code>                              [ SERVEURS BACKEND ]
+                                │              │
+                (Écritures 30%) │              │ (Lectures 70%)
+                                ▼              ▼
+                      ┌──────────────────┐    ┌──────────────────┐
+                      │ PRIMARY (Master) │    │  READ REPLICAS   │
+                      │ (Writes / SQL)   │    │  (Replicas 1,2)  │
+                      └────────┬─────────┘    └──────────────────┘
+                               │ (Replication Lag ~200ms)
+                               └──────────────────────►
+</code></pre></div>
+<ul>
+<li><strong>Fonctionnement</strong> : Un serveur <strong>Primary</strong> gère 100% des écritures (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>). Ses données sont répliquées vers plusieurs <strong>Read Replicas</strong> dédiés uniquement aux lectures.</li>
+<li><strong>Avantage</strong> : Réduction massive de la charge sur le serveur principal et baisse de la latence en plaçant des répliques proches géographiquement des utilisateurs (ex: Primary aux US, Replicas en Inde et en Europe).</li>
+<li><strong>Le Problème du Replication Lag</strong> : La donnée voyage dans des câbles sous-marins. Il existe un délai physique de réplication (ex: 200 ms).</li>
+<li><em>Cas critique</em> : L'utilisateur met à jour son profil ($
+ightarrow$ écriture sur le Primary US) puis rafraîchit immédiatement la page ($
+ightarrow$ lecture sur le Replica Inde qui n'a pas encore reçu le changement). Il voit son ancien nom !</li>
+<li><em>Solutions</em> : Router temporairement les lectures post-écriture vers le Primary, suspendre légèrement la requête de lecture le temps du lag, ou adapter l'UX du front-end.</li>
+</ul>
+<h3 id="b-le-sharding-partitionnement-horizontal">B. Le Sharding (Partitionnement Horizontal)<a class="headerlink" href="#b-le-sharding-partitionnement-horizontal" title="Permanent link">&para;</a></h3>
+<p>Quand une table dépasse des milliards de lignes (ex: table <code>orders</code> sur Amazon) et qu'un seul serveur BDD étouffe sous le volume :</p>
+<ul>
+<li><strong>Principe</strong> : On découpe physiquement la table sur plusieurs instances BDD distinctes grâce à une <strong>Sharding Key</strong> (ex: partitionnement par plages de dates <code>Jan-Juin</code> vs <code>Juil-Déc</code>, ou par <code>user_id</code>).</li>
+<li><strong>Gain</strong> : Division de la taille des tables par instance, réduction drastique du temps de requête (<em>Query Latency</em>) et répartition des IOPS.</li>
+</ul>
+<h3 id="c-bases-de-donnees-distribuees-modernes">C. Bases de Données Distribuées Modernes<a class="headerlink" href="#c-bases-de-donnees-distribuees-modernes" title="Permanent link">&para;</a></h3>
+<p>Aujourd'hui, il est déconseillé de créer sa propre infrastructure de sharding manuelle. On privilégie les <strong>Distributed Databases</strong> gérées :
+* <strong>Neon</strong> (PostgreSQL Serverless écrit en Rust).
+* <strong>PlanetScale</strong> (MySQL basé sur Vitess).
+* <strong>CockroachDB</strong> / <strong>YugabyteDB</strong>.</p>
+<hr />
+<h2 id="4-cdn-content-delivery-networks-edge-computing">🌐 4. CDN (Content Delivery Networks) &amp; Edge Computing<a class="headerlink" href="#4-cdn-content-delivery-networks-edge-computing" title="Permanent link">&para;</a></h2>
+<h3 id="vaincre-la-vitesse-de-la-lumiere">Vaincre la Vitesse de la Lumière<a class="headerlink" href="#vaincre-la-vitesse-de-la-lumiere" title="Permanent link">&para;</a></h3>
+<p>La lumière voyage à ~200 000 km/s dans la fibre optique. Un aller-retour (RTT) Tokyo $\leftrightarrow$ Virginie du Nord (US East 1) prend <strong>100 ms minimum</strong>, rien qu'en transport réseau !</p>
+<p>Si l'on ajoute le parsing JSON, les requêtes BDD (50-100 ms) et les appels d'API externes (200 ms), la latence perçue grimpe vite à <strong>500-800 ms</strong>.</p>
+<div class="highlight"><pre><span></span><code> [ Client (Tokyo) ] ─────── 2 000 km (2 ms) ───────► [ CDN Edge Node (Tokyo) ]  ─── (Réponse instantanée)
+        │
+        └───────────────── 20 000 km (100 ms RTT) ─────────────────────────────────► [ Serveur US East ]
+</code></pre></div>
+<h3 id="le-role-des-cdn-points-of-presence-pops">Le Rôle des CDN &amp; Points of Presence (PoPs)<a class="headerlink" href="#le-role-des-cdn-points-of-presence-pops" title="Permanent link">&para;</a></h3>
+<p>Les CDN (ex: Cloudflare, AWS CloudFront) placent des serveurs appelés <strong>Edge Locations</strong> ou <strong>PoPs</strong> au plus près des utilisateurs (ex: à Tokyo).
+1. <strong>Contenu Statique</strong> : Caching des bundles JS/CSS, images, vidéos, polices.
+2. <strong>Réponses API</strong> : Caching de catalogues produits peu changeants (avec invalidation par tags).
+3. <strong>Protection DDoS</strong> : Absorption de Terabits de trafic malveillant au niveau du CDN avant qu'il n'atteigne nos serveurs.</p>
+<h3 id="lere-du-edge-computing">L'Ère du Edge Computing<a class="headerlink" href="#lere-du-edge-computing" title="Permanent link">&para;</a></h3>
+<p>Le Edge Computing ne se contente plus de servir des fichiers statiques : il <strong>exécute du code</strong> au plus près de l'utilisateur (ex: <strong>Cloudflare Workers</strong> basés sur les <strong>V8 Isolates</strong> de Chrome).</p>
+<ul>
+<li><strong>Cas d'usage numéro 1 : L'Authentification au Edge</strong> : Rejeter les requêtes non authentifiées avec un <code>401 Unauthorized</code> en <strong>2 ms</strong> au niveau du PoP de Tokyo, au lieu de gaspiller 100 ms de voyage réseau et des ressources serveur aux US.</li>
+<li><strong>Limites du Edge</strong> : Contraintes de ressources (RAM/CPU limitées à 1 Go / 1 vCPU), absence de système de fichiers local et indisponibilité des connexions TCP persistantes traditionnelles.</li>
+</ul>
+<hr />
+<h2 id="5-traitements-asynchrones-file-dattente-task-queues">⏳ 5. Traitements Asynchrones &amp; File d'Attente (Task Queues)<a class="headerlink" href="#5-traitements-asynchrones-file-dattente-task-queues" title="Permanent link">&para;</a></h2>
+<p>Pour offrir une application ultra-snappy, il faut réduire la <strong>latence perçue</strong> par l'utilisateur en sortant du cycle de requête synchrone tout ce qui n'a pas besoin d'être exécuté immédiatement.</p>
+<h3 id="exemple-concret-linvitation-dun-membre-dequipe">Exemple Concret : L'Invitation d'un Membre d'Équipe<a class="headerlink" href="#exemple-concret-linvitation-dun-membre-dequipe" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>  APPROCHE SYNCHRONE (Lente - 400ms) :
+  User ──► API ──► Write BDD (100ms) ──► Appel API SendGrid (300ms) ──► Response 200 OK (400ms)
+
+  APPROCHE ASYNCHRONE (Snappy - 100ms) :
+  User ──► API ──► Write BDD (100ms) ──► Push Job dans Redis Queue ──► Response 200 OK (100ms)
+                                                │
+                                                ▼
+                                    [ Consumer / Worker ] ──► Appel SendGrid (en arrière-plan)
+</code></pre></div>
+<h3 id="les-4-cas-dusage-ideaux-de-lasynchronisme">Les 4 Cas d'Usage Idéaux de l'Asynchronisme<a class="headerlink" href="#les-4-cas-dusage-ideaux-de-lasynchronisme" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Envoi d'Emails / Notifications</strong> (SendGrid, Resend).</li>
+<li><strong>Traitements Médias</strong> (Encodage vidéo YouTube, redimensionnement d'images, génération de sous-titres).</li>
+<li><strong>Suppression de Compte (Delete Account)</strong> : La purge en cascade de millions de lignes dans 8 tables BDD prend 8 secondes. En asynchrone, on répond <code>200 OK</code> en 100 ms et le Worker nettoie la BDD en tâche de fond.</li>
+<li><strong>Tâches Récurrentes (Cron Jobs)</strong> : Nettoyage nocturne, rapports hebdomadaires.</li>
+</ol>
+<p><em>Technologies populaires</em> : <strong>Redis + BullMQ</strong> (Node.js), <strong>RabbitMQ</strong>, <strong>AWS SQS</strong>.</p>
+<hr />
+<h2 id="6-microservices-vs-monolithe-la-realite-du-terrain">🧩 6. Microservices vs Monolithe : La Réalité du Terrain<a class="headerlink" href="#6-microservices-vs-monolithe-la-realite-du-terrain" title="Permanent link">&para;</a></h2>
+<p>On entend souvent que les microservices sont indispensables pour scaler. C'est une idée reçue !</p>
+<blockquote>
+<p>⚠️ <strong>Vérité</strong> : Les microservices ne servent pas d'abord à scaler la performance des machines, mais à <strong>scaler la performance des équipes humaines</strong> quand elles dépassent 100 à 500 développeurs.</p>
+</blockquote>
+<h3 id="tableau-comparatif-monolithe-vs-microservices">Tableau Comparatif : Monolithe vs Microservices<a class="headerlink" href="#tableau-comparatif-monolithe-vs-microservices" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Critère</th>
+<th style="text-align: left;">Monolithe (Single Deployable Unit)</th>
+<th style="text-align: left;">Microservices (Services Indépendants)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Complexité</strong></td>
+<td style="text-align: left;">Simple à développer, tester et déployer</td>
+<td style="text-align: left;">Très complexe (Gestion du réseau, pannes)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Déploiement</strong></td>
+<td style="text-align: left;">Un seul process à déployer</td>
+<td style="text-align: left;">Déploiements indépendants par équipe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Scalabilité</strong></td>
+<td style="text-align: left;">Globale (on scale tout le monolithe)</td>
+<td style="text-align: left;">Granulaire (ex: scaler le service paiement seul)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Stack Technique</strong></td>
+<td style="text-align: left;">Unique (ex: tout en Node.js ou Go)</td>
+<td style="text-align: left;">Polyglotte (Node.js pour le parsing, Rust pour la perf)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Communication</strong></td>
+<td style="text-align: left;">Appels de fonctions en mémoire</td>
+<td style="text-align: left;">Appels réseau (gRPC / HTTP REST / Kafka)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Debugging</strong></td>
+<td style="text-align: left;">Stack trace directe dans un seul log</td>
+<td style="text-align: left;"><strong>Traces distribuées</strong> indispensables (Jaeger/OpenTelemetry)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-serverless-computing-faas">☁️ 7. Serverless Computing (FaaS)<a class="headerlink" href="#7-serverless-computing-faas" title="Permanent link">&para;</a></h2>
+<p>Le Serverless (AWS Lambda, Cloudflare Workers, Vercel) affranchit l'ingénieur de la gestion des VMs (Ubuntu, Docker, Nginx).</p>
+<h3 id="le-changement-de-modele">Le Changement de Modèle<a class="headerlink" href="#le-changement-de-modele" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Traditionnel (Serverful)</strong> : On loue une VM 24h/24 (ex: 4 Go RAM). Qu'il y ait 0 ou 1000 requêtes/sec, on paie le serveur en continu.</li>
+<li><strong>Serverless</strong> : On fournit uniquement du code (<strong>fonctions</strong>). L'API Gateway intercepte l'événement HTTP et instancie une machine à la volée. <strong>On ne paie strictement que les millisecondes d'exécution CPU</strong>.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>  Requête HTTP ──► [ API Gateway ] ──► Instantie la fonction ──► Exécute le code ──► Détruit l&#39;instance
+</code></pre></div>
+<h3 id="le-defi-majeur-le-cold-start-demarrage-a-froid">Le Défi Majeur : Le Cold Start (Démarrage à Froid)<a class="headerlink" href="#le-defi-majeur-le-cold-start-demarrage-a-froid" title="Permanent link">&para;</a></h3>
+<p>Puisqu'aucun serveur n'attend les requêtes à l'avance, le premier appel subit un délai d'initialisation (boot de l'environnement + chargement du runtime) appelé <strong>Cold Start</strong>.
+* <em>Solutions modernes</em> : MicroVMs ultra-rapides (<strong>AWS Firecracker</strong>), V8 Isolates (boot en 0-5 ms), et pings de chauffe automatiques (<em>warming pings</em>).</p>
+<hr />
+<h2 id="8-les-5-regles-dor-de-lingenieur-backend">🎯 8. Les 5 Règles d'Or de l'Ingénieur Backend<a class="headerlink" href="#8-les-5-regles-dor-de-lingenieur-backend" title="Permanent link">&para;</a></h2>
+<p>Pour conclure ce cours sur la performance et le scaling, voici les 5 principes directeurs à garder en tête au quotidien :</p>
+<ol>
+<li>📏 <strong>Mesurer Avant Tout (Measure First)</strong> : Ne devinez jamais où se trouve le bottleneck. Utilisez l'observabilité (Prometheus, Grafana, New Relic, Tracing) pour identifier scientifiquement la cause de la lenteur avant de coder la moindre solution. Évitez l'<strong>optimisation prématurée</strong> !</li>
+<li>🧹 <strong>Préférer les Solutions Simples</strong> : Un monolithe bien structuré avec un index B-Tree PostgreSQL est 100 fois plus simple et performant qu'une architecture microservices mal maîtrisée avec Redis et Kafka.</li>
+<li>📈 <strong>Scaler Pour Vos Besoins Réels</strong> : Ne concevez pas votre système pour 1 milliard d'utilisateurs le premier jour. Concevez pour votre échelle actuelle avec une marge de sécurité raisonnable (<em>headroom</em> de 20-40%).</li>
+<li>👁️ <strong>L'Observabilité dès le Jour 1</strong> : Installez des logs structurés (JSON), des métriques et du tracing dès le démarrage du projet.</li>
+<li>🧠 <strong>Le Mindset de Performance</strong> : La performance est un apprentissage continu. Observez la réaction de vos systèmes sous charge, ajustez, et construisez des architectures capables de dégrader élégamment leur service en cas de panne.</li>
+</ol>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../21.1-backend-scaling-part1/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 21.1. Scaling &amp; Performance Engineering - Partie 1">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                21.1. Scaling & Performance Engineering - Partie 1
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../22-concurrency-parallelism/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 22. Concurrence &amp; Parallélisme (IO-Bound vs CPU-Bound)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
