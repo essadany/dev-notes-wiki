@@ -1,0 +1,2707 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Base de connaissances technique personnelle — notes de référence sur des concepts maîtrisés, à consulter rapidement en cas de besoin après une longue période sans les utiliser.">
+      
+      
+        <meta name="author" content="Yassine ES-SADANY">
+      
+      
+      
+        <link rel="prev" href="../15-authentification-autorisation/">
+      
+      
+        <link rel="next" href="../17-erreurs-globales/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>16. Validation des entrées - Dev Notes Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#16-validation-des-entrees" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Dev Notes Wiki" class="md-header__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dev Notes Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              16. Validation des entrées
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer au mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer au mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer au mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../backend-from-first-principles/" class="md-tabs__link">
+          
+  
+  Backend from first principles
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../global-subjects/" class="md-tabs__link">
+          
+  
+  Sujets classiques d'une app web pro
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../langages/" class="md-tabs__link">
+          
+  
+  Langages de programmation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deploiement-web/" class="md-tabs__link">
+          
+  
+  Déploiement web
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Dev Notes Wiki" class="md-nav__button md-logo" aria-label="Dev Notes Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Dev Notes Wiki
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/essadany/dev-notes-wiki" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    essadany/dev-notes-wiki
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Backend from first principles
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Backend from first principles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Feuille de route pour backend from first principles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/02-walk-the-path-of-a-true-backend-engineer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Le chemin d'un vrai ingénieur backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/03-what-is-a-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Qu'est-ce qu'un backend, comment fonctionne-t-il et pourquoi en a-t-on besoin ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/04-benefits-of-learning-backend-engineering-from-first-principles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Les avantages de l'apprentissage de l'ingénierie backend depuis les principes fondamentaux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/05-understanding-http-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Comprendre HTTP pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/06-what-is-routing-in-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Qu'est-ce que le routing dans le backend ?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/07-serialization-and-deserialization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. La sérialisation et la désérialisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/08-authentication-and-authorization-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. L'authentification et l'autorisation pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/09-validations-and-transformations-for-backend-engineers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Les validations et les transformations pour les ingénieurs backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/10-controllers-services-repositories-middlewares-request-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Les contrôleurs, services, dépôts, middlewares et contexte de requête
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/11-complete-rest-api-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Conception d'APIs REST (Complete REST API Design)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/12-mastering-databases-with-postgres/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Maîtriser les bases de données avec Postgres
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/13-caching-the-secret-behind-it-all/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Le Caching (Le secret des systèmes haute performance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/14-task-queues-and-background-jobs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Task Queues & Background Jobs (L'art de l'asynchronisme)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/15-full-text-search-elasticsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Full-Text Search & Elasticsearch (La recherche à la vitesse de l'éclair)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/16-error-handling-and-fault-tolerance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16. Gestion des Erreurs & Systèmes Tolérants aux Pannes (Fault Tolerance)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/17-production-grade-config-management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion de la configuration en production (Configuration Management)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/18-logging-monitoring-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Logging, Monitoring et Observabilité (Le Trio Réseau & Prod)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/19-graceful-shutdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Graceful Shutdown (L'Art de s'Éteindre Proprement)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/20-backend-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. La Sécurité Backend (Everything You Need to Know)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/21.1-backend-scaling-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.1. Scaling & Performance Engineering - Partie 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/21.2-backend-scaling-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21.2. Scalabilité Backend & Performance Engineering (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/22-concurrency-parallelism/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Concurrence & Parallélisme (IO-Bound vs CPU-Bound)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/23-object-storage-part1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Object Storage & Gestion des Fichiers en Backend (Partie 1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/24-object-storage-part2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Object Storage - Tout Ce Qu'il Faut Savoir (Partie 2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/25-realtime-backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Real-Time Backends (Short Polling, SSE, WebSockets & Pub/Sub)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/26-testing-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Testing pour les Ingénieurs Backend (Mocks, TDD & Couverture)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/27-twelve-factor-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. The Twelve-Factor App (12-Factor Methodology)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/28-openapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. OpenAPI (Le contrat universel entre clients et serveurs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/29-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend-from-first-principles/30-devops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. DevOps & Infrastructure pour les Ingénieurs Backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Sujets classiques d'une app web pro
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Sujets classiques d'une app web pro
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../global-subjects/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Hub — sommaire et checklist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Frontend
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Frontend
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-cache-donnees-serveur-pagination/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Cache des données serveur et pagination
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-gestion-etat/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Gestion d'état
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-authentification-front/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. Authentification côté front
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-formulaires-validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4. Formulaires et validation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-routing-guards-code-splitting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5. Routing, guards et code splitting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-performance-front/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6. Performance (listes longues, debounce, annulation)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-modes-de-rendu/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7. Modes de rendu (CSR, SSR, SSG, ISR)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-erreurs-front/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8. Gestion d'erreurs côté front
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-mises-a-jour-optimistes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9. Mises à jour optimistes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-temps-reel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10. Temps réel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-i18n/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11. Internationalisation (i18n)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-securite-front/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12. Sécurité front
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-tests-front/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13. Tests front
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backend
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Backend
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-pagination-tri-filtrage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14. Pagination, tri et filtrage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-authentification-autorisation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15. Authentification et autorisation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    16. Validation des entrées
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    16. Validation des entrées
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Contexte
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-exemples-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      💻 2. Exemples techniques
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-voir-aussi" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔗 3. Voir aussi
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-erreurs-globales/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17. Gestion d'erreurs globale
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-cache-backend-http/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18. Cache backend et cache HTTP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-n1-performance-orm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19. Problème N+1 et performance ORM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-transactions-concurrence/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20. Transactions et concurrence
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21-migrations-base-de-donnees/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21. Migrations de base de données
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-jobs-asynchrones-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22. Jobs asynchrones et files de tâches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../23-rate-limiting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    23. Rate limiting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../24-logging-observabilite/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    24. Logging et observabilité
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../25-configuration-secrets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    25. Configuration et secrets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../26-upload-fichiers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    26. Upload de fichiers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../27-documentation-api-versioning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    27. Documentation d'API et versioning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../28-soft-delete-audit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    28. Soft delete et audit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../29-securite-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    29. Sécurité backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../30-tests-backend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    30. Tests backend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../31-conteneurisation-cicd-health-checks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    31. Conteneurisation, CI/CD, health checks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Architecture et sujets avancés
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture et sujets avancés
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../32-recherche-full-text/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    32. Recherche full-text
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../33-architecture-couches-hexagonale-clean/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    33. Architecture en couches, hexagonale, Clean Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../34-monolithe-modulaire-vs-microservices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    34. Monolithe modulaire vs microservices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../35-communication-inter-services-resilience/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    35. Communication inter-services et résilience
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../36-multi-tenancy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    36. Multi-tenancy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../37-webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    37. Webhooks (envoi et réception)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../38-feature-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    38. Feature flags
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../39-export-documents/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    39. Export et génération de documents (PDF, CSV, Excel)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../40-dates-fuseaux-montants-ids/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    40. Dates, fuseaux horaires, montants et identifiants
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Langages de programmation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Langages de programmation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/sync-async-langages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Synchrone vs Asynchrone selon les langages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../langages/fetch-axios-httpclient-observable-promise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2. Intercepteurs, clients HTTP, Observable vs Promise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Déploiement web
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Déploiement web
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploiement-web/01-deploiement-ec2-dns-nginx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 1. Contexte
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-exemples-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      💻 2. Exemples techniques
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-voir-aussi" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔗 3. Voir aussi
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="16-validation-des-entrees">16. Validation des entrées<a class="headerlink" href="#16-validation-des-entrees" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>🎯 <strong>Résumé.</strong> Toute donnée venant du client est hostile : on valide d'abord la forme, le type et les bornes, puis les règles métier. La validation est portée par des DTO distincts des entités pour éviter le <em>mass assignment</em> (<code>isAdmin: true</code> envoyé dans un JSON). Le piège principal est de faire confiance à la validation front : elle sert l'UX, jamais de garde-fou serveur, et le back doit revalider systématiquement.</p>
+</blockquote>
+<hr />
+<h2 id="1-contexte">🧭 1. Contexte<a class="headerlink" href="#1-contexte" title="Permanent link">&para;</a></h2>
+<p><strong>Principe</strong> : ne jamais faire confiance aux données du client. Valider forme, type, bornes, puis règles métier.</p>
+<table>
+<thead>
+<tr>
+<th>Stack</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spring Boot</td>
+<td>Bean Validation (<code>@Valid</code>, <code>@NotBlank</code>, <code>@Size</code>...) sur les DTO</td>
+</tr>
+<tr>
+<td>Django / DRF</td>
+<td>Serializers (<code>validate_&lt;champ&gt;</code>, <code>validate</code>)</td>
+</tr>
+<tr>
+<td>Laravel</td>
+<td><code>FormRequest</code> (<code>rules()</code>), <code>Validator</code></td>
+</tr>
+<tr>
+<td>NestJS</td>
+<td><code>class-validator</code> + <code>ValidationPipe</code></td>
+</tr>
+<tr>
+<td>Express</td>
+<td>Zod, Joi, express-validator</td>
+</tr>
+</tbody>
+</table>
+<p>Utiliser des <strong>DTO</strong> distincts des entités (éviter le <em>mass assignment</em> : un client qui envoie <code>isAdmin: true</code>).</p>
+<hr />
+<h2 id="2-exemples-techniques">💻 2. Exemples techniques<a class="headerlink" href="#2-exemples-techniques" title="Permanent link">&para;</a></h2>
+<p>NestJS : le DTO porte les contraintes <code>class-validator</code> et le <code>ValidationPipe</code> global avec <code>whitelist</code> rejette les champs non déclarés (dont un éventuel <code>isAdmin</code>) :</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// create-user.dto.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">IsEmail</span><span class="p">,</span><span class="w"> </span><span class="nx">IsInt</span><span class="p">,</span><span class="w"> </span><span class="nx">IsString</span><span class="p">,</span><span class="w"> </span><span class="nx">Length</span><span class="p">,</span><span class="w"> </span><span class="nx">Max</span><span class="p">,</span><span class="w"> </span><span class="nx">Min</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;class-validator&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">CreateUserDto</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">@IsString</span><span class="p">()</span>
+<span class="w">  </span><span class="kd">@Length</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">80</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">!:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">@IsEmail</span><span class="p">()</span>
+<span class="w">  </span><span class="nx">email</span><span class="o">!:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">@IsInt</span><span class="p">()</span>
+<span class="w">  </span><span class="kd">@Min</span><span class="p">(</span><span class="mf">18</span><span class="p">)</span>
+<span class="w">  </span><span class="kd">@Max</span><span class="p">(</span><span class="mf">120</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">age</span><span class="o">!:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// main.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ValidationPipe</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@nestjs/common&#39;</span><span class="p">;</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">useGlobalPipes</span><span class="p">(</span>
+<span class="w">  </span><span class="ow">new</span><span class="w"> </span><span class="nx">ValidationPipe</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">whitelist</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">forbidNonWhitelisted</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">transform</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">  </span><span class="p">}),</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>DRF : les validateurs par champ puis le validateur global ajoutent les règles métier après le contrôle de forme :</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CreateUserSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">EmailField</span><span class="p">()</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">email__iexact</span><span class="o">=</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;Cet email est déjà utilisé.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;admin&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Nom réservé.&quot;</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">attrs</span>
+</code></pre></div>
+<p>Spring Boot : un record sert de DTO, les annotations Bean Validation sont posées sur les composants et le contrôleur déclenche la validation avec <code>@Valid</code> :</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">CreateUserRequest</span><span class="p">(</span>
+<span class="w">        </span><span class="nd">@NotBlank</span><span class="w"> </span><span class="nd">@Size</span><span class="p">(</span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">80</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">        </span><span class="nd">@NotBlank</span><span class="w"> </span><span class="nd">@Email</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">        </span><span class="nd">@Min</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span><span class="w"> </span><span class="nd">@Max</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&quot;/users&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserController</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">UserService</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">UserController</span><span class="p">(</span><span class="n">UserService</span><span class="w"> </span><span class="n">service</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@PostMapping</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="nd">@Valid</span><span class="w"> </span><span class="nd">@RequestBody</span><span class="w"> </span><span class="n">CreateUserRequest</span><span class="w"> </span><span class="n">body</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">body</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="3-voir-aussi">🔗 3. Voir aussi<a class="headerlink" href="#3-voir-aussi" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../04-formulaires-validation/">Sujet 4 — Formulaires et validation</a></li>
+<li><a href="../17-erreurs-globales/">Sujet 17 — Gestion d'erreurs globale</a></li>
+<li><a href="../29-securite-backend/">Sujet 29 — Sécurité backend</a></li>
+<li><a href="../../backend-from-first-principles/09-validations-and-transformations-for-backend-engineers/">Validations and transformations for backend engineers</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../15-authentification-autorisation/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 15. Authentification et autorisation">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                15. Authentification et autorisation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../17-erreurs-globales/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 17. Gestion d&#39;erreurs globale">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                17. Gestion d'erreurs globale
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
