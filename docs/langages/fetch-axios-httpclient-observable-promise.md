@@ -1,12 +1,14 @@
 # Intercepteurs, clients HTTP, Observable vs Promise
 
+> 🎯 **Résumé.** Un intercepteur est un *Chain of Responsibility* qui centralise auth, logging et gestion d'erreurs sans modifier chaque appel. `fetch` renvoie une `Promise` et ne rejette **jamais** sur un 404, axios ajoute intercepteurs et timeout, et Angular `HttpClient` renvoie un `Observable` annulable avec retry/debounce natifs via RxJS. Le piège : croire que React et Vue ont un intercepteur natif — c'est la bibliothèque HTTP qui porte le concept.
+>
 > Référence de mastery — chaque concept est d'abord expliqué **indépendamment de tout framework, en TypeScript**, puis illustré avec **Angular 22** (stable, juin 2026), **React 19.2** (stable, `19.2.8`, juillet 2026) et **Vue 3.5** (stable, `3.5.42`, août 2026 — Vue 3.6/Vapor Mode encore en RC, non traité ici).
 
 ---
 
-## 1. Le concept d'intercepteur (Interceptor / Middleware)
+## ⛓️ 1. Le concept d'intercepteur (Interceptor / Middleware)
 
-### C'est quoi, en général
+### 1.1 C'est quoi, en général
 
 Un **intercepteur** (ou *middleware* selon les écosystèmes) est un point d'insertion générique dans le trajet d'une requête ou d'un traitement, qui permet d'exécuter du code **avant** et/ou **après** l'opération réelle, sans modifier le code qui déclenche cette opération. Ce n'est pas un concept propre à Angular, ni même propre au HTTP — c'est un **pattern de conception** qu'on retrouve sous des noms différents dans presque tous les écosystèmes :
 
@@ -20,7 +22,7 @@ Un **intercepteur** (ou *middleware* selon les écosystèmes) est un point d'ins
 | gRPC | `Interceptor` |
 | ASP.NET | `Middleware` / `DelegatingHandler` |
 
-### Le pattern sous-jacent : Chain of Responsibility
+### 1.2 Le pattern sous-jacent : Chain of Responsibility
 
 Peu importe le langage ou le framework, le principe est identique : chaque requête traverse une **chaîne** d'étapes, dans un ordre défini, avant d'atteindre le traitement final (souvent l'appel réseau réel ou l'exécution du handler métier).
 
@@ -43,7 +45,7 @@ Chaque étape a le pouvoir de :
 - **court-circuiter** la chaîne (ex : renvoyer une erreur 401 sans jamais atteindre le serveur) ;
 - **transformer** la réponse au retour.
 
-### Pourquoi ce pattern existe (raison générale, pas Angular)
+### 1.3 Pourquoi ce pattern existe (raison générale, pas Angular)
 
 Sans intercepteur, une préoccupation transverse (authentification, logging, gestion d'erreur, cache) doit être dupliquée dans **chaque appel individuel**. L'intercepteur centralise cette logique en un seul endroit, appliqué **automatiquement** à toutes les requêtes qui passent par le système — c'est une application du principe de **separation of concerns**.
 
@@ -55,7 +57,7 @@ Sans intercepteur, une préoccupation transverse (authentification, logging, ges
 - Cache de réponses.
 - Transformation de format (adapter une API legacy à un format interne).
 
-### Exemple générique en TypeScript (indépendant de tout framework)
+### 1.4 Exemple générique en TypeScript (indépendant de tout framework)
 
 Implémentation minimale du pattern Chain of Responsibility, en TypeScript pur — c'est exactement ce mécanisme qu'implémentent Express (`app.use()`), Axios (`interceptors`), et Angular (`HttpInterceptorFn`), chacun avec sa propre API, mais la même logique de composition en chaîne :
 
@@ -112,7 +114,7 @@ const chaine = composerChaine([ajoutToken, logging], envoiReel);
 chaine({ url: "/api/users", headers: {} }).then((res) => console.log(res));
 ```
 
-### Exemple Angular 22
+### 1.5 Exemple Angular 22
 
 Depuis Angular 15, la forme recommandée est **fonctionnelle** (la forme basée sur une classe + `HTTP_INTERCEPTORS` reste supportée mais est considérée comme historique) :
 
@@ -169,7 +171,7 @@ export const appConfig: ApplicationConfig = {
 
 **Depuis Angular 22.1** : les intercepteurs sont désormais automatiquement `untracked` vis-à-vis des Signals — un `effect()` qui déclenche une requête HTTP ne se re-déclenche plus par erreur à cause d'un signal lu à l'intérieur d'un intercepteur.
 
-### Exemple React 19.2 (via axios — React n'a pas de HttpClient intégré)
+### 1.6 Exemple React 19.2 (via axios — React n'a pas de HttpClient intégré)
 
 React est une bibliothèque UI, pas un framework HTTP — il n'existe aucun concept d'intercepteur natif. Le pattern s'implémente presque toujours via **axios**, dont l'API d'intercepteurs est strictement identique, peu importe le framework autour :
 
@@ -215,7 +217,7 @@ function useUsers() {
 }
 ```
 
-### Exemple Vue 3.5 (via axios, consommé en Composition API)
+### 1.7 Exemple Vue 3.5 (via axios, consommé en Composition API)
 
 Même instance axios interceptée que React — c'est le même code, seule la façon de la consommer côté UI change (composable au lieu de hook) :
 
@@ -243,9 +245,9 @@ export function useUsers() {
 
 ---
 
-## 2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient
+## 🌐 2. Les clients HTTP : le concept général, puis fetch / axios / HttpClient
 
-### C'est quoi, en général
+### 2.1 C'est quoi, en général
 
 Un **client HTTP** est simplement un composant logiciel qui construit et envoie une requête HTTP, puis expose la réponse au code appelant. Trois niveaux existent dans à peu près tous les langages :
 
@@ -255,7 +257,7 @@ Un **client HTTP** est simplement un composant logiciel qui construit et envoie 
 
 Angular `HttpClient` se situe dans une **4ᵉ catégorie propre à Angular** : une couche d'abstraction réactive (RxJS) construite **par-dessus** l'une des API natives du navigateur (1 ou 2), pas une alternative de même niveau.
 
-### Comparatif `fetch` vs `axios` vs Angular `HttpClient`
+### 2.2 Comparatif `fetch` vs `axios` vs Angular `HttpClient`
 
 | Aspect | `fetch` | `axios` | Angular `HttpClient` |
 |---|---|---|---|
@@ -270,7 +272,7 @@ Angular `HttpClient` se situe dans une **4ᵉ catégorie propre à Angular** : u
 | **Timeout** | Aucun natif | Natif (`timeout: 5000`) | Opérateur RxJS `timeout()` |
 | **Usage typique** | Vanilla TS, petits scripts | React/Vue/Node — hors écosystème Angular | Exclusivement Angular |
 
-### Piège classique universel avec `fetch`
+### 2.3 Piège classique universel avec `fetch`
 
 ```typescript
 // fetch : PAS d'erreur levée sur un 404 !
@@ -280,7 +282,7 @@ console.log(response.status); // 404
 // Sans vérification manuelle de response.ok, le code continue comme si de rien n'était
 ```
 
-### Ce qui change avec Angular 22 : `FetchBackend` devient le défaut
+### 2.4 Ce qui change avec Angular 22 : `FetchBackend` devient le défaut
 
 Jusqu'à Angular 21, `HttpClient` utilisait `XMLHttpRequest` par défaut, et il fallait activer `withFetch()` explicitement pour passer sur `fetch`. **Depuis Angular 22 (juin 2026), c'est l'inverse** : `fetch` est le backend par défaut, et `withFetch()` est devenu inutile (déprécié).
 
@@ -308,7 +310,7 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-### Architecture interne de `HttpClient` (Angular 22)
+### 2.5 Architecture interne de `HttpClient` (Angular 22)
 
 ```
 Code applicatif (service Angular)
@@ -330,7 +332,7 @@ Code applicatif (service Angular)
 - Avec XHR (`withXhr()`) : les callbacks passent par la **macrotask queue**.
 - L'argument historique pour `fetch` reste valable : le support **SSR**. `fetch` est nativement disponible dans Node depuis la version 18, alors que `XMLHttpRequest` n'existe pas côté Node et nécessitait un polyfill.
 
-### Timeline complète d'une requête `HttpClient` en Angular 22
+### 2.6 Timeline complète d'une requête `HttpClient` en Angular 22
 
 ```
 1. this.http.get(url).subscribe(...)     → code synchrone, retourne un Observable froid
@@ -346,7 +348,7 @@ Code applicatif (service Angular)
 
 Note sur la mise à jour de l'UI : historiquement, c'était **Zone.js** qui interceptait la fin des callbacks asynchrones pour déclencher la *change detection*. Angular 22 généralise l'architecture **Signal-first** : la stratégie `OnPush` devient le comportement par défaut pour tout composant qui ne précise rien, et un état porté par des `signal()` déclenche une mise à jour ciblée sans dépendre de Zone.js — cohérent avec le mode **zoneless**, de plus en plus la direction par défaut du framework.
 
-### Exemple React 19.2 : pas de couche d'abstraction — `fetch` ou `axios` directement
+### 2.7 Exemple React 19.2 : pas de couche d'abstraction — `fetch` ou `axios` directement
 
 React ne fournit **aucun client HTTP intégré** (contrairement à Angular) — l'appel réseau se fait directement avec `fetch`/`axios`, généralement dans un `useEffect` ou via une lib de data-fetching (React Query, SWR). En React 19.2, le hook `use()` (stable depuis la 19.0) permet aussi de consommer directement une Promise en lecture, à combiner avec `<Suspense>` :
 
@@ -394,7 +396,7 @@ function UserList() {
 }
 ```
 
-### Exemple Vue 3.5 : même logique, syntaxe Composition API
+### 2.8 Exemple Vue 3.5 : même logique, syntaxe Composition API
 
 ```typescript
 // composables/useUsers.ts
@@ -436,9 +438,9 @@ const { data: users, isFetching } = useFetch('/api/users').json<User[]>();
 
 ---
 
-## 3. `Observable` vs `Promise` : le concept général, puis Angular/React/Vue
+## 🧵 3. `Observable` vs `Promise` : le concept général, puis Angular/React/Vue
 
-### C'est quoi, en général
+### 3.1 C'est quoi, en général
 
 Il s'agit de **deux modèles distincts pour représenter une valeur qui arrivera plus tard** (asynchrone) — mais qui répondent à des besoins différents et existent, sous des noms variés, dans la plupart des écosystèmes :
 
@@ -449,12 +451,12 @@ Il s'agit de **deux modèles distincts pour représenter une valeur qui arrivera
 
 Le point commun conceptuel à toutes les implémentations "Observable/Stream" est le **pattern Observer** : un producteur (`Observable`) notifie un ou plusieurs consommateurs (`Observer`/`Subscriber`) à chaque nouvelle donnée disponible, jusqu'à ce que le flux se termine ou soit annulé.
 
-### Les deux différences fondamentales, indépendamment du langage
+### 3.2 Les deux différences fondamentales, indépendamment du langage
 
 1. **Cardinalité** : une Promise/Future résout **une fois**. Un Observable/Stream peut émettre **N fois** dans le temps (idéal pour des événements répétés : clics, messages WebSocket, valeurs de capteur, changements de formulaire).
 2. **Eager vs Lazy** : une Promise démarre son exécution **dès sa création**, qu'on l'observe ou non (`eager`). Un Observable classique ne fait **rien** tant que personne ne s'y abonne (`lazy`) — chaque abonnement peut même redéclencher toute l'opération depuis le début (comportement "froid").
 
-### Démonstration du eager vs lazy, en TypeScript
+### 3.3 Démonstration du eager vs lazy, en TypeScript
 
 ```typescript
 import { Observable } from 'rxjs';
@@ -475,12 +477,12 @@ const observable = new Observable<number>((subscriber) => {
 observable.subscribe((val) => console.log(val));
 ```
 
-### Pourquoi ce choix compte, indépendamment du framework
+### 3.4 Pourquoi ce choix compte, indépendamment du framework
 
 - Une API qui représente un **événement DOM**, un **flux WebSocket**, ou une **valeur qui change dans le temps** (température, position GPS, texte d'un champ) a fondamentalement besoin d'un modèle **multi-émissions** — une Promise ne peut structurellement pas représenter ça (elle se résout et c'est terminé).
 - Une API qui représente **une seule opération ponctuelle** (lire un fichier une fois, faire un calcul) est plus simplement représentée par une Promise/Future : plus légère conceptuellement, avec `async`/`await` nativement supporté dans la plupart des langages modernes.
 
-### Exemple Angular 22 : pourquoi `HttpClient` utilise `Observable`
+### 3.5 Exemple Angular 22 : pourquoi `HttpClient` utilise `Observable`
 
 ```typescript
 import { Component, inject, DestroyRef, signal } from '@angular/core';
@@ -518,7 +520,7 @@ searchControl.valueChanges.pipe(
 
 Ce comportement (annulation, debounce, switch automatique) est **trivial en RxJS**, et laborieux à reproduire à la main avec des Promises seules — c'est la vraie justification du choix d'Angular.
 
-### La nuance Angular 22 : la Resource API arrive en renfort, pas en remplacement
+### 3.6 La nuance Angular 22 : la Resource API arrive en renfort, pas en remplacement
 
 Angular 22 stabilise la **Resource API** (`resource()`, `rxResource()`, `httpResource()`) : une troisième façon de représenter une donnée asynchrone, pensée nativement pour les **Signals** — avec état de chargement, erreur, et rechargement intégrés dans un seul objet réactif.
 
@@ -541,7 +543,7 @@ export class UserListComponent {
 
 L'objectif n'est pas de remplacer RxJS partout, mais de simplifier le cas courant "charger une donnée liée à un Signal", sans avoir à écrire un `Observable` + `subscribe()` + gestion manuelle du unsubscribe pour un cas simple d'affichage.
 
-### Convertir de l'un à l'autre (toujours valable en Angular 22)
+### 3.7 Convertir de l'un à l'autre (toujours valable en Angular 22)
 
 ```typescript
 import { from, firstValueFrom } from 'rxjs';
@@ -557,7 +559,7 @@ const data = await firstValueFrom(this.http.get('/api/data'));
 const usersSignal = toSignal(this.http.get<User[]>('/api/users'), { initialValue: [] as User[] });
 ```
 
-### Exemple React 19.2 : `Observable` (RxJS) est utilisable, mais rarement idiomatique
+### 3.8 Exemple React 19.2 : `Observable` (RxJS) est utilisable, mais rarement idiomatique
 
 RxJS n'est **pas propre à Angular** — c'est une bibliothèque TS/JS pure, utilisable dans n'importe quel contexte. En React, ça reste possible mais peu courant, car l'écosystème React privilégie plutôt les Promises + hooks :
 
@@ -623,7 +625,7 @@ function useDebouncedSearch(query: string, delay = 300) {
 }
 ```
 
-### Exemple Vue 3.5 : Composition API + VueUse plutôt que RxJS
+### 3.9 Exemple Vue 3.5 : Composition API + VueUse plutôt que RxJS
 
 Vue propose nativement un système réactif (`ref`, `watch`) qui couvre une bonne partie des cas où Angular utiliserait un `Observable`. Pour le même besoin (debounce + annulation) :
 
@@ -654,10 +656,21 @@ export function useSearch() {
 
 ---
 
-## Récapitulatif des trois concepts
+## 🧠 4. Récapitulatif des trois concepts
 
 | Concept | Le principe général | Angular 22 | React 19.2 | Vue 3.5 |
 |---|---|---|---|---|
 | Intercepteur | Chain of Responsibility appliquée aux requêtes/réponses | `HttpInterceptorFn` + `withInterceptors()`, natif au framework, `untracked` depuis 22.1 | Aucun natif — via `axios.interceptors` | Aucun natif — via `axios.interceptors` |
 | Client HTTP | Construire/envoyer une requête, exposer la réponse | `HttpClient` (RxJS) au-dessus de `FetchBackend`, par défaut depuis Angular 22, imposé par le framework | Aucun officiel — `fetch`/`axios` + React Query/SWR | Aucun officiel — `fetch`/`axios` + VueUse `useFetch` |
 | Promise vs Observable/Stream | Valeur unique vs flux de valeurs dans le temps, eager vs lazy | `Observable` central au framework ; `resource()`/`httpResource()` pour l'asynchrone Signal-first | RxJS possible mais marginal — Promises + hooks (`useEffect`, `useEffectEvent`) + `AbortController` privilégiés | RxJS possible mais marginal — réactivité native (`ref`/`watch`) + VueUse privilégiés |
+
+---
+
+## 🔗 5. Voir aussi
+
+- [Synchrone vs Asynchrone selon les langages](sync-async-langages.md)
+- [Sujet 03 — Authentification côté front](../global-subjects/03-authentification-front.md)
+- [Sujet 06 — Performance front](../global-subjects/06-performance-front.md)
+- [Sujet 10 — Temps réel](../global-subjects/10-temps-reel.md)
+- [Sujet 17 — Gestion d'erreurs globale](../global-subjects/17-erreurs-globales.md)
+

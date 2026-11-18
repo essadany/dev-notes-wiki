@@ -33,6 +33,9 @@ markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+      clickable_checkbox: true
   - toc:
       permalink: true
 
@@ -70,10 +73,56 @@ nav:
       - 28. OpenAPI (Le contrat universel entre clients et serveurs): backend-from-first-principles/28-openapi.md
       - 29. Webhooks - Comment le Serveur Vous Appelle (Reverse APIs): backend-from-first-principles/29-webhooks.md
       - 30. DevOps & Infrastructure pour les Ingénieurs Backend: backend-from-first-principles/30-devops.md
+  - Sujets classiques d'une app web pro:
+      - Hub — sommaire et checklist: global-subjects/global-subjects.md
+      - Frontend:
+          - 1. Cache des données serveur et pagination: global-subjects/01-cache-donnees-serveur-pagination.md
+          - 2. Gestion d'état: global-subjects/02-gestion-etat.md
+          - 3. Authentification côté front: global-subjects/03-authentification-front.md
+          - 4. Formulaires et validation: global-subjects/04-formulaires-validation.md
+          - 5. Routing, guards et code splitting: global-subjects/05-routing-guards-code-splitting.md
+          - 6. Performance (listes longues, debounce, annulation): global-subjects/06-performance-front.md
+          - 7. Modes de rendu (CSR, SSR, SSG, ISR): global-subjects/07-modes-de-rendu.md
+          - 8. Gestion d'erreurs côté front: global-subjects/08-erreurs-front.md
+          - 9. Mises à jour optimistes: global-subjects/09-mises-a-jour-optimistes.md
+          - 10. Temps réel: global-subjects/10-temps-reel.md
+          - 11. Internationalisation (i18n): global-subjects/11-i18n.md
+          - 12. Sécurité front: global-subjects/12-securite-front.md
+          - 13. Tests front: global-subjects/13-tests-front.md
+      - Backend:
+          - 14. Pagination, tri et filtrage: global-subjects/14-pagination-tri-filtrage.md
+          - 15. Authentification et autorisation: global-subjects/15-authentification-autorisation.md
+          - 16. Validation des entrées: global-subjects/16-validation-entrees.md
+          - 17. Gestion d'erreurs globale: global-subjects/17-erreurs-globales.md
+          - 18. Cache backend et cache HTTP: global-subjects/18-cache-backend-http.md
+          - 19. Problème N+1 et performance ORM: global-subjects/19-n1-performance-orm.md
+          - 20. Transactions et concurrence: global-subjects/20-transactions-concurrence.md
+          - 21. Migrations de base de données: global-subjects/21-migrations-base-de-donnees.md
+          - 22. Jobs asynchrones et files de tâches: global-subjects/22-jobs-asynchrones-files.md
+          - 23. Rate limiting: global-subjects/23-rate-limiting.md
+          - 24. Logging et observabilité: global-subjects/24-logging-observabilite.md
+          - 25. Configuration et secrets: global-subjects/25-configuration-secrets.md
+          - 26. Upload de fichiers: global-subjects/26-upload-fichiers.md
+          - 27. Documentation d'API et versioning: global-subjects/27-documentation-api-versioning.md
+          - 28. Soft delete et audit: global-subjects/28-soft-delete-audit.md
+          - 29. Sécurité backend: global-subjects/29-securite-backend.md
+          - 30. Tests backend: global-subjects/30-tests-backend.md
+          - 31. Conteneurisation, CI/CD, health checks: global-subjects/31-conteneurisation-cicd-health-checks.md
+      - Architecture et sujets avancés:
+          - 32. Recherche full-text: global-subjects/32-recherche-full-text.md
+          - 33. Architecture en couches, hexagonale, Clean Architecture: global-subjects/33-architecture-couches-hexagonale-clean.md
+          - 34. Monolithe modulaire vs microservices: global-subjects/34-monolithe-modulaire-vs-microservices.md
+          - 35. Communication inter-services et résilience: global-subjects/35-communication-inter-services-resilience.md
+          - 36. Multi-tenancy: global-subjects/36-multi-tenancy.md
+          - 37. Webhooks (envoi et réception): global-subjects/37-webhooks.md
+          - 38. Feature flags: global-subjects/38-feature-flags.md
+          - 39. Export et génération de documents (PDF, CSV, Excel): global-subjects/39-export-documents.md
+          - 40. Dates, fuseaux horaires, montants et identifiants: global-subjects/40-dates-fuseaux-montants-ids.md
   - Langages de programmation:
       - Accueil: langages/index.md
       - 1. Synchrone vs Asynchrone selon les langages: langages/sync-async-langages.md
       - 2. Intercepteurs, clients HTTP, Observable vs Promise: langages/fetch-axios-httpclient-observable-promise.md
 
   - Déploiement web:
+      - Accueil: deploiement-web/index.md
       - 1. Déploiement d'une app sur EC2 (DNS, ports, reverse proxy): deploiement-web/01-deploiement-ec2-dns-nginx.md

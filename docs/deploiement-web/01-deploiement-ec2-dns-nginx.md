@@ -1,6 +1,10 @@
 # Déploiement d'une app sur EC2 : DNS, ports, reverse proxy
 
-## 1. Instance EC2 — c'est quoi
+> 🎯 **Résumé.** Le domaine, l'IP et l'instance sont trois couches distinctes : un enregistrement A pointe vers une Elastic IP associée à l'EC2, et Nginx route selon `server_name` pour héberger plusieurs sites. Le backend écoute sur `localhost` derrière Nginx, qui termine le SSL avec Certbot et sert les fichiers statiques. Le piège : ouvrir le port du container dans le security group au lieu du port de l'hôte, ou laisser le backend écouter sur 80/443.
+
+---
+
+## 🖥️ 1. Instance EC2 — c'est quoi
 
 Un serveur virtuel loué chez AWS (le service de calcul de base).
 
@@ -10,7 +14,9 @@ Un serveur virtuel loué chez AWS (le service de calcul de base).
 - **Stockage** : volumes **EBS** attachés à l'instance
 - **Sécurité réseau** : gérée via les **security groups** (= firewall)
 
-## 2. Plusieurs domaines sur une même instance
+---
+
+## 🌐 2. Plusieurs domaines sur une même instance
 
 Oui, possible via un **reverse proxy** (Nginx) qui route selon le `server_name` (virtual hosting).
 
@@ -27,7 +33,9 @@ server {
 
 Chaque domaine pointe (DNS type A) vers la même IP publique de l'instance. Avec Docker, on peut aussi utiliser **Traefik** ou **nginx-proxy** pour un routing automatique par labels.
 
-## 3. Domaine vs déploiement : deux choses séparées
+---
+
+## 🧭 3. Domaine vs déploiement : deux choses séparées
 
 | Élément | Où ça se passe |
 |---|---|
@@ -40,7 +48,7 @@ Flow :
 Domaine (registrar) → DNS record (A) → IP publique EC2 → Nginx → App (Docker)
 ```
 
-### Étapes de déploiement
+### 3.1 Étapes de déploiement
 1. Créer l'instance EC2 (security group : ports 22, 80, 443)
 2. Réserver une **Elastic IP** et l'associer (IP fixe, ne change pas au redémarrage)
 3. Chez le registrar : enregistrement A `monsite.com` → Elastic IP
@@ -48,7 +56,9 @@ Domaine (registrar) → DNS record (A) → IP publique EC2 → Nginx → App (Do
 5. Installer Nginx en reverse proxy
 6. Certbot pour le SSL : `certbot --nginx -d monsite.com`
 
-## 4. Security group : port host, jamais le port container
+---
+
+## 🔐 4. Security group : port host, jamais le port container
 
 Le security group filtre au niveau de **l'instance (host)**, pas à l'intérieur du réseau Docker.
 
@@ -63,7 +73,9 @@ Bonne pratique : si Nginx fait le reverse proxy, bind le container en local uniq
 
 **Inbound rules typiques à ouvrir** : 22 (SSH), 80 (HTTP), 443 (HTTPS). Rien d'autre.
 
-## 5. Ports 80/443 vs ports d'app (3000, 8000...)
+---
+
+## 🚪 5. Ports 80/443 vs ports d'app (3000, 8000...)
 
 - **80/443** = ports standards du web, utilisés automatiquement par le navigateur (pas besoin de les préciser dans l'URL)
 - **3000, 8000...** = conventions de dev (Angular, Django `runserver`...), aucune signification pour le web, juste pour éviter les conflits en local
@@ -73,7 +85,7 @@ Bonne pratique : si Nginx fait le reverse proxy, bind le container en local uniq
 - Nginx doit être le point d'entrée unique (gère HTTPS, routing, fichiers statiques)
 - Les ports < 1024 nécessitent des privilèges root → mauvaise pratique pour un backend
 
-### Flow correct
+### 5.1 Flow correct
 ```
 Internet → Port 443 (Nginx, SSL terminé ici) → proxy_pass en interne → Port 8000 (Gunicorn/Django, localhost uniquement)
 ```
@@ -106,7 +118,9 @@ server {
 
 En prod, Angular n'est pas lancé en `ng serve` : on fait `ng build` → fichiers statiques servis directement par Nginx.
 
-## 6. Résolution DNS — comment ça marche
+---
+
+## 📡 6. Résolution DNS — comment ça marche
 
 ```
 1. Navigateur → resolver DNS (FAI)
@@ -118,7 +132,7 @@ En prod, Angular n'est pas lancé en `ng serve` : on fait `ng build` → fichier
 
 Résultat mis en cache selon le **TTL**.
 
-### Ce qu'on configure nous-mêmes
+### 6.1 Ce qu'on configure nous-mêmes
 Uniquement l'enregistrement DNS (type A) :
 
 | Type | Nom | Valeur |
@@ -126,7 +140,7 @@ Uniquement l'enregistrement DNS (type A) :
 | A | monsite.com | Elastic IP |
 | A | www.monsite.com | Elastic IP |
 
-### Nameservers : qui les configure ?
+### 6.2 Nameservers : qui les configure ?
 
 Deux niveaux :
 - **Quels nameservers pour le domaine** → configuré une fois chez le **registrar** (par défaut ceux du registrar, ou délégation vers Route 53)
@@ -134,11 +148,15 @@ Deux niveaux :
 
 **Scénario simple (suffisant dans notre cas)** : garder les nameservers par défaut du registrar, ajouter l'enregistrement A directement dans son interface. Pas besoin de Route 53 sauf si on veut centraliser dans AWS ou utiliser CloudFront/ALB.
 
-## 7. Pourquoi une Elastic IP
+---
+
+## 📌 7. Pourquoi une Elastic IP
 
 L'IP publique par défaut d'EC2 **change** à chaque redémarrage → casse le DNS. L'Elastic IP reste fixe tant qu'on ne la libère pas.
 
-## Schéma récapitulatif complet
+---
+
+## 🗺️ 8. Schéma récapitulatif complet
 
 ```
 Registrar (achat domaine)
@@ -152,7 +170,16 @@ Registrar (achat domaine)
                             ┌──────────┴──────────┐
                             ↓                     ↓
                    /api/ → localhost:8000   / → fichiers statiques
-                   (Django/Gunicorn)         (Angular build, ng build)
-                   port interne, jamais
-                   exposé directement
+                    (Django/Gunicorn)         (Angular build, ng build)
+                    port interne, jamais
+                    exposé directement
 ```
+
+---
+
+## 🔗 9. Voir aussi
+
+- [Sujet 31 — Conteneurisation, CI/CD, health checks](../global-subjects/31-conteneurisation-cicd-health-checks.md)
+- [Sujet 25 — Configuration et secrets](../global-subjects/25-configuration-secrets.md)
+- [30. DevOps & Infrastructure pour les Ingénieurs Backend](../backend-from-first-principles/30-devops.md)
+
